@@ -1,0 +1,90 @@
+version: '3.8'
+
+volumes:
+  nuget-packages:
+    name: nuget-packages
+  rabbitmq_data:
+
+services:
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"  # AMQP port
+      - "15672:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # HR API
+  hr-api:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.API/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5000:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Data Source=43.217.118.244;Initial Catalog=HRDatabase;Persist Security Info=False;User ID=hrmadmin;Password=Pahr~$m(!n9202djasldAddf;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=60;
+    network_mode: "host"
+
+  # HR gRPC Service
+  hr-grpc:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.Grpc/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5001:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Data Source=43.217.118.244;Initial Catalog=HRDatabase;Persist Security Info=False;User ID=hrmadmin;Password=Pahr~$m(!n9202djasldAddf;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=60;
+    network_mode: "host"
+
+  # External API
+  external-api:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.ExternalAPI/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5002:80"
+    depends_on:
+      - hr-grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - GrpcSettings__EmployeeServiceUrl=http://localhost:5001
+    network_mode: "host"

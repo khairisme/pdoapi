@@ -1,0 +1,21 @@
+# This is a basic development configuration for Temporal server
+# It enables some features that are useful for development but may not be suitable for production
+
+frontend.enableClientVersionCheck:
+  - value: true
+system.enableGlobalDomain:
+  - value: false
+history.persistenceMaxQPS:
+  - value: 3000
+frontend.persistenceMaxQPS:
+  - value: 3000
+frontend.historyMgrNumConns:
+  - value: 10
+frontend.throttledLogRPS:
+  - value: 20
+history.historyMgrNumConns:
+  - value: 50
+system.advancedVisibilityWritingMode:
+  - value: "off"
+system.enableReadVisibilityFromES:
+  - value: false

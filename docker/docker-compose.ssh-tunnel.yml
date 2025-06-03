@@ -1,0 +1,115 @@
+version: '3.8'
+
+volumes:
+  nuget-packages:
+    name: nuget-packages
+  rabbitmq_data:
+
+services:
+  # SSH Tunnel Service
+  ssh-tunnel:
+    image: alpine/ssh
+    command: -N -L 0.0.0.0:1433:43.217.118.244:1433 user@your-ssh-server
+    restart: always
+    environment:
+      - SSH_PRIVATE_KEY=your_private_key_here
+    networks:
+      - hr-network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"  # AMQP port
+      - "15672:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - hr-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # HR API
+  hr-api:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.API/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5000:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      ssh-tunnel:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      # Modified connection string to use the SSH tunnel
+      - ConnectionStrings__DefaultConnection=Server=ssh-tunnel,1433;Database=HRDatabase;User Id=hrmadmin;Password=Pahr~$m(!n9202djasldAddf;TrustServerCertificate=True;
+    networks:
+      - hr-network
+
+  # HR gRPC Service
+  hr-grpc:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.Grpc/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5001:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      ssh-tunnel:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      # Modified connection string to use the SSH tunnel
+      - ConnectionStrings__DefaultConnection=Server=ssh-tunnel,1433;Database=HRDatabase;User Id=hrmadmin;Password=Pahr~$m(!n9202djasldAddf;TrustServerCertificate=True;
+    networks:
+      - hr-network
+
+  # External API
+  external-api:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.ExternalAPI/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5002:80"
+    depends_on:
+      - hr-grpc
+      - ssh-tunnel
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - GrpcSettings__EmployeeServiceUrl=http://hr-grpc
+    networks:
+      - hr-network
+
+networks:
+  hr-network:
+    driver: bridge

@@ -1,0 +1,119 @@
+# Docker Compose configuration for HR Management System
+
+volumes:
+  nuget-packages:
+    name: nuget-packages
+  rabbitmq_data:
+
+services:
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"  # AMQP port
+      - "15672:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - hr-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # HR API
+  hr-api:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.API/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5000:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      # Escaping $ with $$ in the password
+      - ConnectionStrings__DefaultConnection=Data Source=43.217.118.244;Initial Catalog=HRDatabase;Persist Security Info=False;User ID=hrmadmin;Password=Pahr~$$m(!n9202djasldAddf;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=60;
+    networks:
+      - hr-network
+      - external-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "sql-server:43.217.118.244"
+
+  # HR gRPC Service
+  hr-grpc:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.Grpc/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5001:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      # Escaping $ with $$ in the password
+      - ConnectionStrings__DefaultConnection=Data Source=43.217.118.244;Initial Catalog=HRDatabase;Persist Security Info=False;User ID=hrmadmin;Password=Pahr~$$m(!n9202djasldAddf;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=60;
+    networks:
+      - hr-network
+      - external-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "sql-server:43.217.118.244"
+
+  # External API
+  external-api:
+    build:
+      context: ..
+      dockerfile: src/Services/HR.ExternalAPI/Dockerfile
+      platforms:
+        - linux/amd64
+      args:
+        - NUGET_PACKAGES=/nuget/packages
+    volumes:
+      - nuget-packages:/nuget/packages
+    ports:
+      - "5002:80"
+    depends_on:
+      - hr-grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - GrpcSettings__EmployeeServiceUrl=http://hr-grpc
+    networks:
+      - hr-network
+      - external-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "sql-server:43.217.118.244"
+
+
+
+networks:
+  hr-network:
+    driver: bridge
+  external-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
