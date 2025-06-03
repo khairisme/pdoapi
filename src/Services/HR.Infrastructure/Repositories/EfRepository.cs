@@ -56,7 +56,10 @@ public class EfRepository<T> : IRepository<T> where T : BaseEntity
         await _dbSet.AddRangeAsync(entities);
         return entities;
     }
-
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
     public async Task<bool> UpdateAsync(T entity)
     {
         entity.ModifiedAt = DateTime.UtcNow;

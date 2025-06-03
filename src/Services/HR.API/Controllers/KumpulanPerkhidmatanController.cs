@@ -47,24 +47,158 @@ public class KumpulanPerkhidmatanController : ControllerBase
     }
 
     /// <summary>
-    ///Get Carl Permohonan Perjawatan
+    ///Get Carl MaklumatKumpulanPerkhidmatan
     /// </summary>
     /// <param name="KumpulanPerkhidmatanFilterDto"></param>
     /// <returns></returns>
     [HttpPost("getPermohonanPerjawatan")]
-    public async Task<IActionResult> getPermohonanPerjawatan([FromBody] KumpulanPerkhidmatanFilterDto filter)
+    public async Task<IActionResult> getMaklumatKumpulanPerkhidmatan([FromBody] KumpulanPerkhidmatanFilterDto filter)
     {
-        _logger.LogInformation("Getting all CarlKumpulanPerkhidmatanDto");
-
-        var result = await _kumpulanPerkhidmatan.GetKumpulanPerkhidmatanAsync(filter);
-
-        return Ok(new
+        _logger.LogInformation("Getting Carl Maklumat Kumpulan Perkhidmatan");
+        try
         {
-            status = result.Count() > 0 ? "Sucess" : "Failed",
-            items = result
+            var result = await _kumpulanPerkhidmatan.GetKumpulanPerkhidmatanAsync(filter);
 
-        });
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during carl Maklumat Kumpulan Perkhidmatan");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+    /// <summary>
+    ///Create KumpulanPerkhidmatan
+    /// </summary>
+    /// <param name="KumpulanPerkhidmatanFilterDto"></param>
+    /// <returns></returns>
+    [HttpPost("newPermohonanPerjawatan")]
+    public async Task<IActionResult> Create([FromBody] KumpulanPerkhidmatanDto kumpulanPerkhidmatanDto)
+    {
+        _logger.LogInformation("Creating a new KumpulanPerkhidmatan");
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var isSuccess = await _kumpulanPerkhidmatan.CreateAsync(kumpulanPerkhidmatanDto);
+
+            if (!isSuccess)
+                return StatusCode(500, "Failed to create the record.");
+
+            return Ok("Created successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during creation");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+    /// <summary>
+    ///get KumpulanPerkhidmatan
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("getKumpulanPerkhidmatan/{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        try
+        {
+            var result = await _kumpulanPerkhidmatan.GetKumpulanPerkhidmatanByIdAsync(id);
+            if (result == null)
+                return NotFound($"No KumpulanPerkhidmatan found for ID {id}");
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during getKumpulanPerkhidmatan");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    /// <summary>
+    ///validate duplicate KumpulanPerkhidmatan
+    /// </summary>
+    /// <param name="KumpulanPerkhidmatanDto"></param>
+    /// <returns></returns>
+    [HttpPost("valKumpulanPerkhidmata")]
+    public async Task<IActionResult> ValKumpulanPerkhidmata([FromBody] KumpulanPerkhidmatanDto kumpulanPerkhidmatanDto)
+    {
+        try
+        {
+            var isDuplicate = await _kumpulanPerkhidmatan.CheckDuplicateKodNamaAsync(kumpulanPerkhidmatanDto);
+            if (isDuplicate)
+            return Conflict("Kod or Nama already exists for another record.");
+
+            return Ok(isDuplicate);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during creation");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+    /// <summary>
+    ///Update KumpulanPerkhidmatan
+    /// </summary>
+    /// <param name="KumpulanPerkhidmatanFilterDto"></param>
+    /// <returns></returns>
+    [HttpPost("setPermohonanPerjawatan")]
+    public async Task<IActionResult> Update([FromBody] KumpulanPerkhidmatanDto kumpulanPerkhidmatanDto)
+    {
+        _logger.LogInformation("update KumpulanPerkhidmatan");
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var isSuccess = await _kumpulanPerkhidmatan.UpdateAsync(kumpulanPerkhidmatanDto);
+
+            if (!isSuccess)
+                return StatusCode(500, "Failed to update the record.");
+
+            return Ok("Updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during updation");
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 
 
+    /// <summary>
+    ///Get Carl MaklumatKumpulanPerkhidmatan
+    /// </summary>
+    /// <param name="KumpulanPerkhidmatanFilterDto"></param>
+    /// <returns></returns>
+    [HttpPost("getStatusKumpulanPerkhidmatan")]
+    public async Task<IActionResult> getStatusKumpulanPerkhidmatan([FromBody] KumpulanPerkhidmatanFilterDto filter)
+    {
+        _logger.LogInformation("Getting Carl getStatusKumpulanPerkhidmatan");
+        try
+        {
+            var result = await _kumpulanPerkhidmatan.GetStatusKumpulanPerkhidmatan(filter);
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during carl getStatusKumpulanPerkhidmatan");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
 }

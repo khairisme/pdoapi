@@ -11,8 +11,9 @@ namespace HR.Application.DTOs
         public int Id { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
-        public string Keterangan { get; set; }
-        public string ButiranKemaskini { get; set; }
+        public string? Keterangan { get; set; }
+        public string? ButiranKemaskini { get; set; }
+        public bool StatusAktif { get; set; }=true;
     }
 
     public class CarlKumpulanPerkhidmatanDto
@@ -31,5 +32,26 @@ namespace HR.Application.DTOs
         public string? Nama { get; set; }
         public int? StatusKumpulan { get; set; } // 0 = Tidak Aktif, 1 = Aktif
         public string? StatusPermohonan { get; set; } // e.g., "Draf", "Disahkan", etc.
+    }
+    public class KumpulanPerkhidmatanDetailDto
+    {
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string StatusPermohonan { get; set; }
+        public DateTime TarikhKemaskini { get; set; }
+    }
+
+    public class CarlStatusKumpulanPerkhidmatanDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+    
+        public string KodRujStatusPermohonan { get; set; }
+        public string StatusPermohonan { get; set; }
+        public DateTime TarikhKemaskini { get; set; }
     }
 }

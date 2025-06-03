@@ -98,7 +98,10 @@ public class EfPNSRepository<T> : IRepository<T> where T : PNSBaseEntity
         return await _dbSet.CountAsync(e => Convert.ToBoolean(e.StatusAktif));
     }
 
-   
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
     public async Task<(IEnumerable<T> Items, int TotalCount)> GetPagedListAsync(int pageNumber, int pageSize)
     {
         var query = _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif));

@@ -16,5 +16,13 @@ namespace HR.Application.Interfaces
 
         Task<IEnumerable<CarlKumpulanPerkhidmatanDto>> GetKumpulanPerkhidmatanAsync(KumpulanPerkhidmatanFilterDto filter);
 
+        Task<bool> CreateAsync(KumpulanPerkhidmatanDto perkhidmatanDto);
+        Task<KumpulanPerkhidmatanDetailDto?> GetKumpulanPerkhidmatanByIdAsync(int id);
+        Task<bool> CheckDuplicateKodNamaAsync(KumpulanPerkhidmatanDto dto);
+
+        Task<bool> UpdateAsync(KumpulanPerkhidmatanDto perkhidmatanDto);
+
+        Task<IEnumerable<CarlStatusKumpulanPerkhidmatanDto>> GetStatusKumpulanPerkhidmatan(KumpulanPerkhidmatanFilterDto filter);
+
     }
 }

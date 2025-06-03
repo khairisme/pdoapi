@@ -29,7 +29,10 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
     {
         return await _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif)).ToListAsync();
     }
-
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _dbSet.FirstOrDefaultAsync(predicate);
+    }
 
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
@@ -40,7 +43,7 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
 
     public async Task<T> AddAsync(T entity)
     {
-       
+        entity.IdCipta = System.Guid.NewGuid();
         entity.TarikhCipta = DateTime.UtcNow;
 
         await _dbSet.AddAsync(entity);

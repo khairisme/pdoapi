@@ -80,7 +80,10 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
        
         return entities;
     }
-
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+    {
+        return  null;
+    }
     public async Task<bool> UpdateAsync(T entity)
     {
         entity.ModifiedAt = DateTime.UtcNow;

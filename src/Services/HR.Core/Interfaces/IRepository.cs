@@ -87,4 +87,6 @@ public interface IRepository<T> where T : class
     /// <param name="fieldValue">Value to search for</param>
     /// <returns>Collection of entities matching the field value</returns>
     Task<IEnumerable<T>> FindByFieldAsync(string fieldName, object fieldValue);
+
+    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 }
