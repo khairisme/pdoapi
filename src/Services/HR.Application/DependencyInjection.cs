@@ -24,6 +24,7 @@ public static class DependencyInjection
 
         services.AddScoped<IKumpulanPerkhidmatanService, KumpulanPerkhidmatanService>();
         services.AddScoped<IRujStatusPermohonanService, RujStatusPermohonanService>();
+        services.AddScoped<IMaklumatKlasifikasiPerkhidmatanService, MaklumatKlasifikasiPerkhidmatanService>();
 
         return services;
     }
