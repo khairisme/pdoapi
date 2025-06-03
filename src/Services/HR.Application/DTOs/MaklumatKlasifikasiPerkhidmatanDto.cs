@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace HR.Application.DTOs
 {
-    public class MaklumatKlasifikasiPerkhidmatanDto
+    public class MaklumatKlasifikasiPerkhidmatanCreateRequestDto
+    {
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string FungsiUtama { get; set; }
+        public string FungsiUmum { get; set; }
+    }
+
+    public class MaklumatKlasifikasiPerkhidmatanSearchResponseDto
     {
         public int Bil { get; set; }
         public string Kod { get; set; }

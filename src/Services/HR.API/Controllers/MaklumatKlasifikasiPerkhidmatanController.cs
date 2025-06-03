@@ -37,5 +37,29 @@ namespace HR.API.Controllers
 
             });
         }
+
+        /// <summary>
+        ///Create MaklumatKlasifikasiPerkhidmatanCreateRequestDto
+        /// </summary>
+        /// <param name="MaklumatKlasifikasiPerkhidmatanCreateRequestDto"></param>
+        /// <returns></returns>
+        [HttpPost("createMaklumatKlasifikasiPerkhidmatan")]
+        public async Task<IActionResult> Create([FromBody] MaklumatKlasifikasiPerkhidmatanCreateRequestDto maklumatKlasifikasiPerkhidmatanCreateRequestDto)
+        {
+            _logger.LogInformation("Creating a new maklumatKlasifikasiPerkhidmatan");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var isSuccess = await _maklumatKlasifikasiPerkhidmatanService.CreateAsync(maklumatKlasifikasiPerkhidmatanCreateRequestDto);
+
+            return Ok(new
+            {
+                status = isSuccess ? "Sucess" : "Failed",
+                items = isSuccess
+
+            });
+
+        }
     }
 }

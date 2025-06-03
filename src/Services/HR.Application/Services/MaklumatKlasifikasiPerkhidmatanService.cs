@@ -1,6 +1,7 @@
 ﻿using HR.Application.DTOs;
 using HR.Application.Extensions;
 using HR.Application.Interfaces;
+using HR.Core.Entities;
 using HR.Core.Enums;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
@@ -21,7 +22,7 @@ namespace HR.Application.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanDto>> GetMaklumatKlasifikasiPerkhidmatan(MaklumatKlasifikasiPerkhidmatanFilterDto filter)
+        public async Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanSearchResponseDto>> GetMaklumatKlasifikasiPerkhidmatan(MaklumatKlasifikasiPerkhidmatanFilterDto filter)
         {
             try
             {
@@ -74,7 +75,7 @@ namespace HR.Application.Services
 
 
                 var result = data
-                    .Select((q, index) => new MaklumatKlasifikasiPerkhidmatanDto
+                    .Select((q, index) => new MaklumatKlasifikasiPerkhidmatanSearchResponseDto
                     {
                         Bil = index + 1,
                         Kod = q.Kod,
@@ -96,7 +97,57 @@ namespace HR.Application.Services
             }
         }
 
+        public async Task<bool> CreateAsync(MaklumatKlasifikasiPerkhidmatanCreateRequestDto CreateRequestDto)
+        {
+            _logger.LogInformation("Service: Creating new KumpulanPerkhidmatan");
+            await _unitOfWork.BeginTransactionAsync();
 
+            try
+            {
+                // Step 1: Insert into PDO_KlasifikasiPerkhidmatan
+                var KlasifikasiPerkhidmatan = MapToEntity(CreateRequestDto);
+                KlasifikasiPerkhidmatan.StatusAktif = false;
+
+                KlasifikasiPerkhidmatan = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().AddAsync(KlasifikasiPerkhidmatan);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+                // Step 2: Insert into PDO_StatusPermohonanKumpulanPerkhidmatan
+                var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                {
+                    IdKlasifikasiPerkhidmatan = KlasifikasiPerkhidmatan.Id, // use the ID from step 1
+                    KodRujStatusPermohonan = "01",
+                    TarikhKemaskini = DateTime.Now,
+                    StatusAktif = true
+                };
+                await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service CreateAsync");
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
+
+        private PDOKlasifikasiPerkhidmatan MapToEntity(MaklumatKlasifikasiPerkhidmatanCreateRequestDto dto)
+        {
+            return new PDOKlasifikasiPerkhidmatan
+            {
+
+                Kod = dto.Kod,
+                Nama = dto.Nama,
+                Keterangan = dto.Keterangan,
+                FungsiUmum = dto.FungsiUmum,
+                FungsiUtama = dto.FungsiUtama
+            };
+        }
     }
 }
 

@@ -9,6 +9,8 @@ namespace HR.Application.Interfaces
 {
     public interface IMaklumatKlasifikasiPerkhidmatanService
     {
-        Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanDto>> GetMaklumatKlasifikasiPerkhidmatan(MaklumatKlasifikasiPerkhidmatanFilterDto filter);
+        Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanSearchResponseDto>> GetMaklumatKlasifikasiPerkhidmatan(MaklumatKlasifikasiPerkhidmatanFilterDto filter);
+
+        Task<bool> CreateAsync(MaklumatKlasifikasiPerkhidmatanCreateRequestDto CreateRequestDto);
     }
 }
