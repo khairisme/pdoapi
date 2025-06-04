@@ -4,6 +4,7 @@ using HR.Core.Entities;
 using HR.Core.Enums;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -161,6 +162,107 @@ namespace HR.Application.Services
                 return false;
             }
         }
-        
+        public async Task<bool> CheckDuplicateKodNamaAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        {
+            try
+            {
+                if (dto.IdGred == 0)
+                {
+                    // Create: check if Kod or Nama already exists
+                    return await _dbContext.PDOSkimPerkhidmatan.AnyAsync(x =>
+
+                        (x.Nama.Trim() == dto.Nama.Trim()));
+                }
+                else
+                {
+                    // Update: check for duplicates excluding current record
+                    return await _dbContext.PDOSkimPerkhidmatan.AnyAsync(x =>
+
+                        (x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim()) &&
+                        x.Id != dto.IdGred);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Validate KumpulanPerkhidmatan");
+                throw;
+            }
+        }
+        public async Task<MaklumatSkimPerkhidmatanResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(string Kod)
+        {
+            try
+            {
+                _logger.LogInformation("Getting SenaraiSkimPerkhidmatan by ID {Id} using Entity Framework", Kod);
+                var result = await (from a in _dbContext.PDOSkimPerkhidmatan
+                              join b in _dbContext.PDOKlasifikasiPerkhidmatan
+                                  on a.IdKlasifikasiPerkhidmatan equals b.Id
+                              join c in _dbContext.PDOKumpulanPerkhidmatan
+                                  on a.IdKumpulanPerkhidmatan equals c.Id
+                              where a.Kod == Kod && b.StatusAktif && c.StatusAktif
+                              select new MaklumatSkimPerkhidmatanResponseDto
+                              {
+                                  Id=a.Id,
+                                  Kod = a.Kod,
+                                  Nama = a.Nama,
+                                  Keterangan=a.Keterangan,
+                                  KodKlasifikasiPerkhidmatan = b.Kod,
+                                  KlasifikasiPerkhidmatan = b.Nama,
+                                  KodKumpulanPerkhidmatan = c.Kod,
+                                  KumpulanPerkhidmatan = c.Nama
+                              }).FirstOrDefaultAsync();
+
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting MaklumatSkimPerkhidmatan");
+                throw;
+            }
+        }
+        public async Task<bool> UpdateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        {
+            _logger.LogInformation("Service: Updating MaklumatSkimPerkhidmatan");
+            var record = _dbContext.PDOSkimPerkhidmatan
+                       .FirstOrDefault(x => x.Kod == dto.Kod);
+
+            if (record == null)
+            {
+                return false; // or handle accordingly
+            }
+
+            // Update fields
+            record.Nama = dto.Nama;
+            record.Keterangan = dto.Keterangan;
+            record.IdKlasifikasiPerkhidmatan = dto.IdKlasifikasiPerkhidmatan;
+            record.IdKumpulanPerkhidmatan = dto.IdKumpulanPerkhidmatan;
+            //record.IsKritikal = dto.isKritikal;
+            //record.TarikhKemaskini = DateTime.Now;
+
+            try
+            {
+                _dbContext.SaveChanges();
+                return true;    
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service UpdateAsync");
+             
+                return false;
+            }
+        }
+        private PDOSkimPerkhidmatan MapToEntity(MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        {
+            return new PDOSkimPerkhidmatan
+            {
+               
+                Kod = dto.Kod,
+                Nama = dto.Nama,
+                Keterangan = dto.Keterangan,
+                IdKlasifikasiPerkhidmatan = dto.IdKlasifikasiPerkhidmatan,
+                IdKumpulanPerkhidmatan=dto.IdKumpulanPerkhidmatan
+
+            };
+        }
     }
 }

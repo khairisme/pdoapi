@@ -35,4 +35,15 @@ namespace HR.Application.DTOs
         public bool IndikatorKenaikanPGT { get; set; }
         public int IdGred { get; set; }
     }
+    public class MaklumatSkimPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string KodKlasifikasiPerkhidmatan { get; set; }
+        public string KlasifikasiPerkhidmatan { get; set; }
+        public string KodKumpulanPerkhidmatan { get; set; }
+        public string KumpulanPerkhidmatan { get; set; }
+    }
 }
