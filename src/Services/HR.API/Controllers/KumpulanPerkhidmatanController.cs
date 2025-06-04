@@ -201,4 +201,50 @@ public class KumpulanPerkhidmatanController : ControllerBase
             return StatusCode(500, "Internal Server Error");
         }
     }
+    /// <summary>
+    /// Maklumat Sedia Ada 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("getMaklumatSediaAda/{id}")]
+    public async Task<ActionResult<KumpulanPerkhidmatanStatusDto>> GetMaklumatSediaAda(int id)
+    {
+        var result = await _kumpulanPerkhidmatan.GetMaklumatSediaAda(id);
+
+        if (result == null)
+            return NotFound(new { message = "Information not found." });
+
+        return Ok(result);
+    }
+    /// <summary>
+    /// Maklumat Baharu
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("getMaklumatBaharu/{id}")]
+    public async Task<ActionResult<KumpulanPerkhidmatanButiranDto>> GetMaklumatBaharu(int id)
+    {
+        var result = await _kumpulanPerkhidmatan.GetMaklumatBaharuAsync(id);
+
+        if (result == null)
+            return NotFound(new { message = "Information not found." });
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Set Kemaskinistatus
+    /// </summary>
+    /// <param name="perkhidmatanDto"></param>
+    /// <returns></returns>
+    [HttpPost("setKemaskinistatus")]
+    public async Task<ActionResult<KumpulanPerkhidmatanButiranDto>> SetKemaskinistatus([FromBody]  KumpulanPerkhidmatanRefStatusDto perkhidmatanDto)
+    {
+        var result = await _kumpulanPerkhidmatan.KemaskiniStatusAsync(perkhidmatanDto);
+
+        if (!result)
+            return StatusCode(500, "Failed to update the record.");
+
+        return Ok("Updated successfully");
+    }
 }

@@ -313,6 +313,120 @@ namespace HR.Application.Services
             }
         }
 
+        public async Task<KumpulanPerkhidmatanStatusDto> GetMaklumatSediaAda(int id)
+        {
+            _logger.LogInformation("Getting MaklumatStatus by ID {Id} using Entity Framework", id);
+            try
+            {
+               
+                var result = await (from a in _dbContext.PDOKumpulanPerkhidmatan
+                                    join b in _dbContext.PDOStatusPermohonanKumpulanPerkhidmatan
+                                        on a.Id equals b.IdKumpulanPerkhidmatan
+                                    join b2 in _dbContext.PDORujStatusPermohonan
+                                        on b.KodRujStatusPermohonan equals b2.Kod
+                                    where b.StatusAktif == true && a.Id == id
+                                    select new KumpulanPerkhidmatanStatusDto
+                                    {
+                                        Id = a.Id,
+                                        Kod = a.Kod,
+                                        Nama = a.Nama,
+                                        Keterangan = a.Keterangan,
+                                        StatusAktif = a.StatusAktif,
+                                        KodRujStatusPermohonan = b.KodRujStatusPermohonan,
+                                        StatusPermohonan = b2.Nama,
+                                        TarikhKemaskini = b.TarikhKemaskini
+                                    }).FirstOrDefaultAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting MaklumatStatus");
+                throw;
+            }
+        }
+        public async Task<KumpulanPerkhidmatanButiranDto> GetMaklumatBaharuAsync(int id)
+        {
+            _logger.LogInformation("Getting ButiranKemaskini by ID {Id} using Entity Framework", id);
+            try
+            {
+                var result = await (from a in _dbContext.PDOKumpulanPerkhidmatan
+                                    join b in _dbContext.PDOStatusPermohonanKumpulanPerkhidmatan
+                                        on a.Id equals b.IdKumpulanPerkhidmatan
+                                    join b2 in _dbContext.PDORujStatusPermohonan
+                                        on b.KodRujStatusPermohonan equals b2.Kod
+                                    where b.StatusAktif == true && a.Id == id
+                                    select new KumpulanPerkhidmatanButiranDto
+                                    {
+                                        Id = a.Id,
+                                        Kod = a.Kod,
+                                        ButiranKemaskini = a.ButiranKemaskini,
+                                        KodRujStatusPermohonan = b.KodRujStatusPermohonan,
+                                        StatusPermohonan = b2.Nama,
+                                        TarikhKemaskini = b.TarikhKemaskini
+                                    }).FirstOrDefaultAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting ButiranKemaskini");
+                throw;
+            }
+        }
+
+        public async Task<bool> KemaskiniStatusAsync(KumpulanPerkhidmatanRefStatusDto perkhidmatanDto)
+        {
+            _logger.LogInformation("Service: Updating KemaskiniStatusAsync");
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: update into PDO_KumpulanPerkhidmatan
+                var perkhidmatan = MapToEntity(perkhidmatanDto);
+                perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
+
+                var result = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(perkhidmatan);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+
+
+                // Step 2: Deactivate existing PDO_StatusPermohonanKumpulanPerkhidmatan record
+                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>()
+                        .FirstOrDefaultAsync(x => x.IdKumpulanPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
+
+                if (existingStatus != null)
+                {
+                    existingStatus.StatusAktif = false;
+                    existingStatus.TarikhPinda = DateTime.Now;
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+
+                // Step 3: Insert into PDO_StatusPermohonanKumpulanPerkhidmatan
+                var statusEntity = new PDOStatusPermohonanKumpulanPerkhidmatan
+                {
+                    IdKumpulanPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
+                    KodRujStatusPermohonan = perkhidmatanDto.KodRujStatusPermohonan,
+                    TarikhKemaskini = DateTime.Now,
+                    StatusAktif = true
+                };
+                await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>().AddAsync(statusEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service CreateAsync");
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
         private PDOKumpulanPerkhidmatan MapToEntity(KumpulanPerkhidmatanDto dto)
         {
             return new PDOKumpulanPerkhidmatan

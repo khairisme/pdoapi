@@ -24,5 +24,9 @@ namespace HR.Application.Interfaces
 
         Task<IEnumerable<CarlStatusKumpulanPerkhidmatanDto>> GetStatusKumpulanPerkhidmatan(KumpulanPerkhidmatanFilterDto filter);
 
+        Task<KumpulanPerkhidmatanStatusDto?> GetMaklumatSediaAda(int id);
+        Task<KumpulanPerkhidmatanButiranDto> GetMaklumatBaharuAsync(int id);
+
+        Task<bool> KemaskiniStatusAsync(KumpulanPerkhidmatanRefStatusDto perkhidmatanDto);
     }
 }

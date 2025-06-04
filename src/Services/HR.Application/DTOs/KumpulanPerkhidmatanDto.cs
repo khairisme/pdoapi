@@ -54,4 +54,29 @@ namespace HR.Application.DTOs
         public string StatusPermohonan { get; set; }
         public DateTime TarikhKemaskini { get; set; }
     }
+    public class KumpulanPerkhidmatanButiranDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string? ButiranKemaskini { get; set; }
+        public string KodRujStatusPermohonan { get; set; }
+        public string StatusPermohonan { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+    }
+    public class KumpulanPerkhidmatanStatusDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public bool StatusAktif { get; set; }
+        public string KodRujStatusPermohonan { get; set; }
+        public string StatusPermohonan { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+    }
+    public class KumpulanPerkhidmatanRefStatusDto : KumpulanPerkhidmatanDto
+    {
+       public string KodRujStatusPermohonan { get; set; }
+    }
+
 }
