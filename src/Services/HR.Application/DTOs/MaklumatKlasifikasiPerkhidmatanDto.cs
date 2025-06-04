@@ -33,5 +33,15 @@ namespace HR.Application.DTOs
         public int? StatusKumpulan { get; set; } // 0 = Tidak Aktif, 1 = Aktif
         public string? StatusPermohonan { get; set; } // e.g., "Draf", "Disahkan", etc.
     }
+    public class MaklumatKlasifikasiPerkhidmatanDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string? FungsiUtama { get; set; }
+        public string? FungsiUmum { get; set; }
+        public string? ButiranKemaskini { get; set; }
+    }
 
 }

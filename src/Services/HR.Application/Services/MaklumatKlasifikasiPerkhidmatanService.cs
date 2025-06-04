@@ -135,7 +135,13 @@ namespace HR.Application.Services
                 return false;
             }
         }
-
+        public async Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanDto>> GetAllAsync()
+        {
+            _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanCreateRequestDto using Entity Framework");
+            var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().GetAllAsync();
+            result = result.ToList().Where(e => e.StatusAktif);
+            return result.Select(MapToDto);
+        }
         private PDOKlasifikasiPerkhidmatan MapToEntity(MaklumatKlasifikasiPerkhidmatanCreateRequestDto dto)
         {
             return new PDOKlasifikasiPerkhidmatan
@@ -146,6 +152,19 @@ namespace HR.Application.Services
                 Keterangan = dto.Keterangan,
                 FungsiUmum = dto.FungsiUmum,
                 FungsiUtama = dto.FungsiUtama
+            };
+        }
+        private MaklumatKlasifikasiPerkhidmatanDto MapToDto(PDOKlasifikasiPerkhidmatan entity)
+        {
+            return new MaklumatKlasifikasiPerkhidmatanDto
+            {
+                Id = entity.Id,
+                Nama = entity.Nama,
+                Kod = entity.Kod,
+                Keterangan = entity.Keterangan,
+                FungsiUtama = entity.FungsiUtama,
+                FungsiUmum = entity.FungsiUmum,
+                ButiranKemaskini = entity.ButiranKemaskini
             };
         }
     }

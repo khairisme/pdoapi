@@ -61,5 +61,24 @@ namespace HR.API.Controllers
             });
 
         }
+        /// <summary>
+        ///Get all MaklumatKlasifikasiPerkhidmatanDto
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        [HttpGet("getAll")]
+        public async Task<IActionResult> getAll()
+        {
+            _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanDto");
+
+            var result = await _maklumatKlasifikasiPerkhidmatanService.GetAllAsync();
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
     }
 }

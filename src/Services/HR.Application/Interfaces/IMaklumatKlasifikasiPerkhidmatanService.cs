@@ -12,5 +12,7 @@ namespace HR.Application.Interfaces
         Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanSearchResponseDto>> GetMaklumatKlasifikasiPerkhidmatan(MaklumatKlasifikasiPerkhidmatanFilterDto filter);
 
         Task<bool> CreateAsync(MaklumatKlasifikasiPerkhidmatanCreateRequestDto CreateRequestDto);
+
+        Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanDto>> GetAllAsync();
     }
 }

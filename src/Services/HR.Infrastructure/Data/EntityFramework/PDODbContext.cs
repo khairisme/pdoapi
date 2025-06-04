@@ -15,7 +15,7 @@ namespace HR.Infrastructure.Data.EntityFramework
         public DbSet<PDOStatusPermohonanKlasifikasiPerkhidmatan> PDOStatusPermohonanKlasifikasiPerkhidmatan { get; set; }
         public DbSet<PDOKlasifikasiPerkhidmatan> PDOKlasifikasiPerkhidmatan { get; set; }
 
-
+        public DbSet<PDOGred> PDOGred { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
@@ -29,6 +29,7 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDOStatusPermohonanKumpulanPerkhidmatan>().ToTable("PDO_StatusPermohonanKumpulanPerkhidmatan");
             modelBuilder.Entity<PDOStatusPermohonanKlasifikasiPerkhidmatan>().ToTable("PDO_StatusPermohonanKlasifikasiPerkhidmatan");
             modelBuilder.Entity<PDOKlasifikasiPerkhidmatan>().ToTable("PDO_KlasifikasiPerkhidmatan");
+            modelBuilder.Entity<PDOGred>().ToTable("PDO_Gred");
             base.OnModelCreating(modelBuilder);
         }
     }

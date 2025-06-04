@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IKumpulanPerkhidmatanService, KumpulanPerkhidmatanService>();
         services.AddScoped<IRujStatusPermohonanService, RujStatusPermohonanService>();
         services.AddScoped<IMaklumatKlasifikasiPerkhidmatanService, MaklumatKlasifikasiPerkhidmatanService>();
+        services.AddScoped<IGredService, GredService>();
 
         return services;
     }
