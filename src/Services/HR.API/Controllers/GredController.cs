@@ -40,8 +40,31 @@ public class GredController : ControllerBase
             return BadRequest("Invalid parameters.");
 
         var data = await _gredService.GetGredListAsync(idKlasifikasi, idKumpulan);
-        return Ok(data);
+        return Ok(new
+        {
+            status = data.Count() > 0 ? "Sucess" : "Failed",
+            items = data
+
+        });
+    }
+    /// <summary>
+    /// Search Gred
+    /// </summary>
+    /// <param name="idKlasifikasi"></param>
+    /// <param name="idKumpulan"></param>
+    /// <returns></returns>
+    [HttpGet("searchGred")]
+    public async Task<IActionResult> SearchGred([FromQuery] int? idKlasifikasi, [FromQuery] int? idKumpulan)
+    {
+        var result = await _gredService.SearchGredAsync(idKlasifikasi, idKumpulan);
+        return Ok(new
+        {
+            status = result.Count() > 0 ? "Sucess" : "Failed",
+            items = result
+
+        });
+        
     }
 
-   
+
 }

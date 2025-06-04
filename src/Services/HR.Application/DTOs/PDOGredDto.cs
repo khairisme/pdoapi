@@ -14,4 +14,14 @@ namespace HR.Application.DTOs
         public string? Keterangan { get; set; }
 
     }
+    public class GredSearchResultDTO
+    {
+        public int Bil { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string StatusGred { get; set; }
+        public string StatusPermohonan { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+    }
 }
