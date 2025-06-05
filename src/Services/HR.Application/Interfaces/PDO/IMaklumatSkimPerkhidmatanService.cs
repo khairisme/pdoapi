@@ -15,6 +15,9 @@ namespace HR.Application.Interfaces.PDO
         Task<MaklumatSkimPerkhidmatanResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(string kod);
         Task<bool> UpdateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto);
         Task<IEnumerable<SkimPerkhidmatanDto>> GetActiveSkimPerkhidmatan(SkimPerkhidmatanFilterDto filter);
+        Task<bool> DaftarHantarSkimPerkhidmatanAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto);
+
+        Task<bool> UpdateHantarSkimPerkhidmatanAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto);
 
     }
 }

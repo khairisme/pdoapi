@@ -28,12 +28,16 @@ namespace HR.Application.DTOs.PDO
     {
         public int IdKlasifikasiPerkhidmatan { get; set; }
         public int IdKumpulanPerkhidmatan { get; set; }
-        public string Kod { get; set; }
+        public string? Kod { get; set; }
         public string Nama { get; set; }
         public string Keterangan { get; set; }
         public bool IndikatorSkimKritikal { get; set; }
         public bool IndikatorKenaikanPGT { get; set; }
         public int IdGred { get; set; }
+        public int Id { get; set; } = 0;
+        public string KlasifikasiKod { get; set; }
+        public string KumpulanKod { get; set; }
+        public string JenisKod { get; set; }
     }
     public class MaklumatSkimPerkhidmatanResponseDto
     {

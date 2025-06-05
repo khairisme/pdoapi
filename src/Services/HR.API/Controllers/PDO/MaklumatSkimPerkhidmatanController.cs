@@ -44,9 +44,9 @@ namespace HR.API.Controllers.PDO
         }
 
         /// <summary>
-        ///Create MaklumatKlasifikasiPerkhidmatanCreateRequestDto
+        ///Create MaklumatSkimPerkhidmatanCreateRequestDto
         /// </summary>
-        /// <param name="MaklumatKlasifikasiPerkhidmatanCreateRequestDto"></param>
+        /// <param name="MaklumatSkimPerkhidmatanCreateRequestDto"></param>
         /// <returns></returns>
         [HttpPost("newSenaraiSkimPerkhidmatan")]
         public async Task<IActionResult> Create([FromBody] MaklumatSkimPerkhidmatanCreateRequestDto maklumatSkimPerkhidmatanCreateRequestDto)
@@ -67,9 +67,9 @@ namespace HR.API.Controllers.PDO
 
         }
         /// <summary>
-        ///validate duplicate KumpulanPerkhidmatan
+        ///validate duplicate ValSkimPerkhidmatan
         /// </summary>
-        /// <param name="KumpulanPerkhidmatanDto"></param>
+        /// <param name="MaklumatSkimPerkhidmatanCreateRequestDto"></param>
         /// <returns></returns>
         [HttpPost("ValSkimPerkhidmatan")]
         public async Task<IActionResult> ValSkimPerkhidmatan([FromBody] MaklumatSkimPerkhidmatanCreateRequestDto dto)
@@ -149,7 +149,38 @@ namespace HR.API.Controllers.PDO
             var result = await _maklumatSkimPerkhidmatan.GetActiveSkimPerkhidmatan(filter);
             return Ok(result);
         }
+        /// <summary>
+        /// daftar Hantar Skim Perkhidmatan 
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("daftarhantar")]
+        public async Task<IActionResult> DaftarHantarSkimPerkhidmatan([FromBody] MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        {
+            var result = await _maklumatSkimPerkhidmatan.DaftarHantarSkimPerkhidmatanAsync(dto);
+            if (!result)
+                return StatusCode(500, "The application has failed to sent.");
 
+            return Ok("The application has been sent.");
+        }
+
+        /// <summary>
+        /// set Hantar Skim Perkhidmatan
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("sethantar")]
+        public async Task<IActionResult> setHantarSkimPerkhidmatan([FromBody] MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        {
+
+            var isSuccess = await _maklumatSkimPerkhidmatan.UpdateHantarSkimPerkhidmatanAsync(dto);
+
+            if (!isSuccess)
+                return StatusCode(500, "The application has failed to sent.");
+
+            return Ok("The application has been sent.");
+
+        }
     }
 }
 
