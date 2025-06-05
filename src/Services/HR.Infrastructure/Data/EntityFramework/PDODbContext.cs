@@ -1,4 +1,4 @@
-﻿using HR.Core.Entities;
+﻿using HR.Core.Entities.PDO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 

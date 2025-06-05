@@ -1,14 +1,14 @@
-﻿using HR.Application.DTOs;
+﻿using HR.Application.DTOs.PDO;
 using HR.Application.Extensions;
-using HR.Application.Interfaces;
-using HR.Core.Entities;
+using HR.Application.Interfaces.PDO;
+using HR.Core.Entities.PDO;
 using HR.Core.Enums;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace HR.Application.Services
+namespace HR.Application.Services.PDO
 {
     public class MaklumatKlasifikasiPerkhidmatanService : IMaklumatKlasifikasiPerkhidmatanService
     {

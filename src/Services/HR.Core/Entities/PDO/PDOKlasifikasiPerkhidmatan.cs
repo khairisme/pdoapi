@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HR.Core.Entities
+namespace HR.Core.Entities.PDO
 {
 
     [Table("PDO_KlasifikasiPerkhidmatan")] // This is the key

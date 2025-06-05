@@ -1,6 +1,6 @@
-﻿using HR.Application.DTOs;
+﻿using HR.Application.DTOs.PDO;
 
-namespace HR.Application.Interfaces
+namespace HR.Application.Interfaces.PDO
 {
     public interface IMaklumatKlasifikasiPerkhidmatanService
     {

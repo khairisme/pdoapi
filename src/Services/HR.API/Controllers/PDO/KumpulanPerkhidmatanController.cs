@@ -1,5 +1,5 @@
-using HR.Application.DTOs;
-using HR.Application.Interfaces;
+using HR.Application.DTOs.PDO;
+using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
 using HR.Core.Entities;
 using HR.Core.Enums;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
-namespace HR.API.Controllers;
+namespace HR.API.Controllers.PDO;
 
 [ApiController]
 [Route("api/pdo/[controller]")]

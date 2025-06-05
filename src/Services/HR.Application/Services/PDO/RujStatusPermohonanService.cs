@@ -1,6 +1,6 @@
-﻿using HR.Application.DTOs;
-using HR.Application.Interfaces;
-using HR.Core.Entities;
+﻿using HR.Application.DTOs.PDO;
+using HR.Application.Interfaces.PDO;
+using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.Application.Services
+namespace HR.Application.Services.PDO
 {
     public class RujStatusPermohonanService : IRujStatusPermohonanService
     {

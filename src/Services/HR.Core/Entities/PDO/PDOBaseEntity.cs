@@ -1,4 +1,4 @@
-namespace HR.Core.Entities;
+namespace HR.Core.Entities.PDO;
 
 /// <summary>
 /// Base entity for all domain entities

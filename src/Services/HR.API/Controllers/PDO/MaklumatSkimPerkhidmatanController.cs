@@ -1,9 +1,9 @@
-﻿using HR.Application.DTOs;
-using HR.Application.Interfaces;
+﻿using HR.Application.DTOs.PDO;
+using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HR.API.Controllers
+namespace HR.API.Controllers.PDO
 {
     [ApiController]
     [Route("api/pdo/[controller]")]

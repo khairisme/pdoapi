@@ -1,4 +1,4 @@
-using HR.Core.Entities;
+using HR.Core.Entities.PDO;
 
 namespace HR.Core.Interfaces;
 

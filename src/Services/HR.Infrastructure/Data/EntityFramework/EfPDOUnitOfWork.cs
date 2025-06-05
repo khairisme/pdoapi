@@ -1,4 +1,4 @@
-﻿using HR.Core.Entities;
+﻿using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;

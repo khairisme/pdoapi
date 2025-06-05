@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HR.Core.Entities
+namespace HR.Core.Entities.PDO
 {
     [Table("PDO_Gred")] // This is the key
     public class PDOGred : PDOBaseEntity

@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using HR.Core.Entities;
+using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;

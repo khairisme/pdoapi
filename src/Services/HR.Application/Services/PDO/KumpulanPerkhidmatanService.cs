@@ -1,7 +1,4 @@
-﻿using HR.Application.DTOs;
-using HR.Application.Interfaces;
-using HR.Core.Entities;
-using HR.Core.Enums;
+﻿using HR.Core.Enums;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HR.Application.Extensions;
+using HR.Core.Entities.PDO;
+using HR.Application.DTOs.PDO;
+using HR.Application.Interfaces.PDO;
 
-namespace HR.Application.Services
+namespace HR.Application.Services.PDO
 {
     public class KumpulanPerkhidmatanService : IKumpulanPerkhidmatanService
     {
@@ -176,7 +176,7 @@ namespace HR.Application.Services
                     // Create: check if Kod or Nama already exists
                     return await _dbContext.PDOKumpulanPerkhidmatan.AnyAsync(x =>
                         
-                        (x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim()));
+                        x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim());
                 }
                 else
                 {
