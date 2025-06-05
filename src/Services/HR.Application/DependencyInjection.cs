@@ -31,7 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IMaklumatSkimPerkhidmatanService, MaklumatSkimPerkhidmatanService>();
 
         services.AddScoped<IGredService, GredService>();
-
+        services.AddScoped<IRujJenisSaraanService, RujJenisSaraanService>();
 
         return services;
     }

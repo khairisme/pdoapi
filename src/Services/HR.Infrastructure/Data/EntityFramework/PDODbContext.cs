@@ -18,9 +18,9 @@ namespace HR.Infrastructure.Data.EntityFramework
         public DbSet<PDOSkimPerkhidmatan> PDOSkimPerkhidmatan { get; set; }
         public DbSet<PDOGredSkimPerkhidmatan> PDOGredSkimPerkhidmatan { get; set; }
         public DbSet<PDOStatusPermohonanSkimPerkhidmatan> PDOStatusPermohonanSkimPerkhidmatan { get; set; }
+        public DbSet<PDORujJenisSaraan> PDORujJenisSaraan { get; set; }
 
 
-       
         public DbSet<PDOGred> PDOGred { get; set; }
         public DbSet<PDOStatusPermohonanGred> PDOStatusPermohonanGred { get; set; }
 
@@ -46,6 +46,12 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.HasKey(e => e.IdGred); // Set Kod as the PK
                 entity.HasKey(e => e.IdSkimPerkhidmatan);
 
+            });
+            modelBuilder.Entity<PDORujJenisSaraan>(entity =>
+            {
+                entity.ToTable("PDO_RujJenisSaraan");
+                entity.HasKey(e => e.Kod); // Set Kod as the PK
+                entity.Ignore(e => e.Id); // Don't map base Id
             });
             modelBuilder.Entity<PDOStatusPermohonanSkimPerkhidmatan>().ToTable("PDO_StatusPermohonanSkimPerkhidmatan");
 
