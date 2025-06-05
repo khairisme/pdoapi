@@ -332,7 +332,7 @@ namespace HR.Application.Services.PDO
                     var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
                     {
                         IdKlasifikasiPerkhidmatan = KlasifikasiPerkhidmatan.Id, // use the ID from step 1
-                        KodRujStatusPermohonan = "01",
+                        KodRujStatusPermohonan = "02",
                         TarikhKemaskini = DateTime.Now,
                         StatusAktif = true
                     };
