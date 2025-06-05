@@ -14,5 +14,7 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> CheckDuplicateKodNamaAsync(MaklumatSkimPerkhidmatanCreateRequestDto maklumatSkimPerkhidmatanDto);
         Task<MaklumatSkimPerkhidmatanResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(string kod);
         Task<bool> UpdateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto);
+        Task<IEnumerable<SkimPerkhidmatanDto>> GetActiveSkimPerkhidmatan(SkimPerkhidmatanFilterDto filter);
+
     }
 }

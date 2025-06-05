@@ -138,6 +138,18 @@ namespace HR.API.Controllers.PDO
                 return StatusCode(500, "Internal Server Error");
             }
         }
+        /// <summary>
+        /// GetStatusSkimPerkhidmatan
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpPost("getStatusSkimPerkhidmatan")]
+        public async Task<IActionResult> GetStatusSkimPerkhidmatan([FromBody] SkimPerkhidmatanFilterDto filter)
+        {
+            var result = await _maklumatSkimPerkhidmatan.GetActiveSkimPerkhidmatan(filter);
+            return Ok(result);
+        }
+
     }
 }
 

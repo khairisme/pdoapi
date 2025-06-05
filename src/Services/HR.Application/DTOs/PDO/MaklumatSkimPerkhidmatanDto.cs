@@ -46,4 +46,21 @@ namespace HR.Application.DTOs.PDO
         public string KodKumpulanPerkhidmatan { get; set; }
         public string KumpulanPerkhidmatan { get; set; }
     }
+    public class SkimPerkhidmatanFilterDto
+    {
+        public string? Kod { get; set; }
+        public string? Nama { get; set; }
+        public string? KodRujStatusPermohonan { get; set; }
+    }
+    public class SkimPerkhidmatanDto
+    {
+        public int Bil { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string StatusSkimPerkhidmatan { get; set; }
+        public string StatusPermohonan { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+    }
+
 }

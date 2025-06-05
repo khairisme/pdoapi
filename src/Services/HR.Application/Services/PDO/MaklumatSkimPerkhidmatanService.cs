@@ -264,5 +264,48 @@ namespace HR.Application.Services.PDO
 
             };
         }
+        public async Task<IEnumerable<SkimPerkhidmatanDto>> GetActiveSkimPerkhidmatan(SkimPerkhidmatanFilterDto filter)
+        {
+            var query = from a in _dbContext.PDOSkimPerkhidmatan
+                        join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+                            on a.Id equals b.IdSkimPerkhidmatan
+                        join b2 in _dbContext.PDORujStatusPermohonan
+                            on b.KodRujStatusPermohonan equals b2.Kod
+                        where b.StatusAktif == true
+                        
+                        select new
+                        {
+                            a.Kod,
+                            a.Nama,
+                            a.Keterangan,
+                            StatusSkim = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
+                            StatusPermohonan = b2.Nama,
+                            b.TarikhKemasKini,
+                            b.KodRujStatusPermohonan
+                        };
+
+            if (!string.IsNullOrEmpty(filter.Kod))
+                query = query.Where(x => x.Kod.Contains(filter.Kod));
+
+            if (!string.IsNullOrEmpty(filter.Nama))
+                query = query.Where(x => x.Nama.Contains(filter.Nama));
+
+            if (!string.IsNullOrEmpty(filter.KodRujStatusPermohonan))
+                query = query.Where(x => x.KodRujStatusPermohonan == filter.KodRujStatusPermohonan);
+
+            var list = query.OrderBy(x => x.Kod).ToList();
+
+            return list.AsEnumerable().Select((x, index) => new SkimPerkhidmatanDto
+            {
+                Bil = index + 1,
+                Kod = x.Kod,
+                Nama = x.Nama,
+                Keterangan = x.Keterangan,
+                StatusSkimPerkhidmatan = x.StatusSkim,
+                StatusPermohonan = x.StatusPermohonan,
+                TarikhKemaskini = x.TarikhKemasKini
+            }).ToList();
+        }
+
     }
 }
