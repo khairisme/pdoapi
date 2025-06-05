@@ -5,6 +5,7 @@ using HR.Core.Entities;
 using HR.Core.Enums;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HR.Application.Services
@@ -22,7 +23,7 @@ namespace HR.Application.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanSearchResponseDto>> GetMaklumatKlasifikasiPerkhidmatan(MaklumatKlasifikasiPerkhidmatanFilterDto filter)
+        public async Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanSearchResponseDto>> GetSearchMaklumatKlasifikasiPerkhidmatan(PenapisMaklumatKlasifikasiPerkhidmatanDto filter)
         {
             try
             {
@@ -97,7 +98,7 @@ namespace HR.Application.Services
             }
         }
 
-        public async Task<bool> CreateAsync(MaklumatKlasifikasiPerkhidmatanCreateRequestDto CreateRequestDto)
+        public async Task<bool> NewAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto CreateRequestDto)
         {
             _logger.LogInformation("Service: Creating new KumpulanPerkhidmatan");
             await _unitOfWork.BeginTransactionAsync();
@@ -135,6 +136,169 @@ namespace HR.Application.Services
                 return false;
             }
         }
+
+        public async Task<MaklumatKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatan(int id)
+        {
+            try
+            {
+
+                _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanDto using EF Core join");
+
+                var query = await (from a in _dbContext.PDOKlasifikasiPerkhidmatan
+                                   join b in _dbContext.PDOStatusPermohonanKlasifikasiPerkhidmatan
+                                                 on a.Id equals b.IdKlasifikasiPerkhidmatan
+                                   join b2 in _dbContext.PDORujStatusPermohonan
+                                                 on b.KodRujStatusPermohonan equals b2.Kod
+                                   where b.StatusAktif == true && a.Id == id
+                                   orderby a.Kod
+                                   select new MaklumatKlasifikasiPerkhidmatanResponseDto
+                                   {
+                                       Id= a.Id,
+                                       Kod = a.Kod,
+                                       Nama = a.Nama,
+                                       Keterangan = a.Keterangan,
+                                       FungsiUtama = a.FungsiUtama ?? "",
+                                       FungsiUmum = a.FungsiUmum ?? "",
+                                       StatusKlasifikasiPerkhidmatan = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
+                                       Status = b2.Nama,
+                                       TarikhKemaskini = b.TarikhKemaskini
+                                   }).FirstOrDefaultAsync();
+
+                return query;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Failed to retrive data");
+            }
+        }
+
+        public async Task<bool> SetAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateRequestDto)
+        {
+            _logger.LogInformation("Service: Updating MaklumatKlasifikasiPerkhidmatan");
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: update into PDO_KlasifikasiPerkhidmatan
+                var perkhidmatan = MapToEntity(updateRequestDto);
+                perkhidmatan.StatusAktif = updateRequestDto.StatusAktif;
+
+                var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(perkhidmatan);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+
+
+                // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
+                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                        .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
+
+                if (existingStatus != null)
+                {
+                    existingStatus.StatusAktif = false;
+                    existingStatus.TarikhPinda = DateTime.Now;
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+
+                // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
+                var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                {
+                    IdKlasifikasiPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
+                    KodRujStatusPermohonan = "01",
+                    TarikhKemaskini = DateTime.Now,
+                    StatusAktif = true
+                };
+                await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service UpdateAsync");
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<PengesahanPerkhidmatanKlasifikasiResponseDto>> GetSenaraiPengesahanPerkhidmatanKlasifikasi(PenapisPerkhidmatanKlasifikasiDto filter)
+        {
+            try
+            {
+                _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanDto using EF Core join");
+
+                var query = (from a in _dbContext.PDOKlasifikasiPerkhidmatan
+                              join b in _dbContext.PDOStatusPermohonanKlasifikasiPerkhidmatan
+                                  on a.Id equals b.IdKlasifikasiPerkhidmatan
+                              join b2 in _dbContext.PDORujStatusPermohonan
+                                  on b.KodRujStatusPermohonan equals b2.Kod
+                              where b.StatusAktif == true
+                              orderby a.Kod
+                              select new
+                              {
+                                  a.Id,
+                                  a.Kod,
+                                  a.Nama,
+                                  a.Keterangan,
+                                  b.KodRujStatusPermohonan,
+                                  StatusPermohonan = b2.Nama,
+                                  b.TarikhKemaskini
+                              })
+                .AsEnumerable() // Switch to in-memory to simulate row_number
+                .Select((x, index) => new
+                {
+                    Bil = index + 1,
+                    x.Id,
+                    x.Kod,
+                    x.Nama,
+                    x.Keterangan,
+                    x.KodRujStatusPermohonan,
+                    x.StatusPermohonan,
+                    x.TarikhKemaskini
+                });
+
+
+
+                // Apply filters
+                if (!string.IsNullOrWhiteSpace(filter.Kod))
+                    query = query.Where(q => q.Kod.Contains(filter.Kod));
+
+                if (!string.IsNullOrWhiteSpace(filter.Nama))
+                    query = query.Where(q => q.Nama.Contains(filter.Nama));
+
+                if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
+                    query = query.Where(q => q.Kod == filter.StatusPermohonan);
+
+                var data = query.ToList();
+
+
+                var result = data
+                    .Select((q, index) => new PengesahanPerkhidmatanKlasifikasiResponseDto
+                    {
+                        Id= q.Id,
+                        Bil = q.Bil,
+                        Kod = q.Kod,
+                        Nama = q.Nama,
+                        Keterangan = q.Keterangan,
+                        StatusPermohonan = q.StatusPermohonan
+                     
+                    })
+                    .ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Failed to retrive data");
+            }
+        }
+
         public async Task<IEnumerable<MaklumatKlasifikasiPerkhidmatanDto>> GetAllAsync()
         {
             _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanCreateRequestDto using Entity Framework");
@@ -142,16 +306,18 @@ namespace HR.Application.Services
             result = result.ToList().Where(e => e.StatusAktif);
             return result.Select(MapToDto);
         }
-        private PDOKlasifikasiPerkhidmatan MapToEntity(MaklumatKlasifikasiPerkhidmatanCreateRequestDto dto)
+
+        private PDOKlasifikasiPerkhidmatan MapToEntity(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
         {
             return new PDOKlasifikasiPerkhidmatan
             {
-
+                Id = dto.Id,
                 Kod = dto.Kod,
                 Nama = dto.Nama,
                 Keterangan = dto.Keterangan,
                 FungsiUmum = dto.FungsiUmum,
-                FungsiUtama = dto.FungsiUtama
+                FungsiUtama = dto.FungsiUtama,
+                StatusAktif = dto.StatusAktif
             };
         }
         private MaklumatKlasifikasiPerkhidmatanDto MapToDto(PDOKlasifikasiPerkhidmatan entity)

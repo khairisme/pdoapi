@@ -19,16 +19,16 @@ namespace HR.API.Controllers
         }
 
         /// <summary>
-        ///Get Maklumat Klasifikasi Perkhidmatan
+        ///dapatkanMaklumatKlasifikasiPerkhidmatan
         /// </summary>
-        /// <param name="MaklumatKlasifikasiPerkhidmatanDto"></param>
+        /// <param name="PenapisMaklumatKlasifikasiPerkhidmatan"></param>
         /// <returns></returns>
-        [HttpPost("getMaklumatKlasifikasiPerkhidmatan")]
-        public async Task<IActionResult> getMaklumatKlasifikasiPerkhidmatan([FromBody] MaklumatKlasifikasiPerkhidmatanFilterDto filter)
+        [HttpPost("getSearchMaklumatKlasifikasiPerkhidmatan")]
+        public async Task<IActionResult> GetSearchMaklumatKlasifikasiPerkhidmatan([FromBody] PenapisMaklumatKlasifikasiPerkhidmatanDto filter)
         {
-            _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanDto");
+            _logger.LogInformation("Getting all PenapisMaklumatKlasifikasiPerkhidmatanDto");
 
-            var result = await _maklumatKlasifikasiPerkhidmatanService.GetMaklumatKlasifikasiPerkhidmatan(filter);
+            var result = await _maklumatKlasifikasiPerkhidmatanService.GetSearchMaklumatKlasifikasiPerkhidmatan(filter);
 
             return Ok(new
             {
@@ -39,25 +39,126 @@ namespace HR.API.Controllers
         }
 
         /// <summary>
-        ///Create MaklumatKlasifikasiPerkhidmatanCreateRequestDto
+        ///Create ciptaPerkhidmatanKlasifikasi
         /// </summary>
         /// <param name="MaklumatKlasifikasiPerkhidmatanCreateRequestDto"></param>
         /// <returns></returns>
-        [HttpPost("createMaklumatKlasifikasiPerkhidmatan")]
-        public async Task<IActionResult> Create([FromBody] MaklumatKlasifikasiPerkhidmatanCreateRequestDto maklumatKlasifikasiPerkhidmatanCreateRequestDto)
+        [HttpPost("newMaklumatKlasifikasiPerkhidmatan")]
+        public async Task<IActionResult> Create([FromBody] MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto maklumatKlasifikasiPerkhidmatanCreateRequestDto)
         {
             _logger.LogInformation("Creating a new maklumatKlasifikasiPerkhidmatan");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var isSuccess = await _maklumatKlasifikasiPerkhidmatanService.CreateAsync(maklumatKlasifikasiPerkhidmatanCreateRequestDto);
+            var isSuccess = await _maklumatKlasifikasiPerkhidmatanService.NewAsync(maklumatKlasifikasiPerkhidmatanCreateRequestDto);
 
             return Ok(new
             {
                 status = isSuccess ? "Sucess" : "Failed",
                 items = isSuccess
 
+            });
+
+        }
+
+        /// <summary>
+        ///get MaklumatKlasifikasiPerkhidmatan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("getMaklumatKlasifikasiPerkhidmatan/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var result = await _maklumatKlasifikasiPerkhidmatanService.GetMaklumatKlasifikasiPerkhidmatan(id);
+            if (result == null)
+                return NotFound($"No MaklumatKlasifikasiPerkhidmatan found for ID {id}");
+
+            return Ok(result);
+
+        }
+
+        /// <summary>
+        ///get MaklumatKlasifikasiPerkhidmatan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("getMaklumatBaharu/{id}")]
+        public async Task<IActionResult> GetNewInforationById(int id)
+        {
+            var result = await _maklumatKlasifikasiPerkhidmatanService.GetMaklumatKlasifikasiPerkhidmatan(id);
+            if (result == null)
+                return NotFound($"No MaklumatKlasifikasiPerkhidmatan found for ID {id}");
+
+            return Ok(result);
+
+        }
+
+
+        /// <summary>
+        ///Update MaklumatKlasifikasiPerkhidmatan
+        /// </summary>
+        /// <param name="MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto"></param>
+        /// <returns></returns>
+        [HttpPost("setMaklumatKlasifikasiPerkhidmatan")]
+        public async Task<IActionResult> Update([FromBody] MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateDto)
+        {
+            _logger.LogInformation("update MaklumatKlasifikasiPerkhidmatan");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+
+            var isSuccess = await _maklumatKlasifikasiPerkhidmatanService.SetAsync(updateDto);
+
+            return Ok(new
+            {
+                status = isSuccess ? "Sucess" : "Failed",
+                items = isSuccess
+            });
+
+        }
+
+        /// <summary>
+        ///dapatkanSenaraiPengesahanPerkhidmatanKlasifikasi
+        /// </summary>
+        /// <param name="PenapisPerkhidmatanKlasifikasiDto"></param>
+        /// <returns></returns>
+        [HttpPost("getSenaraiPengesahanPerkhidmatanKlasifikasi")]
+        public async Task<IActionResult> getSenaraiPengesahanPerkhidmatanKlasifikasi([FromBody] PenapisPerkhidmatanKlasifikasiDto filter)
+        {
+            _logger.LogInformation("Getting all PenapisPerkhidmatanKlasifikasiDto");
+
+            var result = await _maklumatKlasifikasiPerkhidmatanService.GetSenaraiPengesahanPerkhidmatanKlasifikasi(filter);
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
+
+        /// <summary>
+        ///Update MaklumatKlasifikasiPerkhidmatan
+        /// </summary>
+        /// <param name="MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto"></param>
+        /// <returns></returns>
+        [HttpPost("setStatusPengesahanMaklumatKlasifikasiPerkhidmatan")]
+        public async Task<IActionResult> SetStatusPengesahanMaklumatKlasifikasiPerkhidmatan([FromBody] MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateDto)
+        {
+            _logger.LogInformation("update MaklumatKlasifikasiPerkhidmatan");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+
+            var isSuccess = await _maklumatKlasifikasiPerkhidmatanService.SetAsync(updateDto);
+
+            return Ok(new
+            {
+                status = isSuccess ? "Sucess" : "Failed",
+                items = isSuccess
             });
 
         }

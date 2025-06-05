@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace HR.Application.DTOs
 {
-    public class MaklumatKlasifikasiPerkhidmatanCreateRequestDto
+    public class MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto
     {
+        public int Id { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string Keterangan { get; set; }
         public string FungsiUtama { get; set; }
         public string FungsiUmum { get; set; }
+        public bool StatusAktif {  get; set; } = true;
     }
 
     public class MaklumatKlasifikasiPerkhidmatanSearchResponseDto
@@ -26,7 +28,20 @@ namespace HR.Application.DTOs
 
     }
 
-    public class MaklumatKlasifikasiPerkhidmatanFilterDto
+    public class MaklumatKlasifikasiPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string FungsiUtama { get; set; }
+        public string FungsiUmum { get; set; }
+        public string Status { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+        public string StatusKlasifikasiPerkhidmatan { get; set; }
+    }
+
+    public class PenapisMaklumatKlasifikasiPerkhidmatanDto
     {
         public string? Kod { get; set; }
         public string? Nama { get; set; }
@@ -44,4 +59,33 @@ namespace HR.Application.DTOs
         public string? ButiranKemaskini { get; set; }
     }
 
+
+    public class MaklumatKlasifikasiPerkhidmatanUpdateRequestDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string FungsiUtama { get; set; }
+        public string FungsiUmum { get; set; }
+    }
+
+    public class PengesahanPerkhidmatanKlasifikasiResponseDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string KodRujStatusPermohonan { get; set; }
+        public string StatusPermohonan { get; set; }
+    }
+
+    public class PenapisPerkhidmatanKlasifikasiDto
+    {
+        public string? Kod { get; set; }
+        public string? Nama { get; set; }
+        public string? StatusPermohonan { get; set; }
+
+    }
 }

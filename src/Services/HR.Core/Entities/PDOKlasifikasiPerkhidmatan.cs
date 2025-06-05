@@ -8,7 +8,7 @@ namespace HR.Core.Entities
     {
         public string Kod { get; set; }
         public string Nama { get; set; }
-        public string Keterangan { get; set; }
+        public string? Keterangan { get; set; }
         public string? FungsiUtama { get; set; }
         public string? FungsiUmum { get; set; }
         public string? ButiranKemaskini { get; set; }
