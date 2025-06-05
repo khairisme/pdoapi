@@ -79,4 +79,9 @@ namespace HR.Application.DTOs.PDO
        public string KodRujStatusPermohonan { get; set; }
     }
 
+    public class HantarKumpulanPermohonanDto
+    {
+        public string Kod { get; set; } = string.Empty;
+    }
+
 }

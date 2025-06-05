@@ -142,7 +142,7 @@ namespace HR.API.Controllers.PDO
         /// <summary>
         ///Update MaklumatKlasifikasiPerkhidmatan
         /// </summary>
-        /// <param name="MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto"></param>
+        /// <param name="updateDto"></param>
         /// <returns></returns>
         [HttpPost("setStatusPengesahanMaklumatKlasifikasiPerkhidmatan")]
         public async Task<IActionResult> SetStatusPengesahanMaklumatKlasifikasiPerkhidmatan([FromBody] MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateDto)
@@ -180,6 +180,34 @@ namespace HR.API.Controllers.PDO
                 items = result
 
             });
+        }
+        /// <summary>
+        /// daftar Hantar MaklumatKlasifikasi Perkhidmatan 
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("daftarhantar")]
+        public async Task<IActionResult> DaftarHantarMaklumatKlasifikasiPerkhidmatan([FromBody] MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
+        {
+            var result = await _maklumatKlasifikasiPerkhidmatanService.DaftarHanatarMaklumatKlasifikasiPerkhidmatanAsync(dto);
+            if (!result)
+                return StatusCode(500, "The application has failed to sent.");
+
+            return Ok("The application has been sent.");
+        }
+        /// <summary>
+        /// set Hantar MaklumatKlasifikasi Perkhidmatan 
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [HttpPost("sethantar")]
+        public async Task<IActionResult> SetHantarMaklumatKlasifikasiPerkhidmatan([FromBody] MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
+        {
+            var result = await _maklumatKlasifikasiPerkhidmatanService.SetHanatarMaklumatKlasifikasiPerkhidmatanAsync(dto);
+            if (!result)
+                return StatusCode(500, "The application has failed to sent.");
+
+            return Ok("The application has been sent.");
         }
     }
 }

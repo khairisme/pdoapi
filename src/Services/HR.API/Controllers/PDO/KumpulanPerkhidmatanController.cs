@@ -247,4 +247,36 @@ public class KumpulanPerkhidmatanController : ControllerBase
 
         return Ok("Updated successfully");
     }
+    /// <summary>
+    /// daftar Hantar KumpulanPermohonan 
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("daftarhantar")]
+    public async Task<IActionResult> DaftarHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanDto dto)
+    {
+        var result = await _kumpulanPerkhidmatan.DaftarHantarKumpulanPermohonanAsync(dto);
+        if (!result)
+            return StatusCode(500, "The application has failed to sent.");
+
+        return Ok("The application has been sent.");
+    }
+
+    /// <summary>
+    /// set Hantar kumpulan Permohonan Permohonan
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("sethantar")]
+    public async Task<IActionResult> setHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanDto dto)
+    {
+       
+            var isSuccess = await _kumpulanPerkhidmatan.UpdateHantarKumpulanPermohonanAsync(dto);
+
+            if (!isSuccess)
+                return StatusCode(500, "The application has failed to sent.");
+
+            return Ok("The application has been sent.");
+       
+    }
 }

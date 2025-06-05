@@ -28,5 +28,9 @@ namespace HR.Application.Interfaces.PDO
         Task<KumpulanPerkhidmatanButiranDto> GetMaklumatBaharuAsync(int id);
 
         Task<bool> KemaskiniStatusAsync(KumpulanPerkhidmatanRefStatusDto perkhidmatanDto);
+
+        Task<bool> DaftarHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanDto dto);
+
+        Task<bool> UpdateHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanDto perkhidmatanDto);
     }
 }

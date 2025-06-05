@@ -306,6 +306,132 @@ namespace HR.Application.Services.PDO
             result = result.ToList().Where(e => e.StatusAktif);
             return result.Select(MapToDto);
         }
+        public async Task<bool> DaftarHanatarMaklumatKlasifikasiPerkhidmatanAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
+        {
+            _logger.LogInformation("Service: Hantar  MaklumatKlasifikasiPerkhidmatan");
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                var idKlasifikasi = await _dbContext.PDOKlasifikasiPerkhidmatan
+                .Where(x => x.Kod == dto.Kod)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+                if (idKlasifikasi == 0)
+                {
+
+                    // Step 1: Insert into PDO_KlasifikasiPerkhidmatan
+                    var KlasifikasiPerkhidmatan = MapToEntity(dto);
+                    KlasifikasiPerkhidmatan.StatusAktif = false;
+
+                    KlasifikasiPerkhidmatan = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().AddAsync(KlasifikasiPerkhidmatan);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+
+                    // Step 2: Insert into PDO_StatusPermohonanKumpulanPerkhidmatan
+                    var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                    {
+                        IdKlasifikasiPerkhidmatan = KlasifikasiPerkhidmatan.Id, // use the ID from step 1
+                        KodRujStatusPermohonan = "01",
+                        TarikhKemaskini = DateTime.Now,
+                        StatusAktif = true
+                    };
+                    await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                else
+                {
+                    // Step 1: Update existing active records
+
+                    var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                           .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == idKlasifikasi && x.StatusAktif);
+
+                    if (existingStatus != null)
+                    {
+                        existingStatus.StatusAktif = false;
+                        existingStatus.TarikhPinda = DateTime.Now;
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+                    // Step 2: Insert new record
+                    var newRecord = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                    {
+                        IdKlasifikasiPerkhidmatan = idKlasifikasi,
+                        KodRujStatusPermohonan = "02",
+                        TarikhKemaskini = DateTime.Now,
+                        StatusAktif = true
+                    };
+
+                    await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(newRecord);
+                    await _unitOfWork.SaveChangesAsync();
+
+                }
+
+                    await _unitOfWork.CommitAsync();
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service CreateAsync");
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> SetHanatarMaklumatKlasifikasiPerkhidmatanAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateRequestDto)
+        {
+            _logger.LogInformation("Service: Updating Hantar KumpulanPerkhidmatan");
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: update into PDO_KlasifikasiPerkhidmatan
+                var perkhidmatan = MapToEntity(updateRequestDto);
+               // perkhidmatan.StatusAktif = updateRequestDto.StatusAktif;
+
+                var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(perkhidmatan);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+
+
+                // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
+                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                        .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
+
+                if (existingStatus != null)
+                {
+                    existingStatus.StatusAktif = false;
+                    existingStatus.TarikhPinda = DateTime.Now;
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+
+                // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
+                var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                {
+                    IdKlasifikasiPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
+                    KodRujStatusPermohonan = "02",
+                    TarikhKemaskini = DateTime.Now,
+                    StatusAktif = true
+                };
+                await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service Updating Hantar ");
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
 
         private PDOKlasifikasiPerkhidmatan MapToEntity(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
         {
