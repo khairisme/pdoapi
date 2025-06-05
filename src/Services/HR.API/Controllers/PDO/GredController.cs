@@ -1,5 +1,6 @@
 using HR.Application.DTOs;
-using HR.Application.Interfaces;
+using HR.Application.DTOs.PDO;
+using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
 using HR.Core.Entities;
 using HR.Core.Enums;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
-namespace HR.API.Controllers;
+namespace HR.API.Controllers.PDO;
 
 [ApiController]
 [Route("api/pdo/[controller]")]
@@ -26,20 +27,19 @@ public class GredController : ControllerBase
 
 
 
-   /// <summary>
-   /// Carian Gred
-   /// </summary>
-   /// <param name="idKlasifikasi"></param>
-   /// <param name="idKumpulan"></param>
-   /// <returns></returns>
-    [HttpGet("getGredList")]
-    public async Task<IActionResult> GetGredList([FromQuery] int idKlasifikasi, [FromQuery] int idKumpulan)
+    /// <summary>
+    /// Carian Gred
+    /// </summary>
+    
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    [HttpPost("getGredList")]
+    public async Task<IActionResult> GetGredList([FromBody] GredFilterDto filter)
     {
         _logger.LogInformation("Getting Carian Gred List");
-        if (idKlasifikasi <= 0 || idKumpulan <= 0)
-            return BadRequest("Invalid parameters.");
+        
 
-        var data = await _gredService.GetGredListAsync(idKlasifikasi, idKumpulan);
+        var data = await _gredService.GetGredListAsync(filter);
         return Ok(new
         {
             status = data.Count() > 0 ? "Sucess" : "Failed",
@@ -48,15 +48,14 @@ public class GredController : ControllerBase
         });
     }
     /// <summary>
-    /// Search Gred
+    /// Search Maklumat Gred
     /// </summary>
-    /// <param name="idKlasifikasi"></param>
-    /// <param name="idKumpulan"></param>
+    /// <param name="filter"></param>
     /// <returns></returns>
-    [HttpGet("searchGred")]
-    public async Task<IActionResult> SearchGred([FromQuery] int? idKlasifikasi, [FromQuery] int? idKumpulan)
+    [HttpPost("getMaklumatGred")]
+    public async Task<IActionResult> GetMaklumatGred([FromBody] GredFilterDto filter)
     {
-        var result = await _gredService.SearchGredAsync(idKlasifikasi, idKumpulan);
+        var result = await _gredService.GetFilteredGredList(filter);
         return Ok(new
         {
             status = result.Count() > 0 ? "Sucess" : "Failed",

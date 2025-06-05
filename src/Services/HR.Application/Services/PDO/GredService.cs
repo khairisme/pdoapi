@@ -1,6 +1,7 @@
 ﻿using HR.Application.DTOs;
+using HR.Application.DTOs.PDO;
 using HR.Application.Extensions;
-using HR.Application.Interfaces;
+using HR.Application.Interfaces.PDO;
 using HR.Core.Enums;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
@@ -25,7 +26,7 @@ namespace HR.Application.Services
             _context = dbContext;
             _logger = logger;
         }
-        public async Task<List<PDOGredDto>> GetGredListAsync(int idKlasifikasi, int idKumpulan)
+        public async Task<List<PDOGredDto>> GetGredListAsync(GredFilterDto filter)
         {
             _logger.LogInformation("Getting all PDOGredDto using EF Core join");
             try
@@ -36,8 +37,8 @@ namespace HR.Application.Services
                 var query = from a in _context.PDOGred
                             join b in _context.PDOKlasifikasiPerkhidmatan on a.IdKlasifikasiPerkhidmatan equals b.Id
                             join c in _context.PDOKumpulanPerkhidmatan on a.IdKumpulanPerkhidmatan equals c.Id
-                            where a.IdKlasifikasiPerkhidmatan == idKlasifikasi
-                                  && a.IdKumpulanPerkhidmatan == idKumpulan
+                            where a.IdKlasifikasiPerkhidmatan == filter.IdKlasifikasiPerkhidmatan
+                                  && a.IdKumpulanPerkhidmatan == filter.IdKumpulanPerkhidmatan
                                   && b.StatusAktif
                                   && c.StatusAktif
                             orderby a.Kod
@@ -48,6 +49,8 @@ namespace HR.Application.Services
                                 a.Keterangan
                             };
 
+                if (!string.IsNullOrEmpty(filter.Nama))
+                    query = query.Where(x => x.Nama.Contains(filter.Nama));
                 var result = await query.ToListAsync();
 
                 return result.Select((x, index) => new PDOGredDto
@@ -65,48 +68,56 @@ namespace HR.Application.Services
             }
         }
 
-        public async Task<List<GredSearchResultDTO>> SearchGredAsync(int? idKlasifikasi, int? idKumpulan)
+        public async Task<List<GredResultDto>> GetFilteredGredList(GredFilterDto filter)
         {
             _logger.LogInformation("Search  Gred using EF Core join");
             try
             {
 
-                var query = from a in _context.PDOKumpulanPerkhidmatan
+                var query = from a in _context.PDOGred
                             join b in _context.PDOStatusPermohonanGred on a.Id equals b.IdGred
+                            join d in _context.PDOKlasifikasiPerkhidmatan on a.IdKlasifikasiPerkhidmatan equals d.Id
+                            join c in _context.PDOKumpulanPerkhidmatan on a.IdKumpulanPerkhidmatan equals c.Id
                             join b2 in _context.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals b2.Kod
-                            where b.StatusAktif == true
+                            where b.StatusAktif == true && c.StatusAktif == true
                             select new
                             {
                                 a.Kod,
                                 a.Nama,
                                 a.Keterangan,
-                                a.StatusAktif,
                                 StatusPermohonan = b2.Nama,
-                                b.TarikhKemasKini,
-                                // a.IdKlasifikasiPerkhidmatan,
-                                a.Id
+                                StatusGred = a.StatusAktif == true ? "Aktif" : "Tidak Aktif",
+                                a.IdKumpulanPerkhidmatan,
+                                a.IdKlasifikasiPerkhidmatan,
+                                b.KodRujStatusPermohonan
                             };
 
-                //if (idKlasifikasi.HasValue)
-                //    query = query.Where(x => x.IdKlasifikasiPerkhidmatan == idKlasifikasi);
+                if (filter.IdKumpulanPerkhidmatan.HasValue)
+                    query = query.Where(x => x.IdKumpulanPerkhidmatan == filter.IdKumpulanPerkhidmatan);
 
-                if (idKumpulan.HasValue)
-                    query = query.Where(x => x.Id == idKumpulan);
+                if (filter.IdKlasifikasiPerkhidmatan.HasValue)
+                    query = query.Where(x => x.IdKlasifikasiPerkhidmatan == filter.IdKlasifikasiPerkhidmatan);
 
-                var result = await query.OrderBy(x => x.Kod).ToListAsync();
+                if (!string.IsNullOrEmpty(filter.KodRujStatusPermohonan))
+                    query = query.Where(x => x.KodRujStatusPermohonan == filter.KodRujStatusPermohonan);
 
-                return result.Select((x, index) => new GredSearchResultDTO
+                if (!string.IsNullOrEmpty(filter.Nama))
+                    query = query.Where(x => x.Nama.Contains(filter.Nama));
+
+                var data = await query.ToListAsync();
+
+                // Add row number manually
+                var result = data.Select((x, index) => new GredResultDto
                 {
                     Bil = index + 1,
                     Kod = x.Kod,
                     Nama = x.Nama,
                     Keterangan = x.Keterangan,
-                    StatusGred = (x.StatusAktif
-                                ? StatusKumpulanPerkhidmatanEnum.Aktif
-                                : StatusKumpulanPerkhidmatanEnum.TidakAktif).ToDisplayString(),
                     StatusPermohonan = x.StatusPermohonan,
-                    TarikhKemaskini = x.TarikhKemasKini
+                    StatusGred = x.StatusGred
                 }).ToList();
+
+                return result;
             }
             catch (Exception ex)
             {
