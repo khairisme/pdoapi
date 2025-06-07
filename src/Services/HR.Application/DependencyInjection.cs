@@ -32,6 +32,7 @@ public static class DependencyInjection
 
         services.AddScoped<IGredService, GredService>();
         services.AddScoped<IRujJenisSaraanService, RujJenisSaraanService>();
+        services.AddScoped<IKeyCloakService, KeyCloakService>();
 
         return services;
     }

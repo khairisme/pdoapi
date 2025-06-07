@@ -2,11 +2,18 @@ using HR.Application;
 using HR.Infrastructure;
 using HR.API.Configuration;
 using Shared.Messaging.Extensions;
+using HR.API.Models;
+using HR.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Add services to the container.
+builder.Services.Configure<KeycloakSettings>(builder.Configuration.GetSection("KeyCloak"));
+
+builder.Services.AddHttpClient<KeyCloakService>();
 
 // Register the default implementation (used by regular EmployeesController)
 builder.Services.AddInfrastructure(builder.Configuration);

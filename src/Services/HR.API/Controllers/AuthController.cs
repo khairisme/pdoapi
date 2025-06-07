@@ -1,0 +1,38 @@
+﻿using HR.API.Models;
+using HR.API.Services;
+using HR.Application.Interfaces;
+using HR.Application.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+
+namespace HR.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
+    {
+        private readonly IKeyCloakService _keycloakService;
+        private readonly KeycloakSettings _keycloakSettings;
+        private readonly TokenGeneratorService _tokenGeneratorService = new TokenGeneratorService();
+
+        public AuthController(IKeyCloakService keyCloakService, IOptions<KeycloakSettings> keycloakSettings)
+        {
+            _keycloakService = keyCloakService;
+            _keycloakSettings = keycloakSettings.Value;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            string keyCloakUrl = "http://localhost:8080/realms/" + _keycloakSettings.Realm + "/protocol/openid-connect/token";
+            var tokenResponse = await _keycloakService.GetTokenAsync(username, password, 
+                keyCloakUrl, _keycloakSettings.ClientId, _keycloakSettings.ClientSecret);
+            
+            var extractedToken = _tokenGeneratorService.ExtractToken(tokenResponse);
+            var token = _tokenGeneratorService.GenerateNewToken(extractedToken);
+            return Ok(token);
+        }
+    }
+}
