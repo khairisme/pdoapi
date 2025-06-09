@@ -272,7 +272,7 @@ namespace HR.Application.Services.PDO
                     query = query.Where(q => q.Nama.Contains(filter.Nama));
 
                 if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
-                    query = query.Where(q => q.Kod == filter.StatusPermohonan);
+                    query = query.Where(q => q.StatusPermohonan == filter.StatusPermohonan);
 
                 var data = query.ToList();
 
