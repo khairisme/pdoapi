@@ -1,3 +1,4 @@
+using HR.API.Middleware;
 using HR.Application.Interfaces;
 using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
@@ -33,6 +34,12 @@ public static class DependencyInjection
         services.AddScoped<IGredService, GredService>();
         services.AddScoped<IRujJenisSaraanService, RujJenisSaraanService>();
         services.AddScoped<IKeyCloakService, KeyCloakService>();
+
+        // Add JwtService
+        services.AddScoped<JwtService>();
+
+       
+        
 
         return services;
     }

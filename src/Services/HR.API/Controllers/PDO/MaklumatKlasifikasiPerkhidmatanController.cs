@@ -1,9 +1,11 @@
 ﻿using HR.Application.DTOs.PDO;
 using HR.Application.Interfaces.PDO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR.API.Controllers.PDO
 {
+    [Authorize]
     [ApiController]
     [Route("api/pdo/[controller]")]
     public class MaklumatKlasifikasiPerkhidmatanController : ControllerBase

@@ -32,6 +32,8 @@ namespace HR.API.Services
             // Optionally modify or add new claims  
             claims.Add(new Claim("custom-claim", "custom-value"));
 
+            claims.Add(new Claim("user-id", "12345678-90ab-cdef-1234-567890abcdef"));
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),

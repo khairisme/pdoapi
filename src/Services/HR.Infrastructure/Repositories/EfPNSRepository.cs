@@ -1,4 +1,6 @@
 using System.Linq.Expressions;
+using HR.Application.Interfaces;
+using HR.Application.Services;
 using HR.Core.Entities;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
@@ -14,11 +16,12 @@ public class EfPNSRepository<T> : IRepository<T> where T : PNSBaseEntity
 {
     protected readonly PNSDbContext _dbContext;
     protected readonly DbSet<T> _dbSet;
-
-    public EfPNSRepository(PNSDbContext dbContext)
+    protected readonly ICurrentUserService _currentUserService;
+    public EfPNSRepository(PNSDbContext dbContext, ICurrentUserService currentUserService)
     {
         _dbContext = dbContext;
         _dbSet = dbContext.Set<T>();
+        _currentUserService = currentUserService;
     }
     public async Task<T?> GetByIdAsync(Guid id)
     {
@@ -41,7 +44,7 @@ public class EfPNSRepository<T> : IRepository<T> where T : PNSBaseEntity
     {
        
         entity.TarikhCipta = DateTime.UtcNow;
-
+        entity.IdCipta = Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
         await _dbSet.AddAsync(entity);
         return entity;
     }
@@ -60,7 +63,7 @@ public class EfPNSRepository<T> : IRepository<T> where T : PNSBaseEntity
     public async Task<bool> UpdateAsync(T entity)
     {
         entity.TarikhPinda = DateTime.UtcNow;
-
+        entity.IdPinda = Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
         // Detach any existing entity with the same ID to avoid conflicts
         var existingEntity = await _dbSet.FindAsync(entity.Id);
         if (existingEntity != null)
@@ -85,7 +88,7 @@ public class EfPNSRepository<T> : IRepository<T> where T : PNSBaseEntity
 
         entity.StatusAktif = false;
         entity.TarikhPinda = DateTime.UtcNow;
-
+        entity.IdPinda = Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
         return true;
     }
     public async Task<bool> ExistsAsync(Guid id)

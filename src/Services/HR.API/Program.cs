@@ -1,12 +1,15 @@
 using HR.Application;
 using HR.Infrastructure;
+using HR.Shared;
 using HR.API.Configuration;
 using Shared.Messaging.Extensions;
 using HR.API.Models;
 using HR.API.Services;
+using HR.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<JwtDto>(builder.Configuration.GetSection("JwtSettings"));
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -15,15 +18,22 @@ builder.Services.Configure<KeycloakSettings>(builder.Configuration.GetSection("K
 
 builder.Services.AddHttpClient<KeyCloakService>();
 
+
+builder.Services.AddSharedApplication();
+
 // Register the default implementation (used by regular EmployeesController)
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Register the Entity Framework implementation
 builder.Services.AddEntityFrameworkInfrastructure(builder.Configuration);
 
+builder.Services.AddHttpContextAccessor(); // Required to access HttpContext
 
 // Add application services
 builder.Services.AddApplication();
+
+builder.Services.AddAuthorization();
+
 
 // Add RabbitMQ message bus
 builder.Services.AddRabbitMQMessageBus(
@@ -79,7 +89,12 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
+
+app.UseMiddleware<JwtMiddleware>();
+
+
 app.UseAuthorization();
+
 
 app.MapControllers();
 

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HR.Core\HR.Core.csproj" />
+    <ProjectReference Include="..\HR.Shared\HR.Shared.csproj" />
   </ItemGroup>
 
 </Project>

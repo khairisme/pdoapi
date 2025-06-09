@@ -3,12 +3,13 @@ using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
 using HR.Core.Entities;
 using HR.Core.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
-
+[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class KumpulanPerkhidmatanController : ControllerBase
@@ -31,6 +32,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// </summary>
     /// <param name="KumpulanPerkhidmatanDto"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpGet("getAll")]
     public async Task<IActionResult> getAll()
     {
@@ -51,6 +53,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// </summary>
     /// <param name="KumpulanPerkhidmatanFilterDto"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpPost("getPermohonanPerjawatan")]
     public async Task<IActionResult> getMaklumatKumpulanPerkhidmatan([FromBody] KumpulanPerkhidmatanFilterDto filter)
     {
@@ -77,6 +80,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// </summary>
     /// <param name="KumpulanPerkhidmatanFilterDto"></param>
     /// <returns></returns>
+    
     [HttpPost("newPermohonanPerjawatan")]
     public async Task<IActionResult> Create([FromBody] KumpulanPerkhidmatanDto kumpulanPerkhidmatanDto)
     {

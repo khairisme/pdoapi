@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using HR.Application.Interfaces;
 using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
@@ -14,11 +15,13 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
 {
     protected readonly PDODbContext _dbContext;
     protected readonly DbSet<T> _dbSet;
+    protected readonly ICurrentUserService _currentUserService;
 
-    public EfPDORepository(PDODbContext dbContext)
+    public EfPDORepository(PDODbContext dbContext, ICurrentUserService currentUserService)
     {
         _dbContext = dbContext;
         _dbSet = dbContext.Set<T>();
+        _currentUserService = currentUserService;
     }
     public async Task<T?> GetByIdAsync(Guid id)
     {
@@ -43,7 +46,8 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
 
     public async Task<T> AddAsync(T entity)
     {
-        entity.IdCipta = System.Guid.NewGuid();
+        //entity.IdCipta = System.Guid.NewGuid();
+        entity.IdCipta = Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
         entity.TarikhCipta = DateTime.UtcNow;
 
         await _dbSet.AddAsync(entity);
@@ -53,7 +57,7 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
     {
         foreach (var entity in entities)
         {
-           
+            entity.IdCipta= Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
             entity.TarikhCipta = DateTime.UtcNow;
         }
 
@@ -64,7 +68,7 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
     public async Task<bool> UpdateAsync(T entity)
     {
         entity.TarikhPinda = DateTime.UtcNow;
-
+        entity.IdPinda = Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
         // Detach any existing entity with the same ID to avoid conflicts
         var existingEntity = await _dbSet.FindAsync(entity.Id);
         if (existingEntity != null)
@@ -76,6 +80,7 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
         // Don't modify CreatedAt or CreatedBy
         _dbContext.Entry(entity).Property(x => x.TarikhCipta).IsModified = false;
         _dbContext.Entry(entity).Property(x => x.IdCipta).IsModified = false;
+        
 
         return true;
     }
@@ -89,6 +94,7 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
 
         entity.StatusAktif = false;
         entity.TarikhPinda = DateTime.UtcNow;
+        entity.IdPinda = Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
 
         return true;
     }
