@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace HR.Application.Interfaces
 {
-    public class ICurrentUserService
+    public interface ICurrentUserService
     {
-       public string? UserId { get; }
+        string? UserId { get; }
     }
 }
