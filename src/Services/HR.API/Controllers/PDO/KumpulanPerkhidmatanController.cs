@@ -3,12 +3,13 @@ using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
 using HR.Core.Entities;
 using HR.Core.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
-
+[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class KumpulanPerkhidmatanController : ControllerBase
@@ -31,6 +32,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// </summary>
     /// <param name="KumpulanPerkhidmatanDto"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpGet("getAll")]
     public async Task<IActionResult> getAll()
     {
@@ -51,6 +53,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// </summary>
     /// <param name="KumpulanPerkhidmatanFilterDto"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpPost("getPermohonanPerjawatan")]
     public async Task<IActionResult> getMaklumatKumpulanPerkhidmatan([FromBody] KumpulanPerkhidmatanFilterDto filter)
     {
@@ -68,8 +71,8 @@ public class KumpulanPerkhidmatanController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception during carl Maklumat Kumpulan Perkhidmatan");
-            return StatusCode(500, "Internal Server Error");
+            _logger.LogError(ex, "Exception during carl Maklumat Kumpulan Perkhidmatan" + ex.Message.ToString());
+            return StatusCode(500,  ex.InnerException.Message.ToString());
         }
     }
     /// <summary>
@@ -77,6 +80,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// </summary>
     /// <param name="KumpulanPerkhidmatanFilterDto"></param>
     /// <returns></returns>
+    
     [HttpPost("newPermohonanPerjawatan")]
     public async Task<IActionResult> Create([FromBody] KumpulanPerkhidmatanDto kumpulanPerkhidmatanDto)
     {
@@ -96,8 +100,8 @@ public class KumpulanPerkhidmatanController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception during creation");
-            return StatusCode(500, "Internal Server Error");
+            _logger.LogError(ex, "Exception during creation : "+ ex.InnerException.ToString());
+            return StatusCode(500, ex.InnerException.Message.ToString());
         }
     }
     /// <summary>
@@ -119,7 +123,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during getKumpulanPerkhidmatan");
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, ex.InnerException.Message.ToString());
         }
     }
 
@@ -142,7 +146,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during creation");
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, ex.InnerException.Message.ToString());
         }
     }
     /// <summary>
@@ -170,7 +174,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, ex.InnerException.Message.ToString());
         }
     }
 
@@ -198,7 +202,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during carl getStatusKumpulanPerkhidmatan");
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, ex.InnerException.Message.ToString());
         }
     }
     /// <summary>
@@ -209,12 +213,20 @@ public class KumpulanPerkhidmatanController : ControllerBase
     [HttpGet("getMaklumatSediaAda/{id}")]
     public async Task<ActionResult<KumpulanPerkhidmatanStatusDto>> GetMaklumatSediaAda(int id)
     {
-        var result = await _kumpulanPerkhidmatan.GetMaklumatSediaAda(id);
+        try
+        {
+            var result = await _kumpulanPerkhidmatan.GetMaklumatSediaAda(id);
 
-        if (result == null)
-            return NotFound(new { message = "Information not found." });
+            if (result == null)
+                return NotFound(new { message = "Information not found." });
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during GetMaklumatSediaAda");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
     }
     /// <summary>
     /// Maklumat Baharu
@@ -224,12 +236,20 @@ public class KumpulanPerkhidmatanController : ControllerBase
     [HttpGet("getMaklumatBaharu/{id}")]
     public async Task<ActionResult<KumpulanPerkhidmatanButiranDto>> GetMaklumatBaharu(int id)
     {
-        var result = await _kumpulanPerkhidmatan.GetMaklumatBaharuAsync(id);
+        try
+        {
+            var result = await _kumpulanPerkhidmatan.GetMaklumatBaharuAsync(id);
 
-        if (result == null)
-            return NotFound(new { message = "Information not found." });
+            if (result == null)
+                return NotFound(new { message = "Information not found." });
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during GetMaklumatBaharu");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
     }
 
     /// <summary>
@@ -240,12 +260,20 @@ public class KumpulanPerkhidmatanController : ControllerBase
     [HttpPost("setKemaskinistatus")]
     public async Task<ActionResult<KumpulanPerkhidmatanButiranDto>> SetKemaskinistatus([FromBody]  KumpulanPerkhidmatanRefStatusDto perkhidmatanDto)
     {
-        var result = await _kumpulanPerkhidmatan.KemaskiniStatusAsync(perkhidmatanDto);
+        try
+        {
+            var result = await _kumpulanPerkhidmatan.KemaskiniStatusAsync(perkhidmatanDto);
 
-        if (!result)
-            return StatusCode(500, "Failed to update the record.");
+            if (!result)
+                return StatusCode(500, "Failed to update the record.");
 
-        return Ok("Updated successfully");
+            return Ok("Updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during SetKemaskinistatus");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
     }
     /// <summary>
     /// daftar Hantar KumpulanPermohonan 
@@ -255,11 +283,19 @@ public class KumpulanPerkhidmatanController : ControllerBase
     [HttpPost("daftarhantar")]
     public async Task<IActionResult> DaftarHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanDto dto)
     {
-        var result = await _kumpulanPerkhidmatan.DaftarHantarKumpulanPermohonanAsync(dto);
-        if (!result)
-            return StatusCode(500, "The application has failed to sent.");
+        try
+        {
+            var result = await _kumpulanPerkhidmatan.DaftarHantarKumpulanPermohonanAsync(dto);
+            if (!result)
+                return StatusCode(500, "The application has failed to sent.");
 
-        return Ok("The application has been sent.");
+            return Ok("The application has been sent.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during DaftarHantarKumpulanPermohonan");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
     }
 
     /// <summary>
@@ -270,13 +306,20 @@ public class KumpulanPerkhidmatanController : ControllerBase
     [HttpPost("sethantar")]
     public async Task<IActionResult> setHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanDto dto)
     {
-       
+        try
+        {
             var isSuccess = await _kumpulanPerkhidmatan.UpdateHantarKumpulanPermohonanAsync(dto);
 
             if (!isSuccess)
                 return StatusCode(500, "The application has failed to sent.");
 
             return Ok("The application has been sent.");
-       
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during setHantarKumpulanPermohonan");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+
     }
 }

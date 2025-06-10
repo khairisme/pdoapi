@@ -133,9 +133,9 @@ namespace HR.Application.Services.PDO
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during service CreateAsync");
+                _logger.LogError(ex, "Error during service CreateAsync:"+ ex.InnerException.ToString());
                 await _unitOfWork.RollbackAsync();
-                return false;
+                throw;
             }
         }
         public async Task<KumpulanPerkhidmatanDetailDto?> GetKumpulanPerkhidmatanByIdAsync(int id)
@@ -424,7 +424,7 @@ namespace HR.Application.Services.PDO
             {
                 _logger.LogError(ex, "Error during service CreateAsync");
                 await _unitOfWork.RollbackAsync();
-                return false;
+                throw;
             }
         }
         public async Task<bool> DaftarHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanDto dto)
@@ -498,7 +498,7 @@ namespace HR.Application.Services.PDO
             {
                 _logger.LogError(ex, "Error during service Daftar HantarKumpulanPermohonanAsync");
                 await _unitOfWork.RollbackAsync();
-                return false;
+                throw;
             }
         }
 
@@ -551,7 +551,7 @@ namespace HR.Application.Services.PDO
             {
                 _logger.LogError(ex, "Error during service Updating Hantar ");
                 await _unitOfWork.RollbackAsync();
-                return false;
+                throw;
             }
         }
         private PDOKumpulanPerkhidmatan MapToEntity(KumpulanPerkhidmatanDto dto)

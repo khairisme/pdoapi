@@ -23,7 +23,7 @@ namespace HR.Infrastructure.Data.EntityFramework
 
         public DbSet<PDOGred> PDOGred { get; set; }
         public DbSet<PDOStatusPermohonanGred> PDOStatusPermohonanGred { get; set; }
-
+        public DbSet<PDORujStatusSkim> PDORujStatusSkim { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
@@ -52,6 +52,11 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.ToTable("PDO_RujJenisSaraan");
                 entity.HasKey(e => e.Kod); // Set Kod as the PK
                 entity.Ignore(e => e.Id); // Don't map base Id
+            });
+            modelBuilder.Entity<PDORujStatusSkim>(entity =>
+            {
+                entity.ToTable("PDO_RujStatusSkim");
+                entity.HasKey(e => e.Id); // Don't map base Id
             });
             modelBuilder.Entity<PDOStatusPermohonanSkimPerkhidmatan>().ToTable("PDO_StatusPermohonanSkimPerkhidmatan");
 

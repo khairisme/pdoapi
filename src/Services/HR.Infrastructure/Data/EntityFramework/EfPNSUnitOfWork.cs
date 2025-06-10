@@ -1,4 +1,5 @@
-﻿using HR.Core.Entities;
+﻿using HR.Application.Interfaces;
+using HR.Core.Entities;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -14,14 +15,16 @@ namespace HR.Infrastructure.Data.EntityFramework
     {
         private readonly PNSDbContext _dbContext;
         private IDbContextTransaction? _transaction;
+        private readonly ICurrentUserService _currentUserService;
         private bool _disposed;
 
         // Dictionary to store repositories
         private readonly Dictionary<Type, object> _repositories = new();
 
-        public EfPNSUnitOfWork(PNSDbContext dbContext)
+        public EfPNSUnitOfWork(PNSDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
+            _currentUserService = currentUserService;
         }
 
         public IRepository<T> Repository<T>() where T : PNSBaseEntity
@@ -32,7 +35,7 @@ namespace HR.Infrastructure.Data.EntityFramework
             {
 
                 // Default to generic repository if no specific implementation
-                _repositories[type] = new EfPNSRepository<T>(_dbContext);
+                _repositories[type] = new EfPNSRepository<T>(_dbContext, _currentUserService);
             }
 
             return (EfPNSRepository<T>)_repositories[type];

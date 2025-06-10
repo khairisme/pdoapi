@@ -4,12 +4,13 @@ using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
 using HR.Core.Entities;
 using HR.Core.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
-
+[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class GredController : ControllerBase
@@ -30,9 +31,10 @@ public class GredController : ControllerBase
     /// <summary>
     /// Carian Gred
     /// </summary>
-    
+
     /// <param name="filter"></param>
     /// <returns></returns>
+   
     [HttpPost("getGredList")]
     public async Task<IActionResult> GetGredList([FromBody] GredFilterDto filter)
     {
