@@ -24,10 +24,10 @@ namespace HR.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login([FromBody] TokenRequest request)
         {
-            string keyCloakUrl = "http://localhost:8080/realms/" + _keycloakSettings.Realm + "/protocol/openid-connect/token";
-            var tokenResponse = await _keycloakService.GetTokenAsync(username, password, 
+            string keyCloakUrl = _keycloakSettings.BaseUrl + "realms/" + _keycloakSettings.Realm + "/protocol/openid-connect/token";
+            var tokenResponse = await _keycloakService.GetTokenAsync(request.UserName, request.Password, 
                 keyCloakUrl, _keycloakSettings.ClientId, _keycloakSettings.ClientSecret);
             
             var extractedToken = _tokenGeneratorService.ExtractToken(tokenResponse);
