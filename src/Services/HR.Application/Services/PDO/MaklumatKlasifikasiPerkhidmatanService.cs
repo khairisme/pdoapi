@@ -137,6 +137,33 @@ namespace HR.Application.Services.PDO
             }
         }
 
+        public async Task<bool> CheckDuplicateKodNamaAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
+        {
+            try
+            {
+                if (dto.Id == 0)
+                {
+                    // Create: check if Kod or Nama already exists
+                    return await _dbContext.PDOKlasifikasiPerkhidmatan.AnyAsync(x =>
+
+                        x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim());
+                }
+                else
+                {
+                    // Update: check for duplicates excluding current record
+                    return await _dbContext.PDOKlasifikasiPerkhidmatan.AnyAsync(x =>
+
+                        (x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim()) &&
+                        x.Id != dto.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Validate KlasifikasiPerkhidmatan");
+                throw;
+            }
+        }
+
         public async Task<MaklumatKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatan(int id)
         {
             try

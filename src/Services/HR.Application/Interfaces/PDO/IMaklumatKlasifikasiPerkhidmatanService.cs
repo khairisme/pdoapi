@@ -9,6 +9,8 @@ namespace HR.Application.Interfaces.PDO
 
         Task<bool> NewAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto CreateRequestDto);
 
+        Task<bool> CheckDuplicateKodNamaAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto);
+
         Task<MaklumatKlasifikasiPerkhidmatanResponseDto?> GetMaklumatKlasifikasiPerkhidmatan(int id);
 
         Task<bool> SetAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateRequestDto);

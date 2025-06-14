@@ -63,6 +63,28 @@ namespace HR.API.Controllers.PDO
             });
 
         }
+        /// <summary>
+        ///validate duplicate MaklumatKlasifikasiPerkhidmatan
+        /// </summary>
+        /// <param name="maklumatKlasifikasiPerkhidmatanCreateRequestDto"></param>
+        /// <returns></returns>
+        [HttpPost("valMaklumatKlasifikasiPerkhidmatan")]
+        public async Task<IActionResult> ValKumpulanPerkhidmata([FromBody] MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto maklumatKlasifikasiPerkhidmatanCreateRequestDto)
+        {
+            try
+            {
+                var isDuplicate = await _maklumatKlasifikasiPerkhidmatanService.CheckDuplicateKodNamaAsync(maklumatKlasifikasiPerkhidmatanCreateRequestDto);
+                if (isDuplicate)
+                    return Conflict("Kod or Nama already exists for another record.");
+
+                return Ok(isDuplicate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during creation");
+                return StatusCode(500, ex.InnerException.Message.ToString());
+            }
+        }
 
         /// <summary>
         ///get MaklumatKlasifikasiPerkhidmatan
