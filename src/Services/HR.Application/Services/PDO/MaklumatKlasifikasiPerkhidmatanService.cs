@@ -188,7 +188,9 @@ namespace HR.Application.Services.PDO
                                        FungsiUmum = a.FungsiUmum ?? "",
                                        StatusKlasifikasiPerkhidmatan = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
                                        Status = b2.Nama,
-                                       TarikhKemaskini = b.TarikhKemaskini
+                                       TarikhKemaskini = b.TarikhKemaskini,
+                                       IndikatorSkim = a.IndikatorSkim,
+                                       IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
                                    }).FirstOrDefaultAsync();
 
                 return query;
@@ -274,7 +276,9 @@ namespace HR.Application.Services.PDO
                                   a.Keterangan,
                                   b.KodRujStatusPermohonan,
                                   StatusPermohonan = b2.Nama,
-                                  b.TarikhKemaskini
+                                  b.TarikhKemaskini,
+                                  a.IndikatorSkim,
+                                  a.IndSkimPerkhidmatan
                               })
                 .AsEnumerable() // Switch to in-memory to simulate row_number
                 .Select((x, index) => new
@@ -286,7 +290,9 @@ namespace HR.Application.Services.PDO
                     x.Keterangan,
                     x.KodRujStatusPermohonan,
                     x.StatusPermohonan,
-                    x.TarikhKemaskini
+                    x.TarikhKemaskini,
+                    x.IndikatorSkim,
+                    x.IndSkimPerkhidmatan
                 });
 
 
@@ -470,7 +476,9 @@ namespace HR.Application.Services.PDO
                 Keterangan = dto.Keterangan,
                 FungsiUmum = dto.FungsiUmum,
                 FungsiUtama = dto.FungsiUtama,
-                StatusAktif = dto.StatusAktif
+                StatusAktif = dto.StatusAktif,
+                IndikatorSkim = dto.IndikatorSkim,
+                IndSkimPerkhidmatan = dto.IndSkimPerkhidmatan
             };
         }
         private MaklumatKlasifikasiPerkhidmatanDto MapToDto(PDOKlasifikasiPerkhidmatan entity)

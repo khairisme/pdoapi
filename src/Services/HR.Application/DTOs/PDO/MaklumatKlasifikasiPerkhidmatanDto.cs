@@ -15,6 +15,8 @@ namespace HR.Application.DTOs.PDO
         public string FungsiUtama { get; set; }
         public string FungsiUmum { get; set; }
         public bool StatusAktif {  get; set; } = true;
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndSkimPerkhidmatan { get; set; }
     }
 
     public class MaklumatKlasifikasiPerkhidmatanSearchResponseDto
@@ -39,6 +41,9 @@ namespace HR.Application.DTOs.PDO
         public string Status { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
         public string StatusKlasifikasiPerkhidmatan { get; set; }
+
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndSkimPerkhidmatan { get; set; }
     }
 
     public class PenapisMaklumatKlasifikasiPerkhidmatanDto
@@ -57,6 +62,8 @@ namespace HR.Application.DTOs.PDO
         public string? FungsiUtama { get; set; }
         public string? FungsiUmum { get; set; }
         public string? ButiranKemaskini { get; set; }
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndSkimPerkhidmatan { get; set; }
     }
 
 
@@ -79,6 +86,8 @@ namespace HR.Application.DTOs.PDO
         public string Keterangan { get; set; }
         public string KodRujStatusPermohonan { get; set; }
         public string StatusPermohonan { get; set; }
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndSkimPerkhidmatan { get; set; }
     }
 
     public class PenapisPerkhidmatanKlasifikasiDto
