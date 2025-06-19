@@ -35,15 +35,19 @@ namespace HR.Application.Services.PDO
             result = result.ToList().Where(e => e.StatusAktif);
             return result.Select(MapToDto);
         }
-        private KumpulanPerkhidmatanDto MapToDto(PDOKumpulanPerkhidmatan  pDOKumpulan)
+        private KumpulanPerkhidmatanDto MapToDto(PDOKumpulanPerkhidmatan pDOKumpulan)
         {
             return new KumpulanPerkhidmatanDto
             {
                 Id = pDOKumpulan.Id,
                 Nama = pDOKumpulan.Nama,
-                Kod= pDOKumpulan.Kod,
-                Keterangan=pDOKumpulan.Keterangan,
-                ButiranKemaskini= pDOKumpulan.ButiranKemaskini
+                Kod = pDOKumpulan.Kod,
+                Keterangan = pDOKumpulan.Keterangan,
+                ButiranKemaskini = pDOKumpulan.ButiranKemaskini,
+                Ulasan = pDOKumpulan.Ulasan,
+                IndikatorSkim= pDOKumpulan.IndikatorSkim,
+                IndikatorTanpaSkim = pDOKumpulan.IndikatorTanpaSkim,
+                KodJana = pDOKumpulan.KodJana
             };
         }
 
@@ -100,6 +104,18 @@ namespace HR.Application.Services.PDO
             }
         }
 
+        private string GenerateNextKODFromDb()
+        {
+
+                 int maxId = _dbContext.PDOKumpulanPerkhidmatan
+                .Select(c => c.Id)  // Or use your primary key name
+                 .AsEnumerable()    // <-- Force client-side evaluation
+                 .DefaultIfEmpty(0)
+                .Max();
+
+            return (maxId + 1).ToString("D3"); // Formats to 3-digit KOD like "001"
+
+        }
         public async Task<bool> CreateAsync(KumpulanPerkhidmatanDto perkhidmatanDto)
         {
             _logger.LogInformation("Service: Creating new KumpulanPerkhidmatan");
@@ -108,6 +124,7 @@ namespace HR.Application.Services.PDO
             try
             {
                 // Step 1: Insert into PDO_KumpulanPerkhidmatan
+                perkhidmatanDto.Kod = GenerateNextKODFromDb();
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.StatusAktif = false;
 
@@ -133,7 +150,7 @@ namespace HR.Application.Services.PDO
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during service CreateAsync:"+ ex.InnerException.ToString());
+                _logger.LogError(ex, "Error during service CreateAsync:" + ex.InnerException.ToString());
                 await _unitOfWork.RollbackAsync();
                 throw;
             }
@@ -156,7 +173,11 @@ namespace HR.Application.Services.PDO
                       Nama = a.Nama,
                       Keterangan = a.Keterangan,
                       StatusPermohonan = b2.Nama,
-                      TarikhKemaskini = b.TarikhKemaskini
+                      TarikhKemaskini = b.TarikhKemaskini,
+                      Ulasan = a.Ulasan,
+                      IndikatorSkim = a.IndikatorSkim,
+                      IndikatorTanpaSkim = a.IndikatorTanpaSkim,
+                      KodJana=a.KodJana
                   }).FirstOrDefaultAsync();
 
                 return data;
@@ -175,15 +196,18 @@ namespace HR.Application.Services.PDO
                 {
                     // Create: check if Kod or Nama already exists
                     return await _dbContext.PDOKumpulanPerkhidmatan.AnyAsync(x =>
-                        
-                        x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim());
+
+                        // x.Kod.Trim() == dto.Kod.Trim() || 
+                        x.Nama.Trim() == dto.Nama.Trim());
                 }
                 else
                 {
                     // Update: check for duplicates excluding current record
                     return await _dbContext.PDOKumpulanPerkhidmatan.AnyAsync(x =>
-                       
-                        (x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim()) &&
+
+                        (
+                        //x.Kod.Trim() == dto.Kod.Trim() || 
+                        x.Nama.Trim() == dto.Nama.Trim()) &&
                         x.Id != dto.Id);
                 }
             }
@@ -204,12 +228,13 @@ namespace HR.Application.Services.PDO
                 // Step 1: update into PDO_KumpulanPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
+                perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
 
                 var result = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(perkhidmatan);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
 
-                
+
 
                 // Step 2: Deactivate existing PDO_StatusPermohonanKumpulanPerkhidmatan record
                 var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>()
@@ -224,7 +249,7 @@ namespace HR.Application.Services.PDO
 
 
                 // Step 3: Insert into PDO_StatusPermohonanKumpulanPerkhidmatan
-              var  statusEntity = new PDOStatusPermohonanKumpulanPerkhidmatan
+                var statusEntity = new PDOStatusPermohonanKumpulanPerkhidmatan
                 {
                     IdKumpulanPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
                     KodRujStatusPermohonan = "01",
@@ -268,7 +293,11 @@ namespace HR.Application.Services.PDO
                                 a.Keterangan,
                                 b.KodRujStatusPermohonan,
                                 StatusPermohonan = b2.Nama,
-                                b.TarikhKemaskini
+                                b.TarikhKemaskini,
+                                a.Ulasan,
+                                a.IndikatorTanpaSkim,
+                                a.IndikatorSkim,
+                                a.KodJana
                             };
 
                 // Apply filters only if values are provided
@@ -301,7 +330,12 @@ namespace HR.Application.Services.PDO
                     Keterangan = x.Keterangan,
                     KodRujStatusPermohonan = x.KodRujStatusPermohonan,
                     StatusPermohonan = x.StatusPermohonan,
-                    TarikhKemaskini = x.TarikhKemaskini
+                    TarikhKemaskini = x.TarikhKemaskini,
+                    Ulasan = x.Ulasan,
+                    IndikatorTanpaSkim = x.IndikatorTanpaSkim,
+                    IndikatorSkim = x.IndikatorSkim,
+                    KodJana=x.KodJana
+
                 }).ToList();
 
                 return finalList;
@@ -318,7 +352,7 @@ namespace HR.Application.Services.PDO
             _logger.LogInformation("Getting MaklumatStatus by ID {Id} using Entity Framework", id);
             try
             {
-               
+
                 var result = await (from a in _dbContext.PDOKumpulanPerkhidmatan
                                     join b in _dbContext.PDOStatusPermohonanKumpulanPerkhidmatan
                                         on a.Id equals b.IdKumpulanPerkhidmatan
@@ -385,6 +419,7 @@ namespace HR.Application.Services.PDO
                 // Step 1: update into PDO_KumpulanPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
+                perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
 
                 var result = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(perkhidmatan);
                 await _unitOfWork.SaveChangesAsync();
@@ -442,6 +477,7 @@ namespace HR.Application.Services.PDO
                 if (idKumpulan == 0)
                 {
                     // Step 1: Insert into PDO_KumpulanPerkhidmatan
+                    dto.Kod = GenerateNextKODFromDb();
                     var perkhidmatan = MapToEntity(dto);
                     perkhidmatan.StatusAktif = false;
                     perkhidmatan = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().AddAsync(perkhidmatan);
@@ -511,7 +547,8 @@ namespace HR.Application.Services.PDO
             {
                 // Step 1: update into PDO_KumpulanPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
-               // perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
+                perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
+                // perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
 
                 var result = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(perkhidmatan);
                 await _unitOfWork.SaveChangesAsync();
@@ -559,10 +596,13 @@ namespace HR.Application.Services.PDO
             return new PDOKumpulanPerkhidmatan
             {
                 Id = dto.Id,
-                Kod=dto.Kod,
-                Nama=dto.Nama,
-                Keterangan= dto.Keterangan,
-                ButiranKemaskini= dto.ButiranKemaskini
+                Kod = dto.Kod,
+                Nama = dto.Nama,
+                Keterangan = dto.Keterangan,
+                IndikatorSkim=dto.IndikatorSkim,
+                IndikatorTanpaSkim = dto.IndikatorTanpaSkim,
+                ButiranKemaskini = dto.ButiranKemaskini,
+                KodJana=dto.KodJana
             };
         }
     }

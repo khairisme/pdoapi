@@ -13,7 +13,12 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public string? Keterangan { get; set; }
         public string? ButiranKemaskini { get; set; }
+        public string? Ulasan { get; set; }
+        public string? KodJana { get; set; }
         public bool StatusAktif { get; set; }=true;
+
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndikatorTanpaSkim { get; set; }
     }
 
     public class CarlKumpulanPerkhidmatanDto
@@ -39,7 +44,12 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public string Keterangan { get; set; }
         public string StatusPermohonan { get; set; }
+        public string? KodJana { get; set; }
+        public string? Ulasan { get; set; }
         public DateTime TarikhKemaskini { get; set; }
+
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndikatorTanpaSkim { get; set; }
     }
 
     public class CarlStatusKumpulanPerkhidmatanDto
@@ -53,6 +63,10 @@ namespace HR.Application.DTOs.PDO
         public string KodRujStatusPermohonan { get; set; }
         public string StatusPermohonan { get; set; }
         public DateTime TarikhKemaskini { get; set; }
+        public string? KodJana { get; set; }
+        public string? Ulasan { get; set; }
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndikatorTanpaSkim { get; set; }
     }
     public class KumpulanPerkhidmatanButiranDto
     {

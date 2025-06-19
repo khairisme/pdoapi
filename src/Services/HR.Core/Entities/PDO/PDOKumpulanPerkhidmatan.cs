@@ -13,6 +13,10 @@ namespace HR.Core.Entities.PDO
         public string  Kod { get; set; }
         public string  Nama { get; set; }
         public string? Keterangan { get; set; }
+        public string? KodJana { get; set; }
+        public string? Ulasan { get; set; }
         public string? ButiranKemaskini { get; set; }
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndikatorTanpaSkim { get; set; }
     }
 }
