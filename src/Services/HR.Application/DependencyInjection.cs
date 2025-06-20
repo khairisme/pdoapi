@@ -33,6 +33,7 @@ public static class DependencyInjection
 
         services.AddScoped<IGredService, GredService>();
         services.AddScoped<IRujJenisSaraanService, RujJenisSaraanService>();
+        services.AddScoped<IJawatanService, JawatanService>();
         services.AddScoped<IKeyCloakService, KeyCloakService>();
 
         // Add JwtService

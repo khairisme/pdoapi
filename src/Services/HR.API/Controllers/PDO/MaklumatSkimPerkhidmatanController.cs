@@ -3,6 +3,7 @@ using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.API.Controllers.PDO
 {
@@ -182,6 +183,23 @@ namespace HR.API.Controllers.PDO
 
             return Ok("The application has been sent.");
 
+        }
+        /// <summary>
+        /// GetSkimWithJawatan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        [HttpGet("getSkimWithJawatan/{id}")]
+        public async Task<IActionResult> GetSkimWithJawatan(int id)
+        {
+            var result = await _maklumatSkimPerkhidmatan.GetSkimWithJawatanAsync(id);
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
         }
     }
 }

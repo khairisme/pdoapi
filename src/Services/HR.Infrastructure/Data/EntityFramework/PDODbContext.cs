@@ -24,6 +24,13 @@ namespace HR.Infrastructure.Data.EntityFramework
         public DbSet<PDOGred> PDOGred { get; set; }
         public DbSet<PDOStatusPermohonanGred> PDOStatusPermohonanGred { get; set; }
         public DbSet<PDORujStatusSkim> PDORujStatusSkim { get; set; }
+
+        public DbSet<PDOSkimKetuaPerkhidmatan> PDOSkimKetuaPerkhidmatan { get; set; }
+        public DbSet<PDOKetuaPerkhidmatan> PDOKetuaPerkhidmatan { get; set; }
+
+        public DbSet<PDOJawatan> PDOJawatan { get; set; }
+
+        public DbSet<PDOUnitOrganisasi> PDOUnitOrganisasi { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
@@ -64,6 +71,14 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDOGred>().ToTable("PDO_Gred");
             modelBuilder.Entity<PDOStatusPermohonanGred>().ToTable("PDO_StatusPermohonanGred");
 
+            modelBuilder.Entity<PDOSkimKetuaPerkhidmatan>().ToTable("PDO_SkimKetuaPerkhidmatan")
+             .HasKey(p => new { p.IdSkimPerkhidmatan, p.IdKetuaPerkhidmatan });
+
+            modelBuilder.Entity<PDOKetuaPerkhidmatan>().ToTable("PDO_KetuaPerkhidmatan");
+
+            modelBuilder.Entity<PDOJawatan>().ToTable("PDO_Jawatan");
+
+            modelBuilder.Entity<PDOUnitOrganisasi>().ToTable("PDO_UnitOrganisasi");
             base.OnModelCreating(modelBuilder);
         }
     }

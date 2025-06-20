@@ -526,5 +526,27 @@ namespace HR.Application.Services.PDO
             return finalCode;
         }
 
+        public async Task<List<SkimWithJawatanDto>> GetSkimWithJawatanAsync(int idSkim)
+        {
+            var query = from a in _dbContext.PDOSkimPerkhidmatan
+                        where a.Id == idSkim
+                        join b in _dbContext.PDOSkimKetuaPerkhidmatan on a.Id equals b.IdSkimPerkhidmatan into skimKetua
+                        from b in skimKetua.DefaultIfEmpty()
+                        join c in _dbContext.PDOKetuaPerkhidmatan on b.IdKetuaPerkhidmatan equals c.Id into ketua
+                        from c in ketua.DefaultIfEmpty()
+                        join d in _dbContext.PDOJawatan on c.IdJawatan equals d.Id into jawatan
+                        from d in jawatan.DefaultIfEmpty()
+                        select new SkimWithJawatanDto
+                        {
+                            Id = a.Id,
+                            Kod = a.Kod,
+                            Nama = a.Nama,
+                            KodJawatan = d.Kod,
+                            NamaJawatan = d.Nama
+                        };
+
+            return await query.ToListAsync();
+        }
+
     }
 }
