@@ -66,6 +66,156 @@ public class GredController : ControllerBase
         });
         
     }
+    /// <summary>
+    ///Create newGredJawatan
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+
+    [HttpPost("newGredJawatan")]
+    public async Task<IActionResult> Create([FromBody] CreateGredDto dto)
+    {
+        _logger.LogInformation("Creating a new GredJawatan");
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var isSuccess = await _gredService.CreateAsync(dto);
+
+            if (!isSuccess)
+                return StatusCode(500, "Failed to create the record.");
+
+            return Ok("Created successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during creation : " + ex.InnerException.ToString());
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
+    /// <summary>
+    /// daftar Hantar GredJawatan 
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("daftarhantar")]
+    public async Task<IActionResult> DaftarGredJawatan([FromBody] CreateGredDto dto)
+    {
+        try
+        {
+            var result = await _gredService.DaftarGredJawatanAsync(dto);
+            if (!result)
+                return StatusCode(500, "The application has failed to sent.");
+
+            return Ok("The application has been sent.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during DaftarGredJawatan");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
 
 
+    /// <summary>
+    ///Update GredJawatan
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("setGredJawatan")]
+    public async Task<IActionResult> Update([FromBody] CreateGredDto dto)
+    {
+        _logger.LogInformation("update GredJawatan");
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            var isSuccess = await _gredService.UpdateAsync(dto);
+
+            if (!isSuccess)
+                return StatusCode(500, "Failed to update the record.");
+
+            return Ok("Updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during updation");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
+
+    /// <summary>
+    /// set Hantar Gred Jawatan
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("sethantar")]
+    public async Task<IActionResult> setHantarGredJawatan([FromBody] CreateGredDto dto)
+    {
+        try
+        {
+            var isSuccess = await _gredService.UpdateHantarGredJawatanAsync(dto);
+
+            if (!isSuccess)
+                return StatusCode(500, "The application has failed to sent.");
+
+            return Ok("The application has been sent.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during setHantarGredJawatan");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+
+    }
+    /// <summary>
+    /// Papar Maklumat Gred
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("getMaklumatGred/{id}")]
+    public async Task<ActionResult<PaparMaklumatGredDto>> GetMaklumatGred(int id)
+    {
+        try
+        {
+            var result = await _gredService.GetMaklumatGred(id);
+
+            if (result == null)
+                return NotFound(new { message = "Information not found." });
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during GetMaklumatGred");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
+
+    /// <summary>
+    ///validate duplicate Gred
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("valGredJawatan")]
+    public async Task<IActionResult> ValGredJawatan([FromBody] CreateGredDto dto)
+    {
+        try
+        {
+            var isDuplicate = await _gredService.CheckDuplicateNamaAsync(dto);
+            if (isDuplicate)
+                return Conflict("Nama already exists for another record.");
+
+            return Ok(isDuplicate);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during creation");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
 }

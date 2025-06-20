@@ -21,6 +21,7 @@ namespace HR.Core.Entities.PDO
         public int NomborGred { get; set; }
         public string? Keterangan { get; set; }
         public bool? IndikatorGredLantikanTerus { get; set; }
-        
+        public bool? IndikatorGredKenaikan { get; set; }
+
     }
 }

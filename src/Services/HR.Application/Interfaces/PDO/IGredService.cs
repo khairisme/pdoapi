@@ -12,5 +12,11 @@ namespace HR.Application.Interfaces.PDO
     {
         Task<List<PDOGredDto>> GetGredListAsync(GredFilterDto filter);
         Task<List<GredResultDto>> GetFilteredGredList(GredFilterDto filter);
+        Task<bool> CreateAsync(CreateGredDto dto);
+        Task<bool> DaftarGredJawatanAsync(CreateGredDto dto);
+        Task<bool> UpdateAsync(CreateGredDto dto);
+        Task<bool> UpdateHantarGredJawatanAsync(CreateGredDto dto);
+        Task<PaparMaklumatGredDto> GetMaklumatGred(int id);
+        Task<bool> CheckDuplicateNamaAsync(CreateGredDto dto);
     }
 }
