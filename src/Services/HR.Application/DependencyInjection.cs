@@ -39,8 +39,8 @@ public static class DependencyInjection
         // Add JwtService
         services.AddScoped<JwtService>();
 
-       
-        
+        services.AddScoped<IPermohonanJawatanService, PermohonanJawatanService>();
+
 
         return services;
     }
