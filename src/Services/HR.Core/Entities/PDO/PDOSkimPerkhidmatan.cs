@@ -22,5 +22,10 @@ namespace HR.Core.Entities.PDO
         public int KodRujStatusSkim { get; set; }
         [NotMapped]
         public bool StatusAktif { get; set; }
+        public bool? IndikatorSkim { get; set; }
+
+        public string KodRujMatawang { get; set; }
+
+        public decimal? Jumlah { get; set; }
     }
 }

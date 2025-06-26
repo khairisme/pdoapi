@@ -20,6 +20,7 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> UpdateHantarSkimPerkhidmatanAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto);
 
         Task<List<SkimWithJawatanDto>> GetSkimWithJawatanAsync(int idSkim);
+        Task<IEnumerable<CarianSkimPerkhidmatanResponseDto>> GetCarianSkimPerkhidmatan(CarianSkimPerkhidmatanFilterDto filter);
 
     }
 }

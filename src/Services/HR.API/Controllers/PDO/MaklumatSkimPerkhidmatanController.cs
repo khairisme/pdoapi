@@ -201,6 +201,32 @@ namespace HR.API.Controllers.PDO
 
             });
         }
+
+        /// <summary>
+        ///Get GetCarianSkimPerkhidmatan
+        /// </summary>
+        /// <param name="CarianSkimPerkhidmatanFilterDto"></param>
+        /// <returns></returns>
+        [HttpPost("getCarianSkimPerkhidmatan")]
+        public async Task<IActionResult> GetCarianSkimPerkhidmatan([FromBody] CarianSkimPerkhidmatanFilterDto filter)
+        {
+            _logger.LogInformation("Getting Carian Skim Perkhidmatan Data");
+            try
+            {
+                var result = await _maklumatSkimPerkhidmatan.GetCarianSkimPerkhidmatan(filter);
+
+                return Ok(new
+                {
+                    status = result.Count() > 0 ? "Sucess" : "Failed",
+                    items = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during carl Maklumat Kumpulan Perkhidmatan");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
     }
 }
 

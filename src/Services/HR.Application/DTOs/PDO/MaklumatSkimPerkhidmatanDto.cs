@@ -14,7 +14,12 @@ namespace HR.Application.DTOs.PDO
         public string Keterangan { get; set; }
         public string StatusSkimPerkhidmatan { get; set; }
         public string StatusPermohonan { get; set; }
-        public DateTime? TarikhKemaskini { get; set; }        
+        public DateTime? TarikhKemaskini { get; set; }
+        public bool? IndikatorSkim { get; set; }
+
+        public string? KodRujMatawang { get; set; }
+
+        public decimal? Jumlah { get; set; }
     }
     public class MaklumatSkimPerkhidmatanFilterDto
     {
@@ -38,6 +43,12 @@ namespace HR.Application.DTOs.PDO
         public string KlasifikasiKod { get; set; }
         public string KumpulanKod { get; set; }
         public string JenisKod { get; set; }
+        public bool IndikatorSkim { get; set; }
+
+        public string? KodRujMatawang { get; set; }
+
+        public decimal? Jumlah { get; set; }
+        public int CarianSkimId { get; set; } = 0;
     }
     public class MaklumatSkimPerkhidmatanResponseDto
     {
@@ -49,6 +60,11 @@ namespace HR.Application.DTOs.PDO
         public string KlasifikasiPerkhidmatan { get; set; }
         public string KodKumpulanPerkhidmatan { get; set; }
         public string KumpulanPerkhidmatan { get; set; }
+        public bool? IndikatorSkim { get; set; }
+
+        public string KodRujMatawang { get; set; }
+
+        public decimal? Jumlah { get; set; }
     }
     public class SkimPerkhidmatanFilterDto
     {
@@ -65,6 +81,11 @@ namespace HR.Application.DTOs.PDO
         public string StatusSkimPerkhidmatan { get; set; }
         public string StatusPermohonan { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
+        public bool? IndikatorSkim { get; set; }
+
+        public string? KodRujMatawang { get; set; }
+
+        public decimal? Jumlah { get; set; }
     }
     public class SkimWithJawatanDto
     {
@@ -74,4 +95,21 @@ namespace HR.Application.DTOs.PDO
         public string? KodJawatan { get; set; }
         public string? NamaJawatan { get; set; }
     }
+    public class CarianSkimPerkhidmatanFilterDto
+    {
+        public string? Kod { get; set; }
+        public string? Nama { get; set; }
+        public int? KlasifikasiPerkhidmatanId { get; set; }
+        public int? KumpulanPerkhidmatanId { get; set; }
+        
+    }
+    public class CarianSkimPerkhidmatanResponseDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        
+    }
+
 }
