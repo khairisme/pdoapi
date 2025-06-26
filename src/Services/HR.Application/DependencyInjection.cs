@@ -41,6 +41,7 @@ public static class DependencyInjection
 
         services.AddScoped<IPermohonanJawatanService, PermohonanJawatanService>();
 
+        services.AddScoped<IAktivitiOrganisasiService, AktivitiOrganisasiService>();
 
         return services;
     }

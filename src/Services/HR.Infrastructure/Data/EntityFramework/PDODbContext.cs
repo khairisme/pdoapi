@@ -35,6 +35,9 @@ namespace HR.Infrastructure.Data.EntityFramework
         public DbSet<PDOPermohonanJawatan> PDOPermohonanJawatan { get; set; }
 
         public DbSet<PDOStatusPermohonanJawatan> PDOStatusPermohonanJawatan { get; set; }
+
+        public DbSet<PDOAktivitiOrganisasi> PDOAktivitiOrganisasi { get; set; }
+        public DbSet<PDORujKategoriAktivitiOrganisasi> PDORujKategoriAktivitiOrganisasi { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
@@ -87,6 +90,15 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDOPermohonanJawatan>().ToTable("PDO_PermohonanJawatan");
 
             modelBuilder.Entity<PDOStatusPermohonanJawatan>().ToTable("PDO_StatusPermohonanJawatan");
+
+            modelBuilder.Entity<PDOAktivitiOrganisasi>().ToTable("PDO_AktivitiOrganisasi");
+            modelBuilder.Entity<PDORujKategoriAktivitiOrganisasi>(entity =>
+            {
+                entity.ToTable("PDO_RujKategoriAktivitiOrganisasi");
+                entity.Ignore(e => e.Id); // Don't map base Id
+            });
+           
+
 
             base.OnModelCreating(modelBuilder);
         }
