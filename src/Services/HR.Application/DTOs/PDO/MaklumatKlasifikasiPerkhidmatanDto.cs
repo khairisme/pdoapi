@@ -16,7 +16,7 @@ namespace HR.Application.DTOs.PDO
         public string FungsiUmum { get; set; }
         public bool StatusAktif {  get; set; } = true;
         public bool? IndikatorSkim { get; set; }
-        public bool? IndSkimPerkhidmatan { get; set; }
+        //public bool? IndSkimPerkhidmatan { get; set; }
     }
 
     public class MaklumatKlasifikasiPerkhidmatanSearchResponseDto
@@ -24,6 +24,8 @@ namespace HR.Application.DTOs.PDO
         public int Bil { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
+        public string FungsiUmum { get; set; }
+        public string FungsiUtama { get; set; }
         public string Keterangan { get; set; }
         public string StatusKumpulanPerkhidmatan { get; set; }
         public string StatusPermohonan { get; set; }

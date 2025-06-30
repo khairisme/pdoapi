@@ -44,6 +44,8 @@ namespace HR.Application.Services.PDO
                                  a.Nama,
                                  a.Keterangan,
                                  a.StatusAktif,
+                                 a.FungsiUmum,
+                                 a.FungsiUtama,
                                  StatusPermohonan = b2.Nama
                              })
                   .AsEnumerable()
@@ -54,6 +56,8 @@ namespace HR.Application.Services.PDO
                      x.Nama,
                      x.Keterangan,
                      x.StatusAktif,
+                     x.FungsiUmum,
+                     x.FungsiUtama,
                      x.StatusPermohonan
                  });
 
@@ -85,6 +89,8 @@ namespace HR.Application.Services.PDO
                         StatusKumpulanPerkhidmatan = (q.StatusAktif
                             ? StatusKumpulanPerkhidmatanEnum.Aktif
                             : StatusKumpulanPerkhidmatanEnum.TidakAktif).ToDisplayString(),
+                        FungsiUmum=q.FungsiUmum,
+                        FungsiUtama=q.FungsiUtama,
                         StatusPermohonan = q.StatusPermohonan
                     })
                     .ToList();
@@ -189,8 +195,8 @@ namespace HR.Application.Services.PDO
                                        StatusKlasifikasiPerkhidmatan = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
                                        Status = b2.Nama,
                                        TarikhKemaskini = b.TarikhKemaskini,
-                                       IndikatorSkim = a.IndikatorSkim,
-                                       IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
+                                       IndikatorSkim = a.IndikatorSkim
+                                      // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
                                    }).FirstOrDefaultAsync();
 
                 return query;
@@ -277,8 +283,8 @@ namespace HR.Application.Services.PDO
                                   b.KodRujStatusPermohonan,
                                   StatusPermohonan = b2.Nama,
                                   b.TarikhKemaskini,
-                                  a.IndikatorSkim,
-                                  a.IndSkimPerkhidmatan
+                                  a.IndikatorSkim
+                                  //a.IndSkimPerkhidmatan
                               })
                 .AsEnumerable() // Switch to in-memory to simulate row_number
                 .Select((x, index) => new
@@ -291,8 +297,8 @@ namespace HR.Application.Services.PDO
                     x.KodRujStatusPermohonan,
                     x.StatusPermohonan,
                     x.TarikhKemaskini,
-                    x.IndikatorSkim,
-                    x.IndSkimPerkhidmatan
+                    x.IndikatorSkim
+                    //x.IndSkimPerkhidmatan
                 });
 
 
@@ -478,7 +484,7 @@ namespace HR.Application.Services.PDO
                 FungsiUtama = dto.FungsiUtama,
                 StatusAktif = dto.StatusAktif,
                 IndikatorSkim = dto.IndikatorSkim,
-                IndSkimPerkhidmatan = dto.IndSkimPerkhidmatan
+                //IndSkimPerkhidmatan = dto.IndSkimPerkhidmatan
             };
         }
         private MaklumatKlasifikasiPerkhidmatanDto MapToDto(PDOKlasifikasiPerkhidmatan entity)

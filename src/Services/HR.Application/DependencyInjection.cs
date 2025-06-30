@@ -43,6 +43,9 @@ public static class DependencyInjection
 
         services.AddScoped<IAktivitiOrganisasiService, AktivitiOrganisasiService>();
 
+        services.AddScoped<IRujJenisPermohonanService, RujJenisPermohonanService>();
+        services.AddScoped<IPermohonanPeriwatanService, PermohonanPeriwatanService>(); 
+
         return services;
     }
 }

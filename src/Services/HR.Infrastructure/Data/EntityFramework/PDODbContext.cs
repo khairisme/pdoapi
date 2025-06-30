@@ -38,6 +38,7 @@ namespace HR.Infrastructure.Data.EntityFramework
 
         public DbSet<PDOAktivitiOrganisasi> PDOAktivitiOrganisasi { get; set; }
         public DbSet<PDORujKategoriAktivitiOrganisasi> PDORujKategoriAktivitiOrganisasi { get; set; }
+        public DbSet<PDORujJenisPermohonan> PDORujJenisPermohonan { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
@@ -70,7 +71,12 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDORujStatusSkim>(entity =>
             {
                 entity.ToTable("PDO_RujStatusSkim");
-                entity.HasKey(e => e.Id); // Don't map base Id
+                entity.HasKey(e => e.Id); 
+            });
+            modelBuilder.Entity<PDORujJenisPermohonan>(entity =>
+            {
+                entity.ToTable("PDO_RujJenisPermohonan");
+                entity.HasKey(e => e.Kod); // Don't map base Id
             });
             modelBuilder.Entity<PDOStatusPermohonanSkimPerkhidmatan>().ToTable("PDO_StatusPermohonanSkimPerkhidmatan");
 
@@ -87,7 +93,12 @@ namespace HR.Infrastructure.Data.EntityFramework
 
             modelBuilder.Entity<PDOUnitOrganisasi>().ToTable("PDO_UnitOrganisasi");
 
-            modelBuilder.Entity<PDOPermohonanJawatan>().ToTable("PDO_PermohonanJawatan");
+            
+            modelBuilder.Entity<PDOPermohonanJawatan>(entity =>
+            {
+                entity.ToTable("PDO_PermohonanJawatan");
+                entity.HasKey(e => e.Id); 
+            });
 
             modelBuilder.Entity<PDOStatusPermohonanJawatan>().ToTable("PDO_StatusPermohonanJawatan");
 
@@ -95,7 +106,8 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDORujKategoriAktivitiOrganisasi>(entity =>
             {
                 entity.ToTable("PDO_RujKategoriAktivitiOrganisasi");
-                entity.Ignore(e => e.Id); // Don't map base Id
+                entity.Ignore(e => e.Id);
+                entity.HasKey(e => e.Kod);
             });
            
 
