@@ -15,5 +15,7 @@ namespace HR.Core.Entities.PDO
         public string Tajuk { get; set; }
         public string? Keterangan { get; set; }
         public DateTime? TarikhPermohonan { get; set; }
+        [NotMapped]
+        public new bool StatusAktif { get; set; }
     }
 }
