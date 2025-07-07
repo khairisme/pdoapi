@@ -128,6 +128,13 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.Ignore(e => e.Id); 
             });
 
+            modelBuilder.Entity<PDORujKategoriUnitOrganisasi>(entity =>
+            {
+                entity.ToTable("PDO_RujKategoriUnitOrganisasi");
+                entity.HasKey(e => e.Kod);
+                entity.Ignore(e => e.Id);
+            });
+
             base.OnModelCreating(modelBuilder);
         }
     }
