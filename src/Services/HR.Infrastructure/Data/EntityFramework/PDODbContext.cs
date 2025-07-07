@@ -156,6 +156,12 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.ToTable("PDO_StatusSkimPerkhidmatan");
                 entity.HasKey(e => e.Id);
             });
+            modelBuilder.Entity<PDORujStatusRekod>(entity =>
+            {
+                entity.ToTable("PDO_RujStatusRekod");
+                entity.HasKey(e => e.Kod);
+                entity.Ignore(e => e.Id);
+            });
             base.OnModelCreating(modelBuilder);
         }
     }
