@@ -146,6 +146,12 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.HasKey(e => new { e.IdJawatan, e.IdGred, e.IdSkimPerkhidmatan });
             });
 
+            modelBuilder.Entity<PDOPermohonanPengisianSkim>(entity =>
+            {
+                entity.ToTable("PDO_PermohonanPengisianSkim");
+                entity.HasKey(e => e.Id);
+            });
+
             base.OnModelCreating(modelBuilder);
         }
     }
