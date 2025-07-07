@@ -135,6 +135,12 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.Ignore(e => e.Id);
             });
 
+            modelBuilder.Entity<PDOPengisianJawatan>(entity =>
+            {
+                entity.ToTable("PDO_PengisianJawatan");
+                entity.HasKey(e => e.Id);
+            });
+
             base.OnModelCreating(modelBuilder);
         }
     }
