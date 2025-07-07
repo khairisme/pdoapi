@@ -10,5 +10,7 @@ namespace HR.Application.Interfaces.PDO
     public interface IJawatanService
     {
         Task<List<JawatanWithAgensiDto>> GetJawatanWithAgensiAsync(string namaJwtn, string kodCartaOrganisasi);
+        Task<List<CarianJawatanResponseDto>> GetCarianJawatanAsync(CarianJawatanFilterDto filter);
+
     }
 }
