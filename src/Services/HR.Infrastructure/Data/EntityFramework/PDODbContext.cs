@@ -151,7 +151,11 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.ToTable("PDO_PermohonanPengisianSkim");
                 entity.HasKey(e => e.Id);
             });
-
+            modelBuilder.Entity<PDOStatusSkimPerkhidmatan>(entity =>
+            {
+                entity.ToTable("PDO_StatusSkimPerkhidmatan");
+                entity.HasKey(e => e.Id);
+            });
             base.OnModelCreating(modelBuilder);
         }
     }
