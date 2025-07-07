@@ -37,7 +37,7 @@ namespace HR.Application.Services.PDO
 
                 var query = (from a in _dbContext.PDOSkimPerkhidmatan
                              join a2 in _dbContext.PDORujStatusSkim
-                                 on a.KodRujStatusSkim equals a2.Id
+                                 on a.KodRujStatusSkim equals a2.Kod    
                              join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
                                  on a.Id equals b.IdSkimPerkhidmatan
                              join b2 in _dbContext.PDORujStatusPermohonan
@@ -134,7 +134,7 @@ namespace HR.Application.Services.PDO
                     Keterangan = dto.Keterangan,
                     IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                     IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                    KodRujStatusSkim = 0,
+                    KodRujStatusSkim = "",
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
                     Jumlah = dto.Jumlah
@@ -377,7 +377,7 @@ namespace HR.Application.Services.PDO
                         Keterangan = dto.Keterangan,
                         IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                         IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                        KodRujStatusSkim = 0,
+                        KodRujStatusSkim = "",
                         IndikatorSkim = dto.IndikatorSkim,
                         KodRujMatawang = dto.KodRujMatawang,
                         Jumlah = dto.Jumlah
@@ -553,7 +553,7 @@ namespace HR.Application.Services.PDO
                 _logger.LogInformation("Getting CarianSkimPerkhidmatanResponseDto using EF Core query");
 
                 var query = (from s in _dbContext.PDOSkimPerkhidmatan
-                             where s.KodRujStatusSkim == 1
+                             where s.KodRujStatusSkim == "1"
                              orderby s.Kod
                              select new
                              {

@@ -19,7 +19,7 @@ namespace HR.Core.Entities.PDO
         public bool IndikatorSkimKritikal { get; set; }
         public bool IndikatorKenaikanPGT { get; set; }
         public string? ButiranKemaskini { get; set; }
-        public int KodRujStatusSkim { get; set; }
+        public string? KodRujStatusSkim { get; set; }
         [NotMapped]
         public bool StatusAktif { get; set; }
         public bool? IndikatorSkim { get; set; }
