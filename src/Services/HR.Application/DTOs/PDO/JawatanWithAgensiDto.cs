@@ -13,4 +13,20 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public string Agensi { get; set; }
     }
+    public class CarianJawatanFilterDto
+    {
+        public int Id { get; set; }
+        public string? Nama { get; set; }
+        public string? UnitOrganisasi { get; set; }
+    }
+    public class CarianJawatanResponseDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string NamaJawatan { get; set; }
+        public string UnitOrganisasi { get; set; }
+        public string StatusPengisian { get; set; }
+        public DateTime? TarikhStatusKekosongan { get; set; }
+    }
 }
