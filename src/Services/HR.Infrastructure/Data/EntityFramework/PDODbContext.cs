@@ -49,6 +49,7 @@ namespace HR.Infrastructure.Data.EntityFramework
         public DbSet<PDOStatusSkimPerkhidmatan> PDOStatusSkimPerkhidmatan { get; set; }
         public DbSet<PDORujStatusRekod> PDORujStatusRekod { get; set; }
         public DbSet<PDOKekosonganJawatan> PDOKekosonganJawatan { get; set; }
+        public DbSet<PDORujStatusKekosonganJawatan> PDORujStatusKekosonganJawatan { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
@@ -177,6 +178,14 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.ToTable("PDO_KekosonganJawatan");
                 entity.HasKey(e => e.Id);
             });
+
+            modelBuilder.Entity<PDORujStatusKekosonganJawatan>(entity =>
+            {
+                entity.ToTable("PDO_RujStatusKekosonganJawatan");
+                entity.HasKey(e => e.Kod);
+                entity.Ignore(e => e.Id);
+            });
+
             base.OnModelCreating(modelBuilder);
         }
     }
