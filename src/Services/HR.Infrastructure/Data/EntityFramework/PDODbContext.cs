@@ -116,10 +116,16 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.HasKey(e => e.Id);
             });
 
-            modelBuilder.Entity<PDOPermohonanPengisian>(entity =>
+            modelBuilder.Entity<PDOStatusPermohonanPengisian>(entity =>
             {
                 entity.ToTable("PDO_StatusPermohonanPengisian");
                 entity.HasKey(e => e.Id);
+            });
+            modelBuilder.Entity<PDORujJenisAgensi>(entity =>
+            {
+                entity.ToTable("PDO_RujJenisAgensi");
+                entity.HasKey(e => e.Kod); 
+                entity.Ignore(e => e.Id); 
             });
 
             base.OnModelCreating(modelBuilder);
