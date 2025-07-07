@@ -21,6 +21,8 @@ namespace HR.Application.Services.PDO
         public JawatanService(IPDOUnitOfWork unitOfWork, PDODbContext dbContext, ILogger<GredService> logger)
         {
             _context = dbContext;
+            _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<List<JawatanWithAgensiDto>> GetJawatanWithAgensiAsync(string namaJwtn, string kodCartaOrganisasi)
