@@ -140,6 +140,11 @@ namespace HR.Infrastructure.Data.EntityFramework
                 entity.ToTable("PDO_PengisianJawatan");
                 entity.HasKey(e => e.Id);
             });
+            modelBuilder.Entity<PDOGredSkimJawatan>(entity =>
+            {
+                entity.ToTable("PDO_GredSkimJawatan");
+                entity.HasKey(e => new { e.IdJawatan, e.IdGred, e.IdSkimPerkhidmatan });
+            });
 
             base.OnModelCreating(modelBuilder);
         }
