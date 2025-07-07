@@ -42,7 +42,19 @@ public class JawatanController : ControllerBase
 
         });
     }
-    
+    [HttpPost("getCarianJawatan")]
+    public async Task<IActionResult> GetCarianJawatan([FromBody] CarianJawatanFilterDto filter)
+    {
+        _logger.LogInformation("Getting Carian Jawatan List");
+
+        var data = await _jawatanService.GetCarianJawatanAsync(filter);
+        return Ok(new
+        {
+            status = data.Count() > 0 ? "Sucess" : "Failed",
+            items = data
+
+        });
+    }
 
 
 }
