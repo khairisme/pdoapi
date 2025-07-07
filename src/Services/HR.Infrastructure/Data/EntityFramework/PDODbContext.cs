@@ -39,6 +39,15 @@ namespace HR.Infrastructure.Data.EntityFramework
         public DbSet<PDOAktivitiOrganisasi> PDOAktivitiOrganisasi { get; set; }
         public DbSet<PDORujKategoriAktivitiOrganisasi> PDORujKategoriAktivitiOrganisasi { get; set; }
         public DbSet<PDORujJenisPermohonan> PDORujJenisPermohonan { get; set; }
+       public DbSet<PDOPermohonanPengisian> PDOPermohonanPengisian { get; set; }
+        public DbSet<PDOStatusPermohonanPengisian> PDOStatusPermohonanPengisian { get; set; }
+        public DbSet<PDORujJenisAgensi> PDORujJenisAgensi { get; set; }
+        public DbSet<PDORujKategoriUnitOrganisasi> PDORujKategoriUnitOrganisasi { get; set; }
+        public DbSet<PDOPengisianJawatan> PDOPengisianJawatan { get; set; }
+        public DbSet<PDOGredSkimJawatan> PDOGredSkimJawatan { get; set; }
+        public DbSet<PDOPermohonanPengisianSkim> PDOPermohonanPengisianSkim { get; set; }
+        public DbSet<PDOStatusSkimPerkhidmatan> PDOStatusSkimPerkhidmatan { get; set; }
+        public DbSet<PDORujStatusRekod> PDORujStatusRekod { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
