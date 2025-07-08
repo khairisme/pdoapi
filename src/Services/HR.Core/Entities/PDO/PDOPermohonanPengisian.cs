@@ -10,6 +10,7 @@ namespace HR.Core.Entities.PDO
     [Table("PDO_PermohonanPengisian")]
     public class PDOPermohonanPengisian : PDOBaseEntity
     {
+       
         public int IdUnitOrganisasi { get; set; }
         public string NomborRujukan { get; set; }
         public string Tajuk { get; set; }
