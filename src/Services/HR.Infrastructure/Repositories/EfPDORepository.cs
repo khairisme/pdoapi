@@ -98,6 +98,19 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
 
         return true;
     }
+    public async Task<bool> DeleteAsync(int id)
+    {
+        // Soft delete - update IsDeleted flag
+        var entity = await _dbSet.FindAsync(id);
+        if (entity == null)
+            return false;
+
+        entity.StatusAktif = false;
+        entity.TarikhPinda = DateTime.UtcNow;
+        entity.IdPinda = Guid.TryParse(_currentUserService.UserId, out var userId) ? userId : Guid.Empty;
+
+        return true;
+    }
     public async Task<bool> ExistsAsync(Guid id)
     {
         return await _dbSet.AnyAsync(e => Convert.ToBoolean(e.StatusAktif));

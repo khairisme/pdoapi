@@ -110,6 +110,14 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         var rowsAffected = await conn.ExecuteAsync(query, new { Id = id, ModifiedAt = DateTime.UtcNow });
         return rowsAffected > 0;
     }
+    public async Task<bool> DeleteAsync(int id)
+    {
+        // Soft delete
+        using var conn = _connection.CreateConnection();
+        var query = $"UPDATE {_tableName} SET IsDeleted = 1, ModifiedAt = @ModifiedAt WHERE Id = @Id";
+        var rowsAffected = await conn.ExecuteAsync(query, new { Id = id, ModifiedAt = DateTime.UtcNow });
+        return rowsAffected > 0;
+    }
 
     public async Task<int> CountAsync()
     {

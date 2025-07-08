@@ -54,7 +54,12 @@ public interface IRepository<T> where T : class
     /// Delete an entity
     /// </summary>
     Task<bool> DeleteAsync(Guid id);
-    
+
+    /// <summary>
+    /// Delete an entity
+    /// </summary>
+    Task<bool> DeleteAsync(int id);
+
     /// <summary>
     /// Count entities
     /// </summary>

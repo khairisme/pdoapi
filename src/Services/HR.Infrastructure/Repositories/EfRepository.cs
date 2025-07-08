@@ -92,6 +92,19 @@ public class EfRepository<T> : IRepository<T> where T : BaseEntity
         return true;
     }
 
+    public async Task<bool> DeleteAsync(int id)
+    {
+        // Soft delete - update IsDeleted flag
+        var entity = await _dbSet.FindAsync(id);
+        if (entity == null)
+            return false;
+
+        entity.IsDeleted = true;
+        entity.ModifiedAt = DateTime.UtcNow;
+
+        return true;
+    }
+
     public async Task<int> CountAsync()
     {
         return await _dbSet.CountAsync(e => !e.IsDeleted);
