@@ -15,9 +15,9 @@ namespace HR.Application.DTOs.PDO
     }
     public class CarianJawatanFilterDto
     {
-        public int Id { get; set; }
-        public string? Nama { get; set; }
-        public string? UnitOrganisasi { get; set; }
+        public int? SkimPerkhidmatanId { get; set; }
+        public string? NamaJawatan { get; set; }
+        public int? UnitOrganisasi { get; set; }
     }
     public class CarianJawatanResponseDto
     {

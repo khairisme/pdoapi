@@ -44,7 +44,7 @@ namespace HR.Application.Services.PDO
         }
         public async Task<List<CarianJawatanResponseDto>> GetCarianJawatanAsync(CarianJawatanFilterDto filter)
         {
-            _logger.LogInformation("Getting all CarianJawatanResponseDto using EF Core join");
+            _logger.LogInformation("GetCarianJawatanAsync: Getting CarianJawatanSebenar with filter: {@Filter}", filter);
             try
             {
                 var query = from a in _context.PDOJawatan
@@ -57,8 +57,10 @@ namespace HR.Application.Services.PDO
                             join e2 in _context.PDORujStatusKekosonganJawatan on e.KodRujStatusKekosonganJawatan equals e2.Kod
                             join f in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals f.Id
                             where e.KodRujStatusKekosonganJawatan == "01"
-                                  && c.Id == filter.Id
-                               
+                                  && (filter.SkimPerkhidmatanId == null || c.Id == filter.SkimPerkhidmatanId)
+                                  && (string.IsNullOrEmpty(filter.NamaJawatan) || a.Nama.Contains(filter.NamaJawatan))
+                                  && (filter.UnitOrganisasi == null || a.IdUnitOrganisasi == filter.UnitOrganisasi)
+                            orderby a.Kod
                             select new
                             {
                                 a.Id,
@@ -69,13 +71,11 @@ namespace HR.Application.Services.PDO
                                 e.TarikhStatusKekosongan
                             };
 
-                if (!string.IsNullOrEmpty(filter.Nama))
-                    query = query.Where(x => x.NamaJawatan.Contains(filter.Nama));
-
-                if (!string.IsNullOrEmpty(filter.UnitOrganisasi))
-                    query = query.Where(x => x.UnitOrganisasi.Contains(filter.UnitOrganisasi));
+                _logger.LogInformation("GetCarianJawatanAsync: Executing query to fetch CarianJawatan data");
 
                 var data = await query.ToListAsync();
+
+                _logger.LogInformation("GetCarianJawatanAsync: Retrieved {Count} records from database", data.Count);
 
                 var result = data.Select((x, index) => new CarianJawatanResponseDto
                 {
@@ -88,11 +88,12 @@ namespace HR.Application.Services.PDO
                     TarikhStatusKekosongan = x.TarikhStatusKekosongan
                 }).ToList();
 
+                _logger.LogInformation("GetCarianJawatanAsync: Successfully processed {Count} CarianJawatan records", result.Count);
                 return result;
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "GetCarianJawatanAsync: Failed to retrieve CarianJawatan data with filter: {@Filter}", filter);
                 throw new Exception("Failed to retrive data");
             }
         }

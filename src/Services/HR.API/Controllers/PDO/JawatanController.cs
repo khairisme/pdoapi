@@ -7,6 +7,7 @@ using HR.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
@@ -42,21 +43,52 @@ public class JawatanController : ControllerBase
 
         });
     }
+    /// <summary>
+    /// GetCarianJawatan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
     [HttpPost("getCarianJawatan")]
     public async Task<IActionResult> GetCarianJawatan([FromBody] CarianJawatanFilterDto filter)
     {
-        _logger.LogInformation("Getting Carian Jawatan List");
 
-        var data = await _jawatanService.GetCarianJawatanAsync(filter);
-        return Ok(new
+        _logger.LogInformation("GetCarianJawatan: GetCarianJawatan method called from controller with filter: {@Filter}", filter);
+        try
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
-            items = data
+            var data = await _jawatanService.GetCarianJawatanAsync(filter);
 
-        });
+            _logger.LogInformation("GetCarianJawatan: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetCarianJawatan: Error occurred in controller while processing request with filter: {@Filter}", filter);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<CarianJawatanResponseDto>()
+            });
+        }
+
+
+     
     }
     /// <summary>
-    /// GetCarianJawatan
+    /// getCarianJawatanSebenar
     /// </summary>
     /// <param name="filter">Filter criteria</param>
     /// <returns>Returns a list of data matching the filter criteria</returns>
