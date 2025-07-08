@@ -4,6 +4,7 @@ using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,9 +58,9 @@ namespace HR.Application.Services.PDO
                             join e2 in _context.PDORujStatusKekosonganJawatan on e.KodRujStatusKekosonganJawatan equals e2.Kod
                             join f in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals f.Id
                             where e.KodRujStatusKekosonganJawatan == "01"
-                                  && (filter.SkimPerkhidmatanId == null || c.Id == filter.SkimPerkhidmatanId)
+                                  && c.Id == filter.SkimPerkhidmatanId
                                   && (string.IsNullOrEmpty(filter.NamaJawatan) || a.Nama.Contains(filter.NamaJawatan))
-                                  && (filter.UnitOrganisasi == null || a.IdUnitOrganisasi == filter.UnitOrganisasi)
+                                  && (string.IsNullOrEmpty(filter.UnitOrganisasi) || f.Nama.Contains(filter.UnitOrganisasi))
                             orderby a.Kod
                             select new
                             {
@@ -70,7 +71,6 @@ namespace HR.Application.Services.PDO
                                 StatusPengisian = e2.Nama,
                                 e.TarikhStatusKekosongan
                             };
-
                 _logger.LogInformation("GetCarianJawatanAsync: Executing query to fetch CarianJawatan data");
 
                 var data = await query.ToListAsync();
@@ -117,7 +117,7 @@ namespace HR.Application.Services.PDO
                                   && (string.IsNullOrEmpty(filter.KodJawatanSebenar) || a.Kod == filter.KodJawatanSebenar)
                                   && (string.IsNullOrEmpty(filter.NamaJawatanSebenar) || a.Nama.Contains(filter.NamaJawatanSebenar))
                                   && (string.IsNullOrEmpty(filter.StatusKekosonganJawatan) || e2.Kod == filter.StatusKekosonganJawatan)
-                                  && (filter.UnitOrganisasi == null || a.IdUnitOrganisasi == filter.UnitOrganisasi)
+                                  && (filter.UnitOrganisasiId == null || a.IdUnitOrganisasi == filter.UnitOrganisasiId)
                             orderby a.Kod
                             select new
                             {

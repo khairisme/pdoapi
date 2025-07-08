@@ -17,7 +17,7 @@ namespace HR.Application.DTOs.PDO
     {
         public int? SkimPerkhidmatanId { get; set; }
         public string? NamaJawatan { get; set; }
-        public int? UnitOrganisasi { get; set; }
+        public string? UnitOrganisasi { get; set; }
     }
     public class CarianJawatanResponseDto
     {
@@ -35,7 +35,7 @@ namespace HR.Application.DTOs.PDO
         public string? KodJawatanSebenar { get; set; }
         public string? NamaJawatanSebenar { get; set; }
         public string? StatusKekosonganJawatan { get; set; }
-        public int? UnitOrganisasi { get; set; }
+        public int? UnitOrganisasiId { get; set; }
         
     }
     public class CarianJawatanSebenarResponseDto
