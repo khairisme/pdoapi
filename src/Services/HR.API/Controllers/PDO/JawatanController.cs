@@ -55,6 +55,46 @@ public class JawatanController : ControllerBase
 
         });
     }
+    /// <summary>
+    /// GetCarianJawatan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+    [HttpPost("getCarianJawatanSebenar")]
+    public async Task<IActionResult> GetCarianJawatanSebenar([FromBody] CarianJawatanSebenarFilterDto filter)
+    {
+        _logger.LogInformation("GetCarianJawatanSebenar: GetCarianJawatanSebenar method called from controller with filter: {@Filter}", filter);
+        try
+        {
+            var data = await _jawatanService.GetCarianJawatanSebenar(filter);
+
+            _logger.LogInformation("GetCarianJawatanSebenar: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetCarianJawatanSebenar: Error occurred in controller while processing request with filter: {@Filter}", filter);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<CarianJawatanSebenarResponseDto>()
+            });
+        }
+    }
 
 
 }
