@@ -13,6 +13,7 @@ namespace HR.Core.Entities.PDO
         public int IdPermohonanPengisianSkim { get; set; }
         public int IdJawatan { get; set; }
         public Guid? IdPemilikKompetensi { get; set; }
-        
+        public int IdPermohonanPengisian { get; set; }
+        public int IdJawatanSebenar { get; set; }
     }
 }

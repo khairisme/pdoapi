@@ -24,7 +24,7 @@ namespace HR.Core.Entities.PDO
         public bool StatusAktif { get; set; }
         public bool? IndikatorSkim { get; set; }
 
-        public string KodRujMatawang { get; set; }
+        public string? KodRujMatawang { get; set; }
 
         public decimal? Jumlah { get; set; }
     }

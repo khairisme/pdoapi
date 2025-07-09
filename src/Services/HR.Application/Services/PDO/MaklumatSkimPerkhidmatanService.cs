@@ -135,10 +135,11 @@ namespace HR.Application.Services.PDO
                     Keterangan = dto.Keterangan,
                     IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                     IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                    KodRujStatusSkim = "",
+                    KodRujStatusSkim = "01",
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
                     Jumlah = dto.Jumlah
+                    
 
                 };
 
@@ -380,7 +381,7 @@ namespace HR.Application.Services.PDO
                         Keterangan = dto.Keterangan,
                         IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                         IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                        KodRujStatusSkim = "",
+                        KodRujStatusSkim = "01",
                         IndikatorSkim = dto.IndikatorSkim,
                         KodRujMatawang = dto.KodRujMatawang,
                         Jumlah = dto.Jumlah
