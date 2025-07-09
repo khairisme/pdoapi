@@ -11,7 +11,8 @@ namespace HR.Core.Entities.PDO
     [Table("PDO_UnitOrganisasi")]
     public class PDOUnitOrganisasi : PDOBaseEntity
     {
-        
+
+        public string KodRujKategoriUnitOrganisasi { get; set; }
         public string KodRujJenisAgensi { get; set; }
 
        

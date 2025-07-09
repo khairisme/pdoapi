@@ -16,6 +16,7 @@ namespace HR.Application.DTOs.PDO
     public class GredResultDto
     {
         public int Bil { get; set; }
+        public int Id { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string Keterangan { get; set; }

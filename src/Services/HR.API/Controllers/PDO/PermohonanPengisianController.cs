@@ -239,4 +239,121 @@ public class PermohonanPengisianController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Get Filtered Papar Permohonan Pengisian  Jawatan 
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    [HttpPost("getFilteredPermohonanPengisiaJawatan")]
+    public async Task<IActionResult> GetFilteredPermohonanPengisiaJawatanAsync([FromBody] PermohonanPengisianJawatanFilterDto filter)
+    {
+        _logger.LogInformation("Getting  Papar Permohonan Pengisian Jawatan");
+
+
+        var data = await _service.GetFilteredPermohonanJawatanAsync(filter);
+        return Ok(new
+        {
+            status = data.Count() > 0 ? "Sucess" : "Failed",
+            items = data
+
+        });
+    }
+
+    /// <summary>
+    //Get Jawatan By Skim And Agensi
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+
+    [HttpPost("getJawatanBySkimAndAgensi")]
+    public async Task<IActionResult> GetJawatanBySkimAndAgensi([FromBody] PenolongPegawaiTeknologiMaklumatFilterDto filter )
+    {
+        _logger.LogInformation("Get Jawatan By Skim And Agensi");
+
+
+
+        try
+        {
+            var result = await _service.GetJawatanBySkimAndAgensiAsync(filter);
+
+            return Ok(new
+            {
+                status = result.IdSkimPerkhidmatan > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetJawatanBySkimAndAgensi: Error occurred in controller while processing request");
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SkimNameWithJawatanDto>()
+            });
+        }
+    }
+    /// <summary>
+    //Get Grouped Jawatan By Agensi
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+
+    [HttpPost("getGroupedJawatanByAgensi")]
+    public async Task<IActionResult> GetGroupedJawatanByAgensi([FromBody] PenolongPegawaiTeknologiMaklumatFilterDto filter)
+    {
+        _logger.LogInformation("Get Grouped Jawatan By Agensi");
+
+
+
+        try
+        {
+            var result = await _service.GetGroupedJawatanByAgensiAsync(filter);
+
+            return Ok(new
+            {
+                status = result.Count > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetGroupedJawatanByAgensi: Error occurred in controller while processing request");
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SkimNameWithJawatanDto>()
+            });
+        }
+    }
+    /// <summary>
+    /// Get Simulasi Kewangan by Agensi
+    /// </summary>
+    /// <param name="agensiId"></param>
+    /// <returns></returns>
+   // [HttpGet("getSimulasiByAgensi/{agensiId}")]
+    //public async Task<IActionResult> GetSimulasiByAgensi(int agensiId)
+    //{
+    //    var result = await _service.GetSimulasiByAgensiAsync(agensiId);
+    //    return Ok(result);
+    //}
+
+
 }

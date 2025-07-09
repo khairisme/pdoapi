@@ -18,5 +18,9 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> UpdateAsync(SavePermohonanPengisianPOARequestDto request);
 
         Task<List<PermohonanPOAIFilterResponseDto>> GetPermohonanListPOAIAsync(PermohonanPengisianPOAIFilterDto search);
+        Task<List<PermohonanPengisianJawatanResponseDto>> GetFilteredPermohonanJawatanAsync(PermohonanPengisianJawatanFilterDto filter);
+        Task<SkimNameWithJawatanDto?> GetJawatanBySkimAndAgensiAsync(PenolongPegawaiTeknologiMaklumatFilterDto filterDto);
+        Task<List<AgensiWithJawatanDto>> GetGroupedJawatanByAgensiAsync(PenolongPegawaiTeknologiMaklumatFilterDto filter);
+        //Task<List<SimulasiKewanganResponseDto>> GetSimulasiByAgensiAsync(int agensiId);
     }
 }

@@ -22,6 +22,7 @@ namespace HR.Application.DTOs.PDO
     public class MaklumatKlasifikasiPerkhidmatanSearchResponseDto
     {
         public int Bil { get; set; }
+        public int Id  { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string FungsiUmum { get; set; }

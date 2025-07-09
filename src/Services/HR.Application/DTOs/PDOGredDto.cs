@@ -9,6 +9,7 @@ namespace HR.Application.DTOs
     public class PDOGredDto
     {
         public int Bil { get; set; }
+        public int Id { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string? Keterangan { get; set; }
@@ -17,6 +18,7 @@ namespace HR.Application.DTOs
     public class GredSearchResultDTO
     {
         public int Bil { get; set; }
+        public int Id { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string Keterangan { get; set; }

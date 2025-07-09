@@ -15,4 +15,13 @@ namespace HR.Application.DTOs.PDO
         
 
     }
+    public class UnitOrganisasiKementerianDto
+    {
+        public string Kod { get; set; }
+
+        public string Nama { get; set; } = null!;
+        
+
+
+    }
 }

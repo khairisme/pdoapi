@@ -5,6 +5,7 @@ using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -217,6 +218,8 @@ namespace HR.Application.Services.PDO
             return result;
         }
 
+       
+
         public async Task<bool> UpdateAsync(SavePermohonanPengisianPOARequestDto requestDto )
         {
             _logger.LogInformation("Service: Updating PermohonanPengisian POA");
@@ -294,6 +297,184 @@ namespace HR.Application.Services.PDO
                 return false;
             }
         }
+        public async Task<SkimNameWithJawatanDto?> GetJawatanBySkimAndAgensiAsync(PenolongPegawaiTeknologiMaklumatFilterDto filterDto)
+        {
+            // Get Skim Info
+            var skimInfo = await (from ppps in _context.PDOPermohonanPengisianSkim
+                                  join psp in _context.PDOSkimPerkhidmatan on ppps.IdSkimPerkhidmatan equals psp.Id
+                                  where ppps.IdPermohonanPengisian == filterDto.IdPermohonanPengisian
+                                        && ppps.Id == filterDto.IdPermohonanPengisianSkim
+                                  select new
+                                  {
+                                      IdSkim = ppps.IdSkimPerkhidmatan,
+                                      Nama = psp.Nama
+                                  }).FirstOrDefaultAsync();
+
+            if (skimInfo == null)
+                return null;
+
+            // Get jawatan data
+            var jawatanList = await (from ppp in _context.PDOPermohonanPengisian
+                                     join ppps in _context.PDOPermohonanPengisianSkim
+                                         on ppp.Id equals ppps.IdPermohonanPengisian
+                                     join ppj in _context.PDOPengisianJawatan
+                                         on ppp.Id equals ppj.IdPermohonanPengisian
+                                     join pj in _context.PDOJawatan
+                                         on ppj.IdJawatanSebenar equals pj.Id
+                                     join pgsj in _context.PDOGredSkimJawatan
+                                         on pj.Id equals pgsj.IdJawatan
+                                     join pg in _context.PDOGred
+                                         on pgsj.IdGred equals pg.Id
+                                     where ppp.IdUnitOrganisasi == filterDto.AgensiId
+                                           && ppps.IdSkimPerkhidmatan == skimInfo.IdSkim
+                                     select new PenolongPegawaiTeknologiMaklumatResponseDto
+                                     {
+                                         KodJawatan = pj.Kod,
+                                         NamaJawatan = pj.Nama,
+                                         Gred = pg.Nama
+                                     }).ToListAsync();
+
+            return new SkimNameWithJawatanDto
+            {
+                IdSkimPerkhidmatan = skimInfo.IdSkim,
+                Nama = skimInfo.Nama,
+                Data = jawatanList
+            };
+        }
+        public async Task<List<PermohonanPengisianJawatanResponseDto>> GetFilteredPermohonanJawatanAsync(PermohonanPengisianJawatanFilterDto filter)
+        {
+            var query = from a in _context.PDOPermohonanPengisian
+                        join ppps in _context.PDOPermohonanPengisianSkim on a.Id equals ppps.IdPermohonanPengisian
+                        join b in _context.PDOStatusPermohonanPengisian on a.Id equals b.IdPermohonanPengisian
+                        join c in _context.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals c.Kod
+                        join puo in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals puo.Id
+                        where puo.StatusAktif  && puo.Kod == "0001"
+                              && (filter.Kementerian == null || puo.Id == filter.Kementerian)
+                              && (filter.StatusPermohonan == null || c.Kod == filter.StatusPermohonan)
+                        orderby a.Id
+                        select new
+                        {
+                            a.Id,
+                            Kementerian = puo.Nama,
+                            ppps.BilanganPengisian,
+                            a.TarikhPermohonan,
+                            Status = c.Nama
+                        };
+
+            var result = await query.ToListAsync();
+
+            return result.Select((x, index) => new PermohonanPengisianJawatanResponseDto
+            {
+                Id=x.Id,
+                Bil = index + 1,
+                Kementerian = x.Kementerian,
+                BilanganPengisian = x.BilanganPengisian,
+                TarikhPermohonan =Convert.ToDateTime( x.TarikhPermohonan),
+                Status = x.Status
+            }).ToList();
+        }
+
+
+        public async Task<List<AgensiWithJawatanDto>> GetGroupedJawatanByAgensiAsync(PenolongPegawaiTeknologiMaklumatFilterDto filter)
+        {
+            // Step 1: Get all matching Agensi
+            var agensiList = await (from ppp in _context.PDOPermohonanPengisian
+                                    join ppps in _context.PDOPermohonanPengisianSkim
+                                        on ppp.Id equals ppps.IdPermohonanPengisian
+                                    join psp in _context.PDOSkimPerkhidmatan
+                                        on ppps.IdSkimPerkhidmatan equals psp.Id
+                                    join puo in _context.PDOUnitOrganisasi
+                                        on ppp.IdUnitOrganisasi equals puo.Id
+                                    where ppps.IdPermohonanPengisian == filter.IdPermohonanPengisian
+                                       && ppps.Id == filter.IdPermohonanPengisianSkim
+                                    select new
+                                    {
+                                        AgensiId = puo.Id,
+                                        puo.Kod,
+                                        NamaAgensi = puo.Nama
+                                    })
+                                    .Distinct()
+                                    .ToListAsync();
+
+            var result = new List<AgensiWithJawatanDto>();
+
+            foreach (var agensi in agensiList)
+            {
+                // Step 2: Get jawatan for each Agensi
+                var jawatanList = await (from ppp in _context.PDOPermohonanPengisian
+                                         join puo in _context.PDOUnitOrganisasi
+                                             on ppp.IdUnitOrganisasi equals puo.Id
+                                         join ppj in _context.PDOPengisianJawatan
+                                             on ppp.Id equals ppj.IdPermohonanPengisian
+                                         join pj in _context.PDOJawatan
+                                             on ppj.IdJawatanSebenar equals pj.Id
+                                         join pgsj in _context.PDOGredSkimJawatan
+                                             on pj.Id equals pgsj.IdJawatan
+                                         join pg in _context.PDOGred
+                                             on pgsj.IdGred equals pg.Id
+                                         where ppp.IdUnitOrganisasi == agensi.AgensiId
+                                         select new
+                                         {
+                                             pj.Id,
+                                             pj.Kod,
+                                             pj.Nama,
+                                             Gred = pg.Nama,
+                                             Agensi = agensi.NamaAgensi
+                                         }).ToListAsync();
+
+                var jawatanDtoList = jawatanList
+                .Select((x, index) => new PermohonanPengisianJawatanWithAgensiResponseDto
+                {
+                    Bil = index + 1,
+                    Id=x.Id,
+                    KodJawatan = x.Kod,
+                    NamaJawatan = x.Nama,
+                    Gred = x.Gred
+                }).ToList();
+              
+
+                result.Add(new AgensiWithJawatanDto
+                {
+                    AgensiId = agensi.AgensiId,
+                    Kod = agensi.Kod,
+                    NamaAgensi = agensi.NamaAgensi,
+                    Data = jawatanDtoList
+                });
+            }
+
+            return result;
+        }
+
+        //public async Task<List<SimulasiKewanganResponseDto>> GetSimulasiByAgensiAsync(int agensiId)
+        //{
+        //    var query = from ppp in _context.PDOPermohonanPengisian
+        //                join ppps in _context.PDOPermohonanPengisianSkim
+        //                    on ppp.Id equals ppps.IdPermohonanPengisian
+        //                join puo in _context.PDOUnitOrganisasi
+        //                    on ppp.IdUnitOrganisasi equals puo.Id
+        //                join ppj in _context.PDOPengisianJawatan
+        //                    on ppps.Id equals ppj.IdPermohonanPengisianSkim
+        //                join pj in _context.PDOJawatan
+        //                    on ppj.IdJawatan equals pj.Id
+        //                join pgsj in _context.PDOGredSkimJawatan
+        //                    on pj.Id equals pgsj.IdJawatan
+        //                join pg in _context.PDOGred
+        //                    on pgsj.IdGred equals pg.Id
+        //                join pjg in _context.PDPJadualGaji
+        //                    on pg.Id equals pjg.IdGred
+        //                where ppp.IdUnitOrganisasi == agensiId
+        //                select new SimulasiKewanganResponseDto
+        //                {
+        //                    KodJawatan = pj.Kod,
+        //                    NamaJawatan = pj.Nama,
+        //                    Gred = pg.Nama,
+        //                    JumlahImplikasiKewanganSebulan = pjg.GajiMinimum,
+        //                    JumlahImplikasiKewanganSetahun = pjg.GajiMinimum * 12
+        //                };
+
+        //    return await query.ToListAsync();
+        //}
+
         public async Task<List<PermohonanPOAIFilterResponseDto>> GetPermohonanListPOAIAsync(PermohonanPengisianPOAIFilterDto filter)
         {
             var query = from a in _context.PDOPermohonanPengisian

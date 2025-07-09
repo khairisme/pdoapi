@@ -75,4 +75,64 @@ namespace HR.Application.DTOs.PDO
         public string KodRujStatusPermohonan { get; set; }
         public string Status { get; set; }
     }
+    public class PermohonanPengisianJawatanFilterDto
+    {
+        public int? Kementerian { get; set; }
+        public string StatusPermohonan { get; set; }
+    }
+    public class PermohonanPengisianJawatanResponseDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string Kementerian { get; set; }
+        public int BilanganPengisian { get; set; }
+        public DateTime TarikhPermohonan { get; set; }
+        public string Status { get; set; }
+    }
+    public class PenolongPegawaiTeknologiMaklumatResponseDto
+    {
+      
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+        
+    }
+    public class SkimNameWithJawatanDto
+    {
+        public int IdSkimPerkhidmatan { get; set; }
+        public string Nama { get; set; }
+        public List<PenolongPegawaiTeknologiMaklumatResponseDto> Data { get; set; }
+    }
+    public class PenolongPegawaiTeknologiMaklumatFilterDto
+    {
+        public int IdPermohonanPengisianSkim { get; set; }
+        public int IdPermohonanPengisian { get; set; }
+        public int AgensiId { get; set; }
+    }
+
+    public class PermohonanPengisianJawatanWithAgensiResponseDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+        public string Agensi { get; set; }
+    }
+    public class AgensiWithJawatanDto
+    {
+        public int AgensiId { get; set; }
+        public string Kod { get; set; }
+        public string NamaAgensi { get; set; }
+        public List<PermohonanPengisianJawatanWithAgensiResponseDto> Data { get; set; }
+    }
+
+    public class SimulasiKewanganResponseDto
+    {
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+        public decimal JumlahImplikasiKewanganSebulan { get; set; }
+        public decimal JumlahImplikasiKewanganSetahun { get; set; }
+    }
 }

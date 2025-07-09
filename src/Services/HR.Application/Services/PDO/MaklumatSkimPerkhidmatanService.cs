@@ -96,6 +96,7 @@ namespace HR.Application.Services.PDO
                     .Select((q, index) => new MaklumatSkimPerkhidmatanSearchResponseDto
                     {
                         Bil = index + 1,
+                        Id = q.Id,
                         Kod = q.Kod,
                         Nama = q.Nama,
                         Keterangan = q.Keterangan,
@@ -316,6 +317,7 @@ namespace HR.Application.Services.PDO
                         
                         select new
                         {
+                            a.Id,
                             a.Kod,
                             a.Nama,
                             a.Keterangan,
@@ -342,6 +344,7 @@ namespace HR.Application.Services.PDO
             return list.AsEnumerable().Select((x, index) => new SkimPerkhidmatanDto
             {
                 Bil = index + 1,
+                Id=x.Id,
                 Kod = x.Kod,
                 Nama = x.Nama,
                 Keterangan = x.Keterangan,

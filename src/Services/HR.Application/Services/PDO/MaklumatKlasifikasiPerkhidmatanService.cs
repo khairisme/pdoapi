@@ -40,6 +40,7 @@ namespace HR.Application.Services.PDO
                              orderby a.Kod
                              select new
                              {
+                                 a.Id,
                                  a.Kod,
                                  a.Nama,
                                  a.Keterangan,
@@ -52,6 +53,7 @@ namespace HR.Application.Services.PDO
                  .Select((x, index) => new
                  {
                      Bil = index + 1,
+                     x.Id,
                      x.Kod,
                      x.Nama,
                      x.Keterangan,
@@ -83,6 +85,7 @@ namespace HR.Application.Services.PDO
                     .Select((q, index) => new MaklumatKlasifikasiPerkhidmatanSearchResponseDto
                     {
                         Bil = index + 1,
+                        Id = q.Id,
                         Kod = q.Kod,
                         Nama = q.Nama,
                         Keterangan = q.Keterangan,

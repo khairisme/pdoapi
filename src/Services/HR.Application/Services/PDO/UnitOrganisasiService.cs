@@ -42,6 +42,23 @@ namespace HR.Application.Services.PDO
                 KodCartaOrganisasi = pDOUnitOrganisasi.KodCartaOrganisasi
             };
         }
+        public async Task<List<UnitOrganisasiKementerianDto>> GetUnitOrganisasiByKategoriAsync()
+        {
+            var result = await (from puo in _context.PDOUnitOrganisasi
+                                join prkuo in _context.PDORujKategoriUnitOrganisasi
+                                    on puo.KodRujKategoriUnitOrganisasi equals prkuo.Kod
+                                join prja in _context.PDORujJenisAgensi
+                                    on puo.KodRujJenisAgensi equals prja.Kod
+                                where puo.StatusAktif && prkuo.Kod == "0001"
+                                select new UnitOrganisasiKementerianDto
+                                {
+                                    Kod = puo.Kod,
+                                    Nama = puo.Nama
+                                }).ToListAsync();
+
+            return result;
+        }
+
 
     }
 }

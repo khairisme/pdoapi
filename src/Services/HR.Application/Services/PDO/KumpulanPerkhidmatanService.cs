@@ -84,6 +84,7 @@ namespace HR.Application.Services.PDO
                     .Select((q, index) => new CarlKumpulanPerkhidmatanDto
                     {
                         Bil = index + 1,
+                        Id = q.a.Id,
                         Kod = q.a.Kod?.Trim(),
                         Nama = q.a.Nama,
                         Keterangan = q.a.Keterangan,

@@ -45,6 +45,7 @@ namespace HR.Application.Services
                             orderby a.Kod
                             select new
                             {
+                                a.Id,
                                 a.Kod,
                                 a.Nama,
                                 a.Keterangan
@@ -57,6 +58,7 @@ namespace HR.Application.Services
                 return result.Select((x, index) => new PDOGredDto
                 {
                     Bil = index + 1,
+                    Id=x.Id,
                     Kod = x.Kod,
                     Nama = x.Nama,
                     Keterangan = x.Keterangan
@@ -83,6 +85,7 @@ namespace HR.Application.Services
                             where b.StatusAktif == true && c.StatusAktif == true
                             select new
                             {
+                                a.Id,
                                 a.Kod,
                                 a.Nama,
                                 a.Keterangan,
@@ -111,6 +114,7 @@ namespace HR.Application.Services
                 var result = data.Select((x, index) => new GredResultDto
                 {
                     Bil = index + 1,
+                    Id=x.Id,
                     Kod = x.Kod,
                     Nama = x.Nama,
                     Keterangan = x.Keterangan,

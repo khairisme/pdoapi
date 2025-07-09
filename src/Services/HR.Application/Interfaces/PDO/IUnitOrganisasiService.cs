@@ -10,5 +10,6 @@ namespace HR.Application.Interfaces.PDO
     public interface IUnitOrganisasiService
     {
         Task<IEnumerable<UnitOrganisasiDto>> GetAllAsync();
+        Task<List<UnitOrganisasiKementerianDto>> GetUnitOrganisasiByKategoriAsync();
     }
 }

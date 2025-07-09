@@ -41,6 +41,21 @@ public class UnitOrganisasiController : ControllerBase
 
         });
     }
+    /// <summary>
+    /// Get all Kementerian
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("getKementerian")]
+    public async Task<IActionResult> GetKementerian()
+    {
+        var data = await _unitOrganisasiService.GetUnitOrganisasiByKategoriAsync();
+        return Ok(new
+        {
+            status = data.Count() > 0 ? "Sucess" : "Failed",
+            items = data
+
+        });
+    }
 
 
 }
