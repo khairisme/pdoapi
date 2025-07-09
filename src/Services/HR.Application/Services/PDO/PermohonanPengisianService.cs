@@ -1,5 +1,6 @@
 ﻿using Azure;
 using HR.Application.DTOs.PDO;
+using HR.Application.DTOs.PDP;
 using HR.Application.Interfaces.PDO;
 using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
@@ -11,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,11 +24,13 @@ namespace HR.Application.Services.PDO
         private readonly IPDOUnitOfWork _unitOfWork;
         private readonly PDODbContext _context;
         private readonly ILogger<PermohonanPengisianService> _logger;
-        public PermohonanPengisianService(IPDOUnitOfWork unitOfWork, PDODbContext dbContext, ILogger<PermohonanPengisianService> logger)
+        private readonly HttpClient _httpClient;
+        public PermohonanPengisianService(IPDOUnitOfWork unitOfWork, PDODbContext dbContext, ILogger<PermohonanPengisianService> logger, HttpClient httpClient)
         {
             _unitOfWork = unitOfWork;
             _context = dbContext;
             _logger = logger;
+            _httpClient = httpClient; // This now has BaseAddress pre-configured
         }
         public async Task<List<PermohonanPOAFilterResponseDto>> GetPermohonanListPOAAsync(PermohonanPengisianPOAFilterDto filter)
         {
@@ -476,6 +481,15 @@ namespace HR.Application.Services.PDO
         //}
         public async Task<List<SimulasiKewanganByPermohonanDto>> GetSimulasiByPermohonanIdAsync(int idPermohonanPengisian)
         {
+            // Step 1: Fetch JadualGaji from PDP API
+            
+            var response = await _httpClient.GetAsync("api/pdp/JadualGaji/getAll");
+
+            response.EnsureSuccessStatusCode();
+
+            var jadualGajiListapi = await response.Content.ReadFromJsonAsync<JadualGajiApiResponseDto>();
+            var jadualGajiList = jadualGajiListapi.Items;
+            // Step 2: Query local database
             var result = await (from ppp in _context.PDOPermohonanPengisian
                                 join ppps in _context.PDOPermohonanPengisianSkim
                                     on ppp.Id equals ppps.IdPermohonanPengisian
@@ -489,20 +503,31 @@ namespace HR.Application.Services.PDO
                                     on pj.Id equals pgsj.IdJawatan
                                 join pg in _context.PDOGred
                                     on pgsj.IdGred equals pg.Id
-                                //join pjg in _context.PDPJadualGaji
-                                //    on pg.Id equals pjg.IdGred into gajiJoin
-                                //from gj in gajiJoin.DefaultIfEmpty()
                                 where ppp.Id == idPermohonanPengisian
-                                select new SimulasiKewanganByPermohonanDto
+                                select new
                                 {
-                                    KodJawatan = pj.Kod,
-                                    NamaJawatan = pj.Nama,
-                                    Gred = pg.Nama
-                                    //JumlahImplikasiKewanganSebulan = gj.GajiMinimum,
-                                    //JumlahImplikasiKewanganSetahun = gj.GajiMinimum * 12
+                                    pj.Kod,
+                                    pj.Nama,
+                                    GredNama = pg.Nama,
+                                    pg.Id
                                 }).ToListAsync();
 
-            return result;
+            // Step 3: Join with remote JadualGaji data
+            var finalResult = result
+                .Select(x =>
+                {
+                    var gaji = jadualGajiList.FirstOrDefault(j => j.IdGred == x.Id);
+                    return new SimulasiKewanganByPermohonanDto
+                    {
+                        KodJawatan = x.Kod,
+                        NamaJawatan = x.Nama,
+                        Gred = x.GredNama,
+                        JumlahImplikasiKewanganSebulan = gaji?.GajiMinimum ?? 0,
+                        JumlahImplikasiKewanganSetahun = (gaji?.GajiMinimum ?? 0) * 12
+                    };
+                }).ToList();
+
+            return finalResult;
         }
         public async Task<List<PermohonanPOAIFilterResponseDto>> GetPermohonanListPOAIAsync(PermohonanPengisianPOAIFilterDto filter)
         {

@@ -348,11 +348,29 @@ public class PermohonanPengisianController : ControllerBase
     /// </summary>
     /// <param name="idPermohonan"></param>
     /// <returns></returns>
-    [HttpGet("GetSimulasiByPermohonanIdA/{idPermohonan}")]
-    public async Task<IActionResult> GetSimulasiByPermohonanIdA(int idPermohonan)
+    [HttpGet("GetSimulasiByPermohonanId/{idPermohonan}")]
+    public async Task<IActionResult> GetSimulasiByPermohonanId(int idPermohonan)
     {
-        var result = await _service.GetSimulasiByPermohonanIdAsync(idPermohonan);
-        return Ok(result);
+        try
+        {
+            var result = await _service.GetSimulasiByPermohonanIdAsync(idPermohonan);
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetSimulasiByPermohonanId: Error occurred in controller while processing request");
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SkimNameWithJawatanDto>()
+            });
+        }
     }
 
 

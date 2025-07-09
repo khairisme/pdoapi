@@ -6,6 +6,9 @@ using Shared.Messaging.Extensions;
 using HR.API.Models;
 using HR.API.Services;
 using HR.API.Middleware;
+using HR.Application.Services.PDO;
+using HR.API;
+using HR.Application.Interfaces.PDO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,9 @@ builder.Services.AddControllers();
 builder.Services.Configure<KeycloakSettings>(builder.Configuration.GetSection("KeyCloak"));
 
 builder.Services.AddHttpClient<KeyCloakService>();
+var baseUrl = builder.Configuration["ApiSettings:PdpApiBaseUrl"];
+builder.Services.AddHttpClient<IPermohonanPengisianService, PermohonanPengisianService>()
+    .ConfigureHttpClient(client => client.BaseAddress = new Uri(baseUrl));
 
 
 builder.Services.AddSharedApplication();

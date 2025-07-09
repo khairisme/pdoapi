@@ -1,8 +1,10 @@
 using HR.API.Middleware;
 using HR.Application.Interfaces;
 using HR.Application.Interfaces.PDO;
+using HR.Application.Interfaces.PDP;
 using HR.Application.Services;
 using HR.Application.Services.PDO;
+using HR.Application.Services.PDP;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HR.Application;
@@ -49,11 +51,12 @@ public static class DependencyInjection
         services.AddScoped<IPengisianJawatanService, PengisianJawatanService>();
 
 
-        services.AddScoped<IPermohonanPengisianService, PermohonanPengisianService>();
+       // services.AddScoped<IPermohonanPengisianService, PermohonanPengisianService>();
         services.AddScoped<IUnitOrganisasiService, UnitOrganisasiService>();
         services.AddScoped<IRujStatusKekosonganJawatanService, RujStatusKekosonganJawatanService>();
 
         services.AddScoped<IPermohonanPengisianSkimService, PermohonanPengisianSkimService>();
+        services.AddScoped<IJadualGajiService, JadualGajiService>();
 
         return services;
     }
