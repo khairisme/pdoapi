@@ -135,13 +135,11 @@ namespace HR.Application.Services.PDO
                     Keterangan = dto.Keterangan,
                     IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                     IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                    KodRujStatusSkim = "",
+                    KodRujStatusSkim = "01",
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
-                    Jumlah = dto.Jumlah,
-
-
-
+                    Jumlah = dto.Jumlah
+                    
 
                 };
 
@@ -383,7 +381,7 @@ namespace HR.Application.Services.PDO
                         Keterangan = dto.Keterangan,
                         IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                         IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                        KodRujStatusSkim = "",
+                        KodRujStatusSkim = "01",
                         IndikatorSkim = dto.IndikatorSkim,
                         KodRujMatawang = dto.KodRujMatawang,
                         Jumlah = dto.Jumlah
@@ -601,6 +599,34 @@ namespace HR.Application.Services.PDO
                 throw new Exception("Failed to retrieve CarianSkimPerkhidmatan data", ex);
             }
         }
+
+        public async Task<IEnumerable<SkimPerkhidmatanResponseDto>> GetAllAsync()
+        {
+            _logger.LogInformation("GetAllAsync: Getting all SkimPerkhidmatan using LINQ");
+            try
+            {
+                var query = from s in _dbContext.PDOSkimPerkhidmatan
+                            orderby s.Kod
+                            select new SkimPerkhidmatanResponseDto
+                            {
+                                Id = s.Id,
+                                Kod = s.Kod ?? String.Empty,
+                                Nama = s.Nama ?? String.Empty
+                            };
+
+                _logger.LogInformation("GetAllAsync: Executing query to fetch SkimPerkhidmatan data");
+                var result = await query.ToListAsync();
+
+                _logger.LogInformation("GetAllAsync: Successfully retrieved {Count} SkimPerkhidmatan records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetAllAsync: Failed to retrieve SkimPerkhidmatan data");
+                throw;
+            }
+        }
+
 
     }
 }

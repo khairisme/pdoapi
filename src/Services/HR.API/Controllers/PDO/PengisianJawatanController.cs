@@ -2,6 +2,7 @@
 using HR.Application.Interfaces.PDO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.API.Controllers.PDO
 {
@@ -36,7 +37,11 @@ namespace HR.API.Controllers.PDO
                 if (result == null)
                     return NotFound($"No Pengisian Jawatan found for idSkimPerkhidmatan {idSkimPerkhidmatan}");
 
-                return Ok(result);
+                return Ok(new
+                {
+                    status = result.Count > 0 ? "Success" : "Failed",
+                    items = result
+                });
             }
             catch (Exception ex)
             {
@@ -72,24 +77,25 @@ namespace HR.API.Controllers.PDO
         /// </summary>
         /// <param name="pengisianJawatanDto"></param>
         /// <returns></returns>
-        [HttpPost("newPengisianJawatan")]
-        public async Task<IActionResult> Create([FromBody] PengisianJawatanDto pengisianJawatanDto)
-        {
-            _logger.LogInformation("Creating a new PengisianJawatan");
+        /// Need confirmation from Pernec
+        //[HttpPost("newPengisianJawatan")]
+        //public async Task<IActionResult> Create([FromBody] PengisianJawatanDto pengisianJawatanDto)
+        //{
+        //    _logger.LogInformation("Creating a new PengisianJawatan");
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-            var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDto);
+        //    var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDto);
 
-            return Ok(new
-            {
-                status = isSuccess ? "Sucess" : "Failed",
-                items = isSuccess
+        //    return Ok(new
+        //    {
+        //        status = isSuccess ? "Sucess" : "Failed",
+        //        items = isSuccess
 
-            });
+        //    });
 
-        }
+        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)

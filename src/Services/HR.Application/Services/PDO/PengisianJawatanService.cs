@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace HR.Application.Services.PDO
 {
@@ -27,34 +28,45 @@ namespace HR.Application.Services.PDO
             _dbContext = dbContext;
             _logger = logger;
         }
-        public async Task<PengisianJawatanSearchResponseDto?> GetPengisianJawatanAsync(int idSkimPerkhidmatan)
+        public async Task<List<PengisianJawatanSearchResponseDto>> GetPengisianJawatanAsync(int idSkimPerkhidmatan)
         {
             try
             {
                 _logger.LogInformation("Getting PengisianJawatan by ID {Id} using Entity Framework", idSkimPerkhidmatan);
-                var result = await (from a in _dbContext.PDOPengisianJawatan
-                              join b in _dbContext.PDOJawatan
-                                  on a.IdJawatan equals b.Id
-                              join c in _dbContext.PDOUnitOrganisasi
-                                  on b.IdUnitOrganisasi equals c.Id
-                              join d in _dbContext.PDOKekosonganJawatan
-                                  on b.Id equals d.IdJawatan
-                              join e in _dbContext.PDORujStatusKekosonganJawatan
-                                  on d.KodRujStatusKekosonganJawatan equals e.Kod
-                              join f in _dbContext.PDOGredSkimJawatan
-                                  on a.IdJawatan equals f.IdJawatan
-                              where b.StatusAktif == true && f.IdSkimPerkhidmatan == idSkimPerkhidmatan
-                              select new PengisianJawatanSearchResponseDto
-                              {
-                                  Id=a.Id,
-                                  KodJawatan = b.Kod,
-                                  NamaJawatan = b.Nama,
-                                  UnitOrganisasi = c.Nama,
-                                  StatusPengisianJawatan = e.Nama,
-                                  TarikhKekosonganJawatan = d.TarikhStatusKekosongan
-                              }).FirstOrDefaultAsync();
-                
+                var query = from a in _dbContext.PDOPengisianJawatan
+                             join b in _dbContext.PDOJawatan
+                                 on a.IdJawatan equals b.Id
+                             join c in _dbContext.PDOUnitOrganisasi
+                                 on b.IdUnitOrganisasi equals c.Id
+                             join d in _dbContext.PDOKekosonganJawatan
+                                 on b.Id equals d.IdJawatan
+                             join e in _dbContext.PDORujStatusKekosonganJawatan
+                                 on d.KodRujStatusKekosonganJawatan equals e.Kod
+                             join f in _dbContext.PDOGredSkimJawatan
+                                 on a.IdJawatan equals f.IdJawatan
+                             where b.StatusAktif == true && f.IdSkimPerkhidmatan == idSkimPerkhidmatan
+                             select new PengisianJawatanSearchResponseDto
+                             {
+                                 Id = a.Id,
+                                 KodJawatan = b.Kod,
+                                 NamaJawatan = b.Nama,
+                                 UnitOrganisasi = c.Nama,
+                                 StatusPengisianJawatan = e.Nama,
+                                 TarikhKekosonganJawatan = d.TarikhStatusKekosongan
+                             };
 
+                var data = await query.ToListAsync();
+
+                var result = data.Select((x, index) => new PengisianJawatanSearchResponseDto
+                {
+                    Bil = index + 1,
+                    Id = x.Id,
+                    KodJawatan = x.KodJawatan,
+                    NamaJawatan = x.NamaJawatan,
+                    UnitOrganisasi = x.UnitOrganisasi,
+                    StatusPengisianJawatan = x.StatusPengisianJawatan,
+                    TarikhKekosonganJawatan = x.TarikhKekosonganJawatan
+                }).ToList();
 
 
                 return result;

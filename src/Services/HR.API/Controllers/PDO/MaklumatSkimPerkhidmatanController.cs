@@ -7,7 +7,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.API.Controllers.PDO
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/pdo/[controller]")]
     public class MaklumatSkimPerkhidmatanController : Controller
@@ -226,6 +226,26 @@ namespace HR.API.Controllers.PDO
                 _logger.LogError(ex, "Exception during carl Maklumat Kumpulan Perkhidmatan");
                 return StatusCode(500, "Internal Server Error");
             }
+        }
+
+        /// <summary>
+        ///Get all SkimPerkhidmatan
+        /// </summary>
+        /// <param name="RujStatusPermohonanDto"></param>
+        /// <returns></returns>
+        [HttpGet("getAll")]
+        public async Task<IActionResult> getAll()
+        {
+            _logger.LogInformation("Getting all SkimPerkhidmatan");
+
+            var result = await _maklumatSkimPerkhidmatan.GetAllAsync();
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
         }
     }
 }

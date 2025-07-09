@@ -53,6 +53,8 @@ public static class DependencyInjection
         services.AddScoped<IUnitOrganisasiService, UnitOrganisasiService>();
         services.AddScoped<IRujStatusKekosonganJawatanService, RujStatusKekosonganJawatanService>();
 
+        services.AddScoped<IPermohonanPengisianSkimService, PermohonanPengisianSkimService>();
+
         return services;
     }
 }

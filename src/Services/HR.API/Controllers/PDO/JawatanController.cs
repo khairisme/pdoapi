@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class JawatanController : ControllerBase

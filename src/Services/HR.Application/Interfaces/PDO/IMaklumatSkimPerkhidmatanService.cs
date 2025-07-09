@@ -21,6 +21,7 @@ namespace HR.Application.Interfaces.PDO
 
         Task<List<SkimWithJawatanDto>> GetSkimWithJawatanAsync(int idSkim);
         Task<IEnumerable<CarianSkimPerkhidmatanResponseDto>> GetCarianSkimPerkhidmatan(CarianSkimPerkhidmatanFilterDto filter);
+        Task<IEnumerable<SkimPerkhidmatanResponseDto>> GetAllAsync();
 
     }
 }

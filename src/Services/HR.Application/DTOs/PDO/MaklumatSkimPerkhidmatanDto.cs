@@ -114,4 +114,12 @@ namespace HR.Application.DTOs.PDO
         
     }
 
+    public class SkimPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+
+    }
+
 }
