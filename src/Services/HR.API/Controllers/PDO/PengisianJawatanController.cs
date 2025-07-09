@@ -2,6 +2,7 @@
 using HR.Application.Interfaces.PDO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.API.Controllers.PDO
 {
@@ -36,7 +37,11 @@ namespace HR.API.Controllers.PDO
                 if (result == null)
                     return NotFound($"No Pengisian Jawatan found for idSkimPerkhidmatan {idSkimPerkhidmatan}");
 
-                return Ok(result);
+                return Ok(new
+                {
+                    status = result.Count > 0 ? "Success" : "Failed",
+                    items = result
+                });
             }
             catch (Exception ex)
             {

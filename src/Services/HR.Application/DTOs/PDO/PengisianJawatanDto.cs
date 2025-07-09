@@ -44,6 +44,7 @@ namespace HR.Application.DTOs.PDO
     public class PengisianJawatanSearchResponseDto
     {
         #region Properties
+        public int Bil { get; set; }
         /// <summary>
         /// Gets or sets the Pengisian Jawatan ID (a.Id from PDO_PengisianJawatan)
         /// </summary>
