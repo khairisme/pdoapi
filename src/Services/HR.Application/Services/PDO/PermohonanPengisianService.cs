@@ -474,7 +474,36 @@ namespace HR.Application.Services.PDO
 
         //    return await query.ToListAsync();
         //}
+        public async Task<List<SimulasiKewanganByPermohonanDto>> GetSimulasiByPermohonanIdAsync(int idPermohonanPengisian)
+        {
+            var result = await (from ppp in _context.PDOPermohonanPengisian
+                                join ppps in _context.PDOPermohonanPengisianSkim
+                                    on ppp.Id equals ppps.IdPermohonanPengisian
+                                join puo in _context.PDOUnitOrganisasi
+                                    on ppp.IdUnitOrganisasi equals puo.Id
+                                join ppj in _context.PDOPengisianJawatan
+                                    on ppps.Id equals ppj.IdPermohonanPengisianSkim
+                                join pj in _context.PDOJawatan
+                                    on ppj.IdJawatan equals pj.Id
+                                join pgsj in _context.PDOGredSkimJawatan
+                                    on pj.Id equals pgsj.IdJawatan
+                                join pg in _context.PDOGred
+                                    on pgsj.IdGred equals pg.Id
+                                join pjg in _context.PDPJadualGaji
+                                    on pg.Id equals pjg.IdGred into gajiJoin
+                                from gj in gajiJoin.DefaultIfEmpty()
+                                where ppp.Id == idPermohonanPengisian
+                                select new SimulasiKewanganByPermohonanDto
+                                {
+                                    KodJawatan = pj.Kod,
+                                    NamaJawatan = pj.Nama,
+                                    Gred = pg.Nama,
+                                    JumlahImplikasiKewanganSebulan = gj.GajiMinimum,
+                                    JumlahImplikasiKewanganSetahun = gj.GajiMinimum * 12
+                                }).ToListAsync();
 
+            return result;
+        }
         public async Task<List<PermohonanPOAIFilterResponseDto>> GetPermohonanListPOAIAsync(PermohonanPengisianPOAIFilterDto filter)
         {
             var query = from a in _context.PDOPermohonanPengisian

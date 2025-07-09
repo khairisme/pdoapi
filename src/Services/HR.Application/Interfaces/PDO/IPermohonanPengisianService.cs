@@ -21,6 +21,7 @@ namespace HR.Application.Interfaces.PDO
         Task<List<PermohonanPengisianJawatanResponseDto>> GetFilteredPermohonanJawatanAsync(PermohonanPengisianJawatanFilterDto filter);
         Task<SkimNameWithJawatanDto?> GetJawatanBySkimAndAgensiAsync(PenolongPegawaiTeknologiMaklumatFilterDto filterDto);
         Task<List<AgensiWithJawatanDto>> GetGroupedJawatanByAgensiAsync(PenolongPegawaiTeknologiMaklumatFilterDto filter);
+        Task<List<SimulasiKewanganByPermohonanDto>> GetSimulasiByPermohonanIdAsync(int idPermohonanPengisian);
         //Task<List<SimulasiKewanganResponseDto>> GetSimulasiByAgensiAsync(int agensiId);
     }
 }

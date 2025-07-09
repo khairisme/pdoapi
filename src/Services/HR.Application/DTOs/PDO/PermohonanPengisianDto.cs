@@ -135,4 +135,12 @@ namespace HR.Application.DTOs.PDO
         public decimal JumlahImplikasiKewanganSebulan { get; set; }
         public decimal JumlahImplikasiKewanganSetahun { get; set; }
     }
+    public class SimulasiKewanganByPermohonanDto
+    {
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+        public decimal JumlahImplikasiKewanganSebulan { get; set; }
+        public decimal JumlahImplikasiKewanganSetahun { get; set; }
+    }
 }

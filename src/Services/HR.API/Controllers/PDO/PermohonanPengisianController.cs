@@ -327,7 +327,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Sucess" : "Failed",
                 items = result
 
             });
@@ -346,14 +346,14 @@ public class PermohonanPengisianController : ControllerBase
     /// <summary>
     /// Get Simulasi Kewangan by Agensi
     /// </summary>
-    /// <param name="agensiId"></param>
+    /// <param name="idPermohonan"></param>
     /// <returns></returns>
-   // [HttpGet("getSimulasiByAgensi/{agensiId}")]
-    //public async Task<IActionResult> GetSimulasiByAgensi(int agensiId)
-    //{
-    //    var result = await _service.GetSimulasiByAgensiAsync(agensiId);
-    //    return Ok(result);
-    //}
+    [HttpGet("GetSimulasiByPermohonanIdA/{idPermohonan}")]
+    public async Task<IActionResult> GetSimulasiByPermohonanIdA(int idPermohonan)
+    {
+        var result = await _service.GetSimulasiByPermohonanIdAsync(idPermohonan);
+        return Ok(result);
+    }
 
 
 }

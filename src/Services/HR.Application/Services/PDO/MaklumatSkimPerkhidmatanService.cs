@@ -138,7 +138,10 @@ namespace HR.Application.Services.PDO
                     KodRujStatusSkim = "",
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
-                    Jumlah = dto.Jumlah
+                    Jumlah = dto.Jumlah,
+
+
+
 
                 };
 
