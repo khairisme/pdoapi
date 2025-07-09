@@ -68,6 +68,12 @@ public static class DependencyInjection
                 configuration.GetConnectionString("PDOConnection"),
                 b => b.MigrationsAssembly(typeof(PDODbContext).Assembly.FullName)));
 
+        // PDP module registration
+        services.AddDbContext<PDPDbContext>(options =>
+            options.UseSqlServer(
+                configuration.GetConnectionString("PDPConnection"),
+                b => b.MigrationsAssembly(typeof(PDPDbContext).Assembly.FullName)));
+
 
         // Register unit of work
         services.AddScoped<IUnitOfWork, EfUnitOfWork>();
@@ -77,6 +83,9 @@ public static class DependencyInjection
 
         services.AddScoped<IPDOUnitOfWork, EfPDOUnitOfWork>();
         services.AddScoped<EfPDOUnitOfWork>();
+
+        services.AddScoped<IPDPUnitOfWork, EfPDPUnitOfWork>();
+        services.AddScoped<EfPDPUnitOfWork>();
 
         return services;
     }
