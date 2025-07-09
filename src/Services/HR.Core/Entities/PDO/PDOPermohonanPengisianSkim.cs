@@ -16,5 +16,7 @@ namespace HR.Core.Entities.PDO
         public int IdPermohonanPengisian { get; set; }
         public int IdSkimPerkhidmatan { get; set; }
         public int BilanganPengisian { get; set; }
+        public int BilanganHadSIling { get; set; }
+       public string Ulasan { get; set; }
     }
 }

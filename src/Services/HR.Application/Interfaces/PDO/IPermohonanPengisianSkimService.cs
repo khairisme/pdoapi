@@ -12,6 +12,7 @@ namespace HR.Application.Interfaces.PDO
     {
         
         Task<List<PegawaiTeknologiMaklumatResponseDto>> GetPegawaiTeknologiMaklumat(int IdSkimPerkhidmatan, int IdPermohonanPengisian);
+        Task<BilanganPengisianHadSilingResponseDto> GetBilanganPengisianHadSiling(int IdPermohonanPengisian, int IdPermohonanPengisianSkim);
 
     }
 }

@@ -17,4 +17,10 @@ namespace HR.Application.DTOs.PDO
         public DateTime? TarikhKekosonganJawatan { get; set; }
 
     }
+    public class BilanganPengisianHadSilingResponseDto
+    {
+        public int JumlahBilanganPengisian { get; set; }
+
+        public int HadSilingDitetapkan { get; set; }
+    }
 }

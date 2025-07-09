@@ -75,5 +75,40 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+
+        public async Task<BilanganPengisianHadSilingResponseDto> GetBilanganPengisianHadSiling(int IdPermohonanPengisian, int IdPermohonanPengisianSkim)
+        {
+            _logger.LogInformation("GetBilanganPengisianHadSilingAsync: Getting BilanganPengisian summary with IdPermohonanPengisian: {IdPermohonanPengisian}, IdPermohonanPengisianSkim: {IdPermohonanPengisianSkim}", IdPermohonanPengisian, IdPermohonanPengisianSkim);
+            try
+            {
+                var query = from ppps in _context.PDOPermohonanPengisianSkim
+                            where ppps.IdPermohonanPengisian == IdPermohonanPengisian
+                                  && ppps.Id == IdPermohonanPengisianSkim
+                            select new
+                            {
+                                ppps.BilanganPengisian,
+                                ppps.BilanganHadSIling
+                            };
+
+                _logger.LogInformation("GetBilanganPengisianHadSilingAsync: Executing query to fetch BilanganPengisian data");
+                var data = await query.ToListAsync();
+
+                _logger.LogInformation("GetBilanganPengisianHadSilingAsync: Retrieved {Count} records from database", data.Count);
+
+                var result = new BilanganPengisianHadSilingResponseDto
+                {
+                    JumlahBilanganPengisian = data.Sum(x => x.BilanganPengisian),
+                    HadSilingDitetapkan = data.Sum(x => x.BilanganHadSIling)
+                };
+
+                _logger.LogInformation("GetBilanganPengisianHadSilingAsync: Successfully processed BilanganPengisian summary - JumlahBilanganPengisian: {JumlahBilanganPengisian}, HadSilingDitetapkan: {HadSilingDitetapkan}", result.JumlahBilanganPengisian, result.HadSilingDitetapkan);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetBilanganPengisianHadSilingAsync: Failed to retrieve BilanganPengisian summary with IdPermohonanPengisian: {IdPermohonanPengisian}, IdPermohonanPengisianSkim: {IdPermohonanPengisianSkim}", IdPermohonanPengisian, IdPermohonanPengisianSkim);
+                throw;
+            }
+        }
     }
 }
