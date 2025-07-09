@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HR.API.Controllers.PDO
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
@@ -21,7 +21,75 @@ namespace HR.API.Controllers.PDO
         }
 
         #region Public API Methods
-       
+        /// <summary>
+        /// GetPengisianJawatan
+        /// </summary>
+        /// <param name="idSkimPerkhidmatan"></param>
+        /// <returns></returns>
+
+        [HttpGet("GetPengisianJawatan/{idSkimPerkhidmatan}")]
+        public async Task<IActionResult> GetPengisianJawatan(int idSkimPerkhidmatan)
+        {
+            try
+            {
+                var result = await _pengisianJawatanService.GetPengisianJawatanAsync(idSkimPerkhidmatan);
+                if (result == null)
+                    return NotFound($"No Pengisian Jawatan found for idSkimPerkhidmatan {idSkimPerkhidmatan}");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during GetPengisianJawatanAsync");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+        /// <summary>
+        /// GetPengisianJawatanCount
+        /// </summary>
+        /// <param name="idSkimPerkhidmatan"></param>
+        /// <returns></returns>
+
+        [HttpGet("GetPengisianJawatanCount/{idSkimPerkhidmatan}")]
+        public async Task<IActionResult> GetPengisianJawatanCount(int idSkimPerkhidmatan)
+        {
+            try
+            {
+                var result = await _pengisianJawatanService.GetPengisianJawatanCountAsync(idSkimPerkhidmatan);
+                if (result == null)
+                    return NotFound($"No Pengisian Jawatan Count found for idSkimPerkhidmatan {idSkimPerkhidmatan}");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during GetPengisianJawatanAsync");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+        /// <summary>
+        ///Create pengisianJawatan
+        /// </summary>
+        /// <param name="pengisianJawatanDto"></param>
+        /// <returns></returns>
+        [HttpPost("newPengisianJawatan")]
+        public async Task<IActionResult> Create([FromBody] PengisianJawatanDto pengisianJawatanDto)
+        {
+            _logger.LogInformation("Creating a new PengisianJawatan");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDto);
+
+            return Ok(new
+            {
+                status = isSuccess ? "Sucess" : "Failed",
+                items = isSuccess
+
+            });
+
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)

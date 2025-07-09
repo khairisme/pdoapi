@@ -10,8 +10,9 @@ namespace HR.Core.Entities.PDO
     [Table("PDO_PengisianJawatan")]
     public class PDOPengisianJawatan : PDOBaseEntity
     {
-        public int IdPermohonanPengisian { get; set; }
-        public int IdJawatanSebenar { get; set; }
+        public int IdPermohonanPengisianSkim { get; set; }
+        public int IdJawatan { get; set; }
         public Guid? IdPemilikKompetensi { get; set; }
+        
     }
 }

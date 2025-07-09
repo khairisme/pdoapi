@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace HR.Application.DTOs.PDO
 {
-    internal class PengisianJawatanDto
+    public class PengisianJawatanDto
     {
-
+        public int IdJawatan { get; set; }
+        public int IdPermohonanPengisianSkim { get; set; }
+        //public int UserId { get; set; } 
     }
     public class PengisianJawatanFilterDto
     {

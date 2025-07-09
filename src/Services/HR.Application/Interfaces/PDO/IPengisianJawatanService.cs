@@ -9,7 +9,10 @@ namespace HR.Application.Interfaces.PDO
 {
     public interface IPengisianJawatanService
     {
-       // Task<IEnumerable<PengisianJawatanSearchResponseDto>> GetPengisianJawatanBySkimPerkhidmatan(PengisianJawatanFilterDto filter);
+
+        Task<PengisianJawatanSearchResponseDto?> GetPengisianJawatanAsync(int idSkimPerkhidmatan);
+        Task<int> GetPengisianJawatanCountAsync(int idSkimPerkhidmatan);
+        Task<bool> CreateAsync(PengisianJawatanDto dto);
         Task<bool> DeleteAsync(Guid Id);
     }
 }
