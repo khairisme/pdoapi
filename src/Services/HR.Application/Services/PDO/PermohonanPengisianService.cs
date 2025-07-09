@@ -489,17 +489,17 @@ namespace HR.Application.Services.PDO
                                     on pj.Id equals pgsj.IdJawatan
                                 join pg in _context.PDOGred
                                     on pgsj.IdGred equals pg.Id
-                                join pjg in _context.PDPJadualGaji
-                                    on pg.Id equals pjg.IdGred into gajiJoin
-                                from gj in gajiJoin.DefaultIfEmpty()
+                                //join pjg in _context.PDPJadualGaji
+                                //    on pg.Id equals pjg.IdGred into gajiJoin
+                                //from gj in gajiJoin.DefaultIfEmpty()
                                 where ppp.Id == idPermohonanPengisian
                                 select new SimulasiKewanganByPermohonanDto
                                 {
                                     KodJawatan = pj.Kod,
                                     NamaJawatan = pj.Nama,
-                                    Gred = pg.Nama,
-                                    JumlahImplikasiKewanganSebulan = gj.GajiMinimum,
-                                    JumlahImplikasiKewanganSetahun = gj.GajiMinimum * 12
+                                    Gred = pg.Nama
+                                    //JumlahImplikasiKewanganSebulan = gj.GajiMinimum,
+                                    //JumlahImplikasiKewanganSetahun = gj.GajiMinimum * 12
                                 }).ToListAsync();
 
             return result;
