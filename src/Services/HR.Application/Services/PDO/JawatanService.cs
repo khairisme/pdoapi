@@ -115,6 +115,8 @@ namespace HR.Application.Services.PDO
                             from e in eGroup.Where(x => x.StatusAktif == true)
                             join e2 in _context.PDORujStatusKekosonganJawatan on e.KodRujStatusKekosonganJawatan equals e2.Kod
                             join f in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals f.Id
+                            from ppps in _context.PDOPermohonanPengisianSkim.Where(x => x.IdSkimPerkhidmatan == c.Id).DefaultIfEmpty()
+                            from ppj in _context.PDOPengisianJawatan.Where(x => x.IdJawatan == a.Id && (ppps == null || x.IdPermohonanPengisianSkim == ppps.Id)).DefaultIfEmpty()
                             where e.KodRujStatusKekosonganJawatan == "01"
                                   && (filter.SkimPerkhidmatanId == null || c.Id == filter.SkimPerkhidmatanId)
                                   && (string.IsNullOrEmpty(filter.KodJawatanSebenar) || a.Kod == filter.KodJawatanSebenar)
@@ -129,7 +131,8 @@ namespace HR.Application.Services.PDO
                                 NamaJawatan = a.Nama,
                                 UnitOrganisasi = f.Nama,
                                 StatusPengisian = e2.Nama,
-                                e.TarikhStatusKekosongan
+                                e.TarikhStatusKekosongan,
+                                TickCheckBox = ppj != null
                             };
 
                 _logger.LogInformation("GetCarianJawatanSebenar: Executing query to fetch CarianJawatanSebenar data");

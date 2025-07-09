@@ -48,5 +48,6 @@ namespace HR.Application.DTOs.PDO
         public string UnitOrganisasi { get; set; }
         public string StatusPengisian { get; set; }
         public DateTime? TarikhStatusKekosongan { get; set; }
+        public bool TickCheckBox { get; set; }
     }
 }
