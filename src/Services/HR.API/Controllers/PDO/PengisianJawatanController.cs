@@ -72,24 +72,25 @@ namespace HR.API.Controllers.PDO
         /// </summary>
         /// <param name="pengisianJawatanDto"></param>
         /// <returns></returns>
-        [HttpPost("newPengisianJawatan")]
-        public async Task<IActionResult> Create([FromBody] PengisianJawatanDto pengisianJawatanDto)
-        {
-            _logger.LogInformation("Creating a new PengisianJawatan");
+        /// Need confirmation from Pernec
+        //[HttpPost("newPengisianJawatan")]
+        //public async Task<IActionResult> Create([FromBody] PengisianJawatanDto pengisianJawatanDto)
+        //{
+        //    _logger.LogInformation("Creating a new PengisianJawatan");
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-            var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDto);
+        //    var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDto);
 
-            return Ok(new
-            {
-                status = isSuccess ? "Sucess" : "Failed",
-                items = isSuccess
+        //    return Ok(new
+        //    {
+        //        status = isSuccess ? "Sucess" : "Failed",
+        //        items = isSuccess
 
-            });
+        //    });
 
-        }
+        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
