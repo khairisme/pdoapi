@@ -13,5 +13,6 @@ namespace HR.Core.Entities.PDO
         public int IdPermohonanPengisian { get; set; }
         public string KodRujStatusPermohonan { get; set; }
         public DateTime TarikhStatusPermohonan { get; set; }
+        
     }
 }

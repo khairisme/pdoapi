@@ -15,5 +15,7 @@ namespace HR.Core.Entities.PDO
         public Guid? IdPemilikKompetensi { get; set; }
         public int IdPermohonanPengisian { get; set; }
         public int IdJawatanSebenar { get; set; }
+       
+        
     }
 }

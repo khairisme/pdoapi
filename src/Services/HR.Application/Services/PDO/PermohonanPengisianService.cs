@@ -56,7 +56,7 @@ namespace HR.Application.Services.PDO
 
             if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
                 query = query.Where(x => x.KodRujStatusPermohonan == filter.StatusPermohonan);
-            
+
             var result = await query.ToListAsync();
 
             // Add row number manually
@@ -120,7 +120,7 @@ namespace HR.Application.Services.PDO
                     return await _context.PDOPermohonanPengisian.AnyAsync(x =>
 
                         (
-                        x.Tajuk.Trim() == dto.Tajuk.Trim()) 
+                        x.Tajuk.Trim() == dto.Tajuk.Trim())
                         && x.IdUnitOrganisasi == dto.IdUnitOrganisasi &&
                         x.Id != dto.Id);
                 }
@@ -145,7 +145,7 @@ namespace HR.Application.Services.PDO
 
             try
             {
-                
+
 
                 permohonanPengisian = await _unitOfWork.Repository<PDOPermohonanPengisian>().AddAsync(permohonanPengisian);
                 await _unitOfWork.SaveChangesAsync();
@@ -223,9 +223,9 @@ namespace HR.Application.Services.PDO
             return result;
         }
 
-       
 
-        public async Task<bool> UpdateAsync(SavePermohonanPengisianPOARequestDto requestDto )
+
+        public async Task<bool> UpdateAsync(SavePermohonanPengisianPOARequestDto requestDto)
         {
             _logger.LogInformation("Service: Updating PermohonanPengisian POA");
             await _unitOfWork.BeginTransactionAsync();
@@ -234,7 +234,7 @@ namespace HR.Application.Services.PDO
             {
                 // Step 1: update into PDO_PermohonanPengisian
                 var permohonanPengisian = MapToEntity(requestDto);
-                
+
 
                 var result = await _unitOfWork.Repository<PDOPermohonanPengisian>().UpdateAsync(permohonanPengisian);
                 await _unitOfWork.SaveChangesAsync();
@@ -244,7 +244,7 @@ namespace HR.Application.Services.PDO
 
                 // Step 2: Deactivate existing PDO_StatusPermohonanPengisian record
                 var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanPengisian>()
-                        .FirstOrDefaultAsync(x => x.IdPermohonanPengisian == permohonanPengisian.Id );
+                        .FirstOrDefaultAsync(x => x.IdPermohonanPengisian == permohonanPengisian.Id);
 
                 if (existingStatus != null)
                 {
@@ -353,7 +353,7 @@ namespace HR.Application.Services.PDO
                         join b in _context.PDOStatusPermohonanPengisian on a.Id equals b.IdPermohonanPengisian
                         join c in _context.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals c.Kod
                         join puo in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals puo.Id
-                        where puo.StatusAktif  && puo.Kod == "0001"
+                        where puo.StatusAktif && puo.Kod == "0001"
                               && (filter.Kementerian == null || puo.Id == filter.Kementerian)
                               && (filter.StatusPermohonan == null || c.Kod == filter.StatusPermohonan)
                         orderby a.Id
@@ -370,11 +370,11 @@ namespace HR.Application.Services.PDO
 
             return result.Select((x, index) => new PermohonanPengisianJawatanResponseDto
             {
-                Id=x.Id,
+                Id = x.Id,
                 Bil = index + 1,
                 Kementerian = x.Kementerian,
                 BilanganPengisian = x.BilanganPengisian,
-                TarikhPermohonan =Convert.ToDateTime( x.TarikhPermohonan),
+                TarikhPermohonan = Convert.ToDateTime(x.TarikhPermohonan),
                 Status = x.Status
             }).ToList();
         }
@@ -431,12 +431,12 @@ namespace HR.Application.Services.PDO
                 .Select((x, index) => new PermohonanPengisianJawatanWithAgensiResponseDto
                 {
                     Bil = index + 1,
-                    Id=x.Id,
+                    Id = x.Id,
                     KodJawatan = x.Kod,
                     NamaJawatan = x.Nama,
                     Gred = x.Gred
                 }).ToList();
-              
+
 
                 result.Add(new AgensiWithJawatanDto
                 {
@@ -482,7 +482,7 @@ namespace HR.Application.Services.PDO
         public async Task<List<SimulasiKewanganByPermohonanDto>> GetSimulasiByPermohonanIdAsync(int idPermohonanPengisian)
         {
             // Step 1: Fetch JadualGaji from PDP API
-            
+
             var response = await _httpClient.GetAsync("api/pdp/JadualGaji/getAll");
 
             response.EnsureSuccessStatusCode();
@@ -545,13 +545,13 @@ namespace HR.Application.Services.PDO
                             a.TarikhPermohonan,
                             b.KodRujStatusPermohonan,
                             Status = c.Nama,
-                            AgensiId= d.Id
+                            AgensiId = d.Id
                         };
 
             if (filter.AgensiId.HasValue)
-                query = query.Where(x => x.AgensiId== filter.AgensiId);
+                query = query.Where(x => x.AgensiId == filter.AgensiId);
 
-            
+
 
             if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
                 query = query.Where(x => x.KodRujStatusPermohonan == filter.StatusPermohonan);
@@ -561,7 +561,7 @@ namespace HR.Application.Services.PDO
             // Add row number manually
             var withRowNumber = result.Select((x, index) => new PermohonanPOAIFilterResponseDto
             {
-              
+
                 Id = x.Id,
                 NomborRujukan = x.NomborRujukan,
                 Agensi = x.Agensi,
@@ -579,11 +579,479 @@ namespace HR.Application.Services.PDO
             {
                 Id = dto.Id,
                 IdUnitOrganisasi = dto.IdUnitOrganisasi,
-                Tajuk=dto.Tajuk,
+                Tajuk = dto.Tajuk,
                 NomborRujukan = dto.NomborRujukan,
                 Keterangan = dto.Keterangan,
                 TarikhPermohonan = dto.TarikhPermohonan
             };
         }
+        // Amar
+        public async Task<List<SenaraiJawatanSebenarResponseDto>> GetSenaraiJawatanSebenar(SenaraiJawatanSebenarFilterDto filter)
+        {
+            _logger.LogInformation("GetSenaraiJawatanSebenar: Getting SenaraiJawatanSebenar with filter: {@Filter}", filter);
+            try
+            {
+                // Step 1: Call PDP microservice to get JadualGaji data
+                var response = await _httpClient.GetAsync("api/pdp/JadualGaji/getAll");
+                response.EnsureSuccessStatusCode();
+                var jadualGajiListapi = await response.Content.ReadFromJsonAsync<JadualGajiApiResponseDto>();
+                var jadualGajiList = jadualGajiListapi.Items;
+
+                // Step 2: Query local PDO database
+                var query = from ppp in _context.PDOPermohonanPengisian
+                            join ppps in _context.PDOPermohonanPengisianSkim on ppp.Id equals ppps.IdPermohonanPengisian
+                            join puo in _context.PDOUnitOrganisasi on ppp.IdUnitOrganisasi equals puo.Id
+                            join ppj in _context.PDOPengisianJawatan on ppp.Id equals ppj.IdPermohonanPengisian
+                            join pj in _context.PDOJawatan on ppj.IdJawatanSebenar equals pj.Id
+                            join pkj in _context.PDOKekosonganJawatan on pj.Id equals pkj.IdJawatan
+                            join prskj in _context.PDORujStatusKekosonganJawatan on pkj.KodRujStatusKekosonganJawatan equals prskj.Kod
+                            join pgsj in _context.PDOGredSkimJawatan on pj.Id equals pgsj.IdJawatan
+                            join pg in _context.PDOGred on pgsj.IdGred equals pg.Id
+                            where ppp.IdUnitOrganisasi == filter.AgensiId
+                                  && ppps.IdSkimPerkhidmatan == filter.IdSkimPerkhidmatan
+                                  && pj.Kod == filter.KodJawatan
+                                  && prskj.Kod == filter.KodStatusJawatan
+                            select new
+                            {
+                                KodJawatan = pj.Kod,
+                                NamaJawatan = pj.Nama,
+                                UnitOrganisasi = puo.Nama,
+                                Gred = pg.Nama,
+                                GredId = pg.Id
+                            };
+
+                _logger.LogInformation("GetSenaraiJawatanSebenar: Executing query to fetch SenaraiJawatanSebenar data");
+                var data = await query.ToListAsync();
+
+                _logger.LogInformation("GetSenaraiJawatanSebenar: Retrieved {Count} records from database", data.Count);
+
+                // Step 3: Join with remote JadualGaji data and perform grouping/aggregation
+                var finalResult = data
+    .GroupBy(x => new { x.KodJawatan, x.NamaJawatan, x.UnitOrganisasi, x.Gred, x.GredId })
+    .Select((g, index) =>
+    {
+        // Get all salary records for this grade
+        var salaryRecords = jadualGajiList.Where(j => j.IdGred == g.Key.GredId).ToList();
+        var totalMonthlySalary = salaryRecords.Sum(s => s.GajiMinimum) ?? 0; // Handle nullable decimal
+
+        return new SenaraiJawatanSebenarResponseDto
+        {
+            Bil = index + 1,
+            KodJawatan = g.Key.KodJawatan ?? String.Empty,
+            NamaJawatan = g.Key.NamaJawatan ?? String.Empty,
+            Gred = g.Key.Gred ?? String.Empty,
+            JumlajImplikasiKewanganSebulan = totalMonthlySalary,
+            JumlajImplikasiKewanganSetahun = totalMonthlySalary * 12
+        };
+    })
+    .OrderBy(x => x.KodJawatan)
+    .ToList();
+
+                _logger.LogInformation("GetSenaraiJawatanSebenar: Successfully processed {Count} SenaraiJawatanSebenar records", finalResult.Count);
+                return finalResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSenaraiJawatanSebenar: Failed to retrieve SenaraiJawatanSebenar data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
+        //Amar
+        public async Task<List<ImplikasiKewanganResponseDto>> GetImplikasiKewangan(ImplikasiKewanganFilterDto filter)
+        {
+            _logger.LogInformation("GetImplikasiKewangan: Getting ImplikasiKewangan with filter: {@Filter}", filter);
+            try
+            {
+                // Step 1: Call PDP microservice to get JadualGaji data
+                var response = await _httpClient.GetAsync("api/pdp/JadualGaji/getAll");
+                response.EnsureSuccessStatusCode();
+                var jadualGajiListapi = await response.Content.ReadFromJsonAsync<JadualGajiApiResponseDto>();
+                var jadualGajiList = jadualGajiListapi.Items;
+
+                // Step 2: Query local PDO database
+                var query = from ppp in _context.PDOPermohonanPengisian
+                            join ppps in _context.PDOPermohonanPengisianSkim on ppp.Id equals ppps.IdPermohonanPengisian
+                            join puo in _context.PDOUnitOrganisasi on ppp.IdUnitOrganisasi equals puo.Id
+                            join ppj in _context.PDOPengisianJawatan on ppp.Id equals ppj.IdPermohonanPengisian
+                            join pj in _context.PDOJawatan on ppj.IdJawatanSebenar equals pj.Id
+                            join pkj in _context.PDOKekosonganJawatan on pj.Id equals pkj.IdJawatan
+                            join prskj in _context.PDORujStatusKekosonganJawatan on pkj.KodRujStatusKekosonganJawatan equals prskj.Kod
+                            join pgsj in _context.PDOGredSkimJawatan on pj.Id equals pgsj.IdJawatan
+                            join pg in _context.PDOGred on pgsj.IdGred equals pg.Id
+                            where ppp.IdUnitOrganisasi == filter.AgensiId
+                                  && ppps.IdSkimPerkhidmatan == filter.IdSkimPerkhidmatan
+                                  && pj.Kod == filter.KodJawatan
+                                  && prskj.Kod == filter.KodStatusJawatan
+                            select new
+                            {
+                                KodJawatan = pj.Kod,
+                                NamaJawatan = pj.Nama,
+                                UnitOrganisasi = puo.Nama, 
+                                Gred = pg.Nama,
+                                GredId = pg.Id
+                            };
+
+                _logger.LogInformation("GetImplikasiKewangan: Executing query to fetch ImplikasiKewangan data");
+                var data = await query.ToListAsync();
+
+                _logger.LogInformation("GetImplikasiKewangan: Retrieved {Count} records from database", data.Count);
+
+                // Step 3: Join with remote JadualGaji data and perform grouping/aggregation
+                var finalResult = data
+                    .GroupBy(x => new { x.KodJawatan, x.NamaJawatan, x.UnitOrganisasi, x.Gred, x.GredId })
+                    .Select((g, index) =>
+                    {
+                       
+                        var salaryRecords = jadualGajiList.Where(j => j.IdGred == g.Key.GredId).ToList();
+                        var totalMonthlySalary = salaryRecords.Sum(s => s.GajiMinimum) ?? 0; 
+
+                        return new ImplikasiKewanganResponseDto
+                        {
+                            Bil = index + 1,
+                            KodJawatan = g.Key.KodJawatan ?? String.Empty,
+                            NamaJawatan = g.Key.NamaJawatan ?? String.Empty,
+                            Gred = g.Key.Gred ?? String.Empty,
+                            
+                            JumlajImplikasiKewanganSebulan = totalMonthlySalary,
+                            JumlajImplikasiKewanganSetahun = totalMonthlySalary * 12
+                        };
+                    })
+                    .OrderBy(x => x.KodJawatan)
+                    .ToList();
+
+                _logger.LogInformation("GetImplikasiKewangan: Successfully processed {Count} ImplikasiKewangan records", finalResult.Count);
+                return finalResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetImplikasiKewangan: Failed to retrieve ImplikasiKewangan data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
+        //Amar
+        public async Task<List<SenaraiPermohonanPengisianJawatanResponseDto>> GetSenaraiPermohonanPengisianJawatan(SenaraiPermohonanPengisianJawatanFilterDto filter)
+        {
+            _logger.LogInformation("GetSenaraiPermohonanPengisianJawatan: Getting SenaraiPermohonanPengisianJawatan with filter: {@Filter}", filter);
+            try
+            {
+                var query = from a in _context.PDOPermohonanPengisian
+                            join ppps in _context.PDOPermohonanPengisianSkim on a.Id equals ppps.IdPermohonanPengisian
+                            join b in _context.PDOStatusPermohonanPengisian on a.Id equals b.IdPermohonanPengisian
+                            join c in _context.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals c.Kod
+                            join puo in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals puo.Id
+                            where puo.StatusAktif == true
+                                  && puo.Kod == "0001"
+                                  && (filter.Kementerian == null || puo.Id == filter.Kementerian)
+                                  && (string.IsNullOrEmpty(filter.StatusPermohonan) || c.Kod == filter.StatusPermohonan)
+                            orderby a.Id
+                            select new
+                            {
+                                Id = a.Id,
+                                Kementerian = puo.Nama,
+                                ppps.BilanganPengisian,
+                                a.TarikhPermohonan,
+                                Status = c.Nama
+                            };
+
+                _logger.LogInformation("GetSenaraiPermohonanPengisianJawatan: Executing query to fetch SenaraiPermohonanPengisianJawatan data");
+                var data = await query.ToListAsync();
+
+                _logger.LogInformation("GetSenaraiPermohonanPengisianJawatan: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select((x, index) => new SenaraiPermohonanPengisianJawatanResponseDto
+                {
+                    Bil = index + 1,
+                    Kementerian = x.Kementerian ?? String.Empty,
+                    BilanganPengisian = x.BilanganPengisian,
+                    TarikhPermohonan = x.TarikhPermohonan,
+                    Status = x.Status ?? String.Empty
+                }).ToList();
+
+                _logger.LogInformation("GetSenaraiPermohonanPengisianJawatan: Successfully processed {Count} SenaraiPermohonanPengisianJawatan records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSenaraiPermohonanPengisianJawatan: Failed to retrieve SenaraiPermohonanPengisianJawatan data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
+        //Amar
+        public async Task<List<BilanganPermohonanPengisianMaklumatPermohonanResponseDto>> GetBilanganPermohonanPengisian(BilanganPermohonanPengisianFilterDto filter)
+        {
+            _logger.LogInformation("GetBilanganPermohonanPengisian: Getting BilanganPermohonanPengisian with filter: {@Filter}", filter);
+            try
+            {
+                var query = from ppp in _context.PDOPermohonanPengisian
+                            join pspp in _context.PDOStatusPermohonanPengisian on ppp.Id equals pspp.IdPermohonanPengisian
+                            join prsp in _context.PDORujStatusPermohonan on pspp.KodRujStatusPermohonan equals prsp.Kod
+                            join ppps in _context.PDOPermohonanPengisianSkim on ppp.Id equals ppps.IdPermohonanPengisian
+                            join psp in _context.PDOSkimPerkhidmatan on ppps.IdSkimPerkhidmatan equals psp.Id
+                            where (filter.AgensiId == null || ppp.IdUnitOrganisasi == filter.AgensiId)
+                                  && (string.IsNullOrEmpty(filter.NoRujukan) || ppp.NomborRujukan == filter.NoRujukan)
+                                  && (string.IsNullOrEmpty(filter.TajukPermohonan) || ppp.Tajuk.Contains(filter.TajukPermohonan))
+                                  && (filter.TarikhPermohonan == null || ppp.TarikhPermohonan == filter.TarikhPermohonan)
+                                  && (string.IsNullOrEmpty(filter.Keterangan) || ppp.Keterangan.Contains(filter.Keterangan))
+                                  && (filter.HadSilingDitetapkan == null || ppps.BilanganHadSIling == filter.HadSilingDitetapkan)
+                                  && (string.IsNullOrEmpty(filter.StatusPermohonan) || prsp.Kod == filter.StatusPermohonan)
+                            orderby ppps.Id
+                            select new
+                            {
+                                Id = ppps.Id,
+                                KodSkim = psp.Kod,
+                                NamaSkimPerkhidmatan = psp.Nama,
+                                BilanganPermohonanPengisian = ppps.BilanganPengisian,
+                                ppps.BilanganHadSIling,
+                                ppps.Ulasan
+                            };
+
+                _logger.LogInformation("GetBilanganPermohonanPengisian: Executing query to fetch BilanganPermohonanPengisian data");
+                var data = await query.ToListAsync();
+
+                _logger.LogInformation("GetBilanganPermohonanPengisian: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select(x => new BilanganPermohonanPengisianMaklumatPermohonanResponseDto
+                {
+                    Id = x.Id,
+                    KodSkim = x.KodSkim ?? String.Empty,
+                    NamaSkimPerkhidmatan = x.NamaSkimPerkhidmatan ?? String.Empty,
+                    BilanganPermohonanPengisian = x.BilanganPermohonanPengisian,
+                    HadSilingDitetapkan = x.BilanganHadSIling,
+                    Ulasan = x.Ulasan
+                }).ToList();
+
+                _logger.LogInformation("GetBilanganPermohonanPengisian: Successfully processed {Count} BilanganPermohonanPengisian records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetBilanganPermohonanPengisian: Failed to retrieve BilanganPermohonanPengisian data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
+        //Amar
+        public async Task<bool> SetHantarBilanganPermohonanPengisian(HantarBilanganPermohonanPengisianRequestDto request)
+        {
+            _logger.LogInformation("SetHantarBilanganPermohonanPengisian: Updating BilanganPermohonanPengisian with {Count} records", request.Items.Count);
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // Validate request
+                if (request.Items == null || !request.Items.Any())
+                {
+                    _logger.LogWarning("SetHantarBilanganPermohonanPengisian: No items provided for update");
+                    return false;
+                }
+
+                int updatedCount = 0;
+
+                // Process each item in the list
+                foreach (var item in request.Items)
+                {
+                    _logger.LogInformation("SetHantarBilanganPermohonanPengisian: Updating record with Id: {Id}", item.Id);
+
+                    // Find the record to update
+                    var record = await _context.PDOPermohonanPengisianSkim
+                        .FirstOrDefaultAsync(x => x.Id == item.Id);
+
+                    if (record != null)
+                    {
+                        // Update the fields
+                        record.BilanganHadSIling = item.BilanganHadSIling;
+                        record.Ulasan = item.Ulasan;
+
+                        _context.PDOPermohonanPengisianSkim.Update(record);
+                        updatedCount++;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("SetHantarBilanganPermohonanPengisian: Record with Id {Id} not found", item.Id);
+                        // Rollback transaction if record not found
+                        await transaction.RollbackAsync();
+                        throw new InvalidOperationException($"Record with Id {item.Id} not found");
+                    }
+                }
+
+                // Save all changes
+                _logger.LogInformation("SetHantarBilanganPermohonanPengisian: Saving {Count} updated records to database", updatedCount);
+                await _context.SaveChangesAsync();
+
+                // Commit transaction if all updates successful
+                await transaction.CommitAsync();
+
+                _logger.LogInformation("SetHantarBilanganPermohonanPengisian: Successfully updated and committed {UpdatedCount} out of {TotalCount} records", updatedCount, request.Items.Count);
+
+                return updatedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SetHantarBilanganPermohonanPengisian: Error occurred during update operation, rolling back transaction");
+
+                // Rollback transaction on any error
+                await transaction.RollbackAsync();
+
+                _logger.LogInformation("SetHantarBilanganPermohonanPengisian: Transaction rolled back successfully");
+                throw;
+            }
+        }
+        //Amar
+        public async Task<List<SenaraiJawatanSebenarGroupedAgencyResponseDto>> GetSenaraiJawatanSebenarGroupedAgency()
+        {
+            _logger.LogInformation("GetSenaraiJawatanSebenarGroupedAgency: Getting SenaraiJawatanSebenar grouped by agency");
+            try
+            {
+                var agensiList = await (from a in _context.PDOPengisianJawatan
+                                        join b in _context.PDOJawatan
+                                            on a.IdJawatan equals b.Id
+                                        join c in _context.PDOUnitOrganisasi
+                                            on b.IdUnitOrganisasi equals c.Id
+                                        where b.StatusAktif == true
+                                        group new { c.Id, c.Kod, c.Nama } by new { c.Id, c.Kod, c.Nama } into g
+                                        select new
+                                        {
+                                            IdUnitOrganisasi = g.Key.Id,
+                                            Kod = g.Key.Kod,
+                                            Agensi = g.Key.Nama
+                                        })
+                                        .ToListAsync();
+
+                _logger.LogInformation("GetSenaraiJawatanSebenarGroupedAgency: Retrieved {Count} agencies from database", agensiList.Count);
+
+                var result = new List<SenaraiJawatanSebenarGroupedAgencyResponseDto>();
+
+                foreach (var agensi in agensiList)
+                {
+                    _logger.LogInformation("GetSenaraiJawatanSebenarGroupedAgency: Processing agency {AgencyId} - {AgencyName}", agensi.IdUnitOrganisasi, agensi.Agensi);
+
+                    var jawatanList = await (from ppp in _context.PDOPermohonanPengisian
+                                             join puo in _context.PDOUnitOrganisasi
+                                                 on ppp.IdUnitOrganisasi equals puo.Id
+                                             join ppj in _context.PDOPengisianJawatan
+                                                 on ppp.Id equals ppj.IdPermohonanPengisian
+                                             join pj in _context.PDOJawatan
+                                                 on ppj.IdJawatanSebenar equals pj.Id
+                                             join pgsj in _context.PDOGredSkimJawatan
+                                                 on pj.Id equals pgsj.IdJawatan
+                                             join pg in _context.PDOGred
+                                                 on pgsj.IdGred equals pg.Id
+                                             where puo.Id == agensi.IdUnitOrganisasi
+                                             select new
+                                             {
+                                                 KodJawatan = pj.Kod,
+                                                 NamaJawatan = pj.Nama,
+                                                 Gred = pg.Nama
+                                             })
+                                             .ToListAsync();
+
+                    var jawatanDtoList = jawatanList
+                        .Select((x, index) => new SenaraiJawatanSebenarAgencyDetailDto
+                        {
+                            Bil = index + 1,
+                            KodJawatan = x.KodJawatan ?? String.Empty,
+                            NamaJawatan = x.NamaJawatan ?? String.Empty,
+                            Gred = x.Gred ?? String.Empty
+                        })
+                        .OrderBy(x => x.KodJawatan)
+                        .ToList();
+
+                    _logger.LogInformation("GetSenaraiJawatanSebenarGroupedAgency: Found {Count} jawatan for agency {AgencyName}", jawatanDtoList.Count, agensi.Agensi);
+
+                    result.Add(new SenaraiJawatanSebenarGroupedAgencyResponseDto
+                    {
+                        IdUnitOrganisasi = agensi.IdUnitOrganisasi,
+                        Kod = agensi.Kod ?? String.Empty,
+                        Agensi = agensi.Agensi ?? String.Empty,
+                        SenaraiJawatan = jawatanDtoList
+                    });
+                }
+
+                _logger.LogInformation("GetSenaraiJawatanSebenarGroupedAgency: Successfully processed {Count} agencies with jawatan data", result.Count);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSenaraiJawatanSebenarGroupedAgency: Failed to retrieve SenaraiJawatanSebenar grouped by agency data ");
+                throw;
+            }
+        }
+
+        //Amar
+        public async Task<List<ImplikasiKewanganJanaSimulasiKewanganResponseDto>> GetImplikasiKewanganJanaSimulasiKewangan(ImplikasiKewanganJanaSimulasiKewanganFilterDto filter)
+        {
+            _logger.LogInformation("GetImplikasiKewanganJanaSimulasiKewangan: Getting ImplikasiKewanganJanaSimulasiKewangan with filter: {@Filter}", filter);
+            try
+            {
+                // Step 1: Call PDP microservice to get JadualGaji data
+                var response = await _httpClient.GetAsync("api/pdp/JadualGaji/getAll");
+                response.EnsureSuccessStatusCode();
+                var jadualGajiListapi = await response.Content.ReadFromJsonAsync<JadualGajiApiResponseDto>();
+                var jadualGajiList = jadualGajiListapi.Items;
+
+                // Step 2: Query local PDO database
+                var query = from ppp in _context.PDOPermohonanPengisian
+                            join ppps in _context.PDOPermohonanPengisianSkim on ppp.Id equals ppps.IdPermohonanPengisian
+                            join puo in _context.PDOUnitOrganisasi on ppp.IdUnitOrganisasi equals puo.Id
+                            join ppj in _context.PDOPengisianJawatan on ppp.Id equals ppj.IdPermohonanPengisian
+                            join pj in _context.PDOJawatan on ppj.IdJawatanSebenar equals pj.Id
+                            join pkj in _context.PDOKekosonganJawatan on pj.Id equals pkj.IdJawatan
+                            join prskj in _context.PDORujStatusKekosonganJawatan on pkj.KodRujStatusKekosonganJawatan equals prskj.Kod
+                            join pgsj in _context.PDOGredSkimJawatan on pj.Id equals pgsj.IdJawatan
+                            join pg in _context.PDOGred on pgsj.IdGred equals pg.Id
+                            where ppp.IdUnitOrganisasi == filter.AgensiId
+                                  && ppps.IdSkimPerkhidmatan == filter.IdSkimPerkhidmatan
+                                  && pj.Kod == filter.KodJawatan
+                                  && prskj.Kod == filter.KodStatusJawatan
+                            select new
+                            {
+                                KodJawatan = pj.Kod,
+                                NamaJawatan = pj.Nama,
+                                UnitOrganisasi = puo.Nama, 
+                                Gred = pg.Nama,
+                                GredId = pg.Id
+                            };
+
+                _logger.LogInformation("GetImplikasiKewanganJanaSimulasiKewangan: Executing query to fetch ImplikasiKewanganJanaSimulasiKewangan data");
+                var data = await query.ToListAsync();
+
+                _logger.LogInformation("GetImplikasiKewanganJanaSimulasiKewangan: Retrieved {Count} records from database", data.Count);
+
+                // Step 3: Join with remote JadualGaji data and perform grouping/aggregation
+                var finalResult = data
+                    .GroupBy(x => new { x.KodJawatan, x.NamaJawatan, x.UnitOrganisasi, x.Gred, x.GredId })
+                    .Select((g, index) =>
+                    {
+                        
+                        var salaryRecords = jadualGajiList.Where(j => j.IdGred == g.Key.GredId).ToList();
+                        var totalMonthlySalary = salaryRecords.Sum(s => s.GajiMinimum) ?? 0; 
+
+                        return new ImplikasiKewanganJanaSimulasiKewanganResponseDto
+                        {
+                            Bil = index + 1,
+                            KodJawatan = g.Key.KodJawatan ?? String.Empty,
+                            NamaJawatan = g.Key.NamaJawatan ?? String.Empty,
+                            Gred = g.Key.Gred ?? String.Empty,
+                           
+                            JumlajImplikasiKewanganSebulan = totalMonthlySalary,
+                            JumlajImplikasiKewanganSetahun = totalMonthlySalary * 12
+                        };
+                    })
+                    .OrderBy(x => x.KodJawatan)
+                    .ToList();
+
+                _logger.LogInformation("GetImplikasiKewanganJanaSimulasiKewangan: Successfully processed {Count} ImplikasiKewanganJanaSimulasiKewangan records", finalResult.Count);
+                return finalResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetImplikasiKewanganJanaSimulasiKewangan: Failed to retrieve ImplikasiKewanganJanaSimulasiKewangan data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
     }
+
+
+
+
 }
+

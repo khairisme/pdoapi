@@ -23,5 +23,19 @@ namespace HR.Application.Interfaces.PDO
         Task<List<AgensiWithJawatanDto>> GetGroupedJawatanByAgensiAsync(PenolongPegawaiTeknologiMaklumatFilterDto filter);
         Task<List<SimulasiKewanganByPermohonanDto>> GetSimulasiByPermohonanIdAsync(int idPermohonanPengisian);
         //Task<List<SimulasiKewanganResponseDto>> GetSimulasiByAgensiAsync(int agensiId);
+        //Amar
+        Task<List<SenaraiJawatanSebenarResponseDto>> GetSenaraiJawatanSebenar(SenaraiJawatanSebenarFilterDto filter);
+        //Amar
+        Task<List<ImplikasiKewanganResponseDto>> GetImplikasiKewangan(ImplikasiKewanganFilterDto filter);
+        //Amar
+        Task<List<SenaraiPermohonanPengisianJawatanResponseDto>> GetSenaraiPermohonanPengisianJawatan(SenaraiPermohonanPengisianJawatanFilterDto filter);
+        //Amar
+        Task<List<BilanganPermohonanPengisianMaklumatPermohonanResponseDto>> GetBilanganPermohonanPengisian(BilanganPermohonanPengisianFilterDto filter);
+        //Amar
+        Task<bool> SetHantarBilanganPermohonanPengisian(HantarBilanganPermohonanPengisianRequestDto request);
+        //Amar
+        Task<List<SenaraiJawatanSebenarGroupedAgencyResponseDto>> GetSenaraiJawatanSebenarGroupedAgency();
+        //Amar
+        Task<List<ImplikasiKewanganJanaSimulasiKewanganResponseDto>> GetImplikasiKewanganJanaSimulasiKewangan(ImplikasiKewanganJanaSimulasiKewanganFilterDto filter);
     }
 }
