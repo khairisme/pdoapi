@@ -66,7 +66,7 @@ namespace HR.Application.DTOs.PDO
     }
     public class PermohonanPOAIFilterResponseDto
     {
-       
+
         public int Id { get; set; }
         public string NomborRujukan { get; set; }
         public string Agensi { get; set; }
@@ -91,11 +91,11 @@ namespace HR.Application.DTOs.PDO
     }
     public class PenolongPegawaiTeknologiMaklumatResponseDto
     {
-      
+
         public string KodJawatan { get; set; }
         public string NamaJawatan { get; set; }
         public string Gred { get; set; }
-        
+
     }
     public class SkimNameWithJawatanDto
     {
@@ -142,5 +142,127 @@ namespace HR.Application.DTOs.PDO
         public string Gred { get; set; }
         public decimal JumlahImplikasiKewanganSebulan { get; set; }
         public decimal JumlahImplikasiKewanganSetahun { get; set; }
+    }
+    //Amar
+    public class SenaraiJawatanSebenarFilterDto
+    {
+        public int AgensiId { get; set; }
+        public int IdSkimPerkhidmatan { get; set; }
+        public string KodJawatan { get; set; }
+        public string KodStatusJawatan { get; set; }
+    }
+    //Amar
+    public class SenaraiJawatanSebenarResponseDto
+    {
+        public int Bil { get; set; }
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+        public decimal JumlajImplikasiKewanganSebulan { get; set; }
+        public decimal JumlajImplikasiKewanganSetahun { get; set; }
+    }
+    //Amar
+    public class ImplikasiKewanganFilterDto
+    {
+        public int AgensiId { get; set; }
+        public int IdSkimPerkhidmatan { get; set; }
+        public string KodJawatan { get; set; }
+        public string KodStatusJawatan { get; set; }
+    }
+    //Amar
+    public class ImplikasiKewanganResponseDto
+    {
+        public int Bil { get; set; }
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+        public decimal JumlajImplikasiKewanganSebulan { get; set; }
+        public decimal JumlajImplikasiKewanganSetahun { get; set; }
+    }
+    //Amar
+    public class SenaraiPermohonanPengisianJawatanResponseDto
+    {
+        public int Bil { get; set; }
+        public string Kementerian { get; set; }
+        public int BilanganPengisian { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public string Status { get; set; }
+        
+    }
+    //Amar
+    public class SenaraiPermohonanPengisianJawatanFilterDto
+    {
+        public int? Kementerian { get; set; }
+        public string? StatusPermohonan { get; set; } = String.Empty;
+    }
+
+    //Amar
+    public class BilanganPermohonanPengisianFilterDto
+    {
+        public int? AgensiId { get; set; }
+        public string? NoRujukan { get; set; } = String.Empty;
+        public string? TajukPermohonan { get; set; } = String.Empty;
+        public DateTime? TarikhPermohonan { get; set; }
+        public string? Keterangan { get; set; } = String.Empty;
+        public int? HadSilingDitetapkan { get; set; }
+        public string? StatusPermohonan { get; set; } = String.Empty;
+    }
+    //Amar
+    public class BilanganPermohonanPengisianMaklumatPermohonanResponseDto
+    {
+        public int Id { get; set; }
+        public string KodSkim { get; set; } = String.Empty;
+        public string NamaSkimPerkhidmatan { get; set; } = String.Empty;
+        public int BilanganPermohonanPengisian { get; set; }
+        public int? HadSilingDitetapkan { get; set; }
+        public string? Ulasan { get; set; } = String.Empty;
+    }
+    //Amar
+    public class HantarBilanganPermohonanPengisianRowDto
+    {
+        public int Id { get; set; }
+        public int BilanganHadSIling { get; set; }
+        public string Ulasan { get; set; } = String.Empty;
+    }
+    //Amar
+    public class HantarBilanganPermohonanPengisianRequestDto
+    {
+        public List<HantarBilanganPermohonanPengisianRowDto> Items { get; set; } = new List<HantarBilanganPermohonanPengisianRowDto>();
+    }
+    //Amar
+    public class SenaraiJawatanSebenarGroupedAgencyResponseDto
+    {
+        public int IdUnitOrganisasi { get; set; }
+        public string Kod { get; set; } = String.Empty;
+        public string Agensi { get; set; } = String.Empty;
+        public List<SenaraiJawatanSebenarAgencyDetailDto> SenaraiJawatan { get; set; } = new List<SenaraiJawatanSebenarAgencyDetailDto>();
+    }
+
+    //Amar
+    public class SenaraiJawatanSebenarAgencyDetailDto
+    {
+        public int Bil { get; set; }
+        public string KodJawatan { get; set; } = String.Empty;
+        public string NamaJawatan { get; set; } = String.Empty;
+        public string Gred { get; set; } = String.Empty;
+    }
+
+    //Amar
+    public class ImplikasiKewanganJanaSimulasiKewanganFilterDto
+    {
+        public int AgensiId { get; set; }
+        public int IdSkimPerkhidmatan { get; set; }
+        public string KodJawatan { get; set; }
+        public string KodStatusJawatan { get; set; }
+    }
+    //Amar
+    public class ImplikasiKewanganJanaSimulasiKewanganResponseDto
+    {
+        public int Bil { get; set; }
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+        public decimal JumlajImplikasiKewanganSebulan { get; set; }
+        public decimal JumlajImplikasiKewanganSetahun { get; set; }
     }
 }

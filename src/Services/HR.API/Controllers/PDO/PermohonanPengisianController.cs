@@ -2,16 +2,18 @@ using HR.Application.DTOs;
 using HR.Application.DTOs.PDO;
 using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
+using HR.Application.Services.PDO;
 using HR.Core.Entities;
 using HR.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Shared.Contracts.DTOs;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.API.Controllers.PDO;
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class PermohonanPengisianController : ControllerBase
@@ -372,6 +374,347 @@ public class PermohonanPengisianController : ControllerBase
             });
         }
     }
+    // By Amar
+    /// <summary>
+    /// GetSenaraiJawatanSebenar
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All  parameters are mandatory
+    /// 
+    /// </remarks>
+    [HttpPost("getSenaraiJawatanSebenar")]
+    public async Task<IActionResult> GetSenaraiJawatanSebenar([FromBody] SenaraiJawatanSebenarFilterDto filter)
+    {
+
+        _logger.LogInformation("GetSenaraiJawatanSebenar: GetSenaraiJawatanSebenar method called from controller with filter: {@Filter}", filter);
+        try
+        {
+            var data = await _service.GetSenaraiJawatanSebenar(filter);
+
+            _logger.LogInformation("GetSenaraiJawatanSebenar: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetSenaraiJawatanSebenar: Error occurred in controller while processing request with filter: {@Filter}", filter);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while retrieving application data",
+                items = new List<SenaraiJawatanSebenarResponseDto>()
+            });
+        }
 
 
+
+    }
+
+    // By Amar
+    /// <summary>
+    /// GetImplikasiKewangan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All  parameters are mandatory
+    /// 
+    /// </remarks>
+    [HttpPost("getImplikasiKewangan")]
+    public async Task<IActionResult> GetImplikasiKewangan([FromBody] ImplikasiKewanganFilterDto filter)
+    {
+
+        _logger.LogInformation("GetImplikasiKewangan: GetImplikasiKewangan method called from controller with filter: {@Filter}", filter);
+        try
+        {
+            var data = await _service.GetImplikasiKewangan(filter);
+
+            _logger.LogInformation("GetImplikasiKewangan: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetImplikasiKewangan: Error occurred in controller while processing request with filter: {@Filter}", filter);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while retrieving application data",
+                items = new List<ImplikasiKewanganResponseDto>()
+            });
+        }
+
+
+
+    }
+
+    //Amar
+    /// <summary>
+    /// GetSenaraiPermohonanPengisianJawatan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// 
+    /// Filters are optional. 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpPost("getSenaraiPermohonanPengisianJawatan")]
+
+    public async Task<IActionResult> GetSenaraiPermohonanPengisianJawatan([FromBody] SenaraiPermohonanPengisianJawatanFilterDto filter)
+    {
+        _logger.LogInformation("GetSenaraiPermohonanPengisianJawatan: GetSenaraiPermohonanPengisianJawatan method called from controller with filter: {@Filter}", filter);
+        try
+        {
+            var data = await _service.GetSenaraiPermohonanPengisianJawatan(filter);
+
+            _logger.LogInformation("GetSenaraiPermohonanPengisianJawatan: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetSenaraiPermohonanPengisianJawatan: Error occurred in controller while processing request with filter: {@Filter}", filter);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while retrieving application data",
+                items = new List<SenaraiPermohonanPengisianJawatanResponseDto>()
+            });
+        }
+    }
+    //Amar
+    /// <summary>
+    /// GetBilanganPermohonanPengisian
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// 
+    /// Filters are optional. 
+    /// 
+    /// 
+    /// </remarks>
+
+    [HttpPost("getBilanganPermohonanPengisian")]
+    public async Task<IActionResult> GetBilanganPermohonanPengisian([FromBody] BilanganPermohonanPengisianFilterDto filter)
+    {
+        _logger.LogInformation("GetBilanganPermohonanPengisian: GetBilanganPermohonanPengisian method called from controller with filter: {@Filter}", filter);
+        try
+        {
+            var data = await _service.GetBilanganPermohonanPengisian(filter);
+
+            _logger.LogInformation("GetBilanganPermohonanPengisian: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetBilanganPermohonanPengisian: Error occurred in controller while processing request with filter: {@Filter}", filter);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while retrieving application data..",
+                items = new List<BilanganPermohonanPengisianMaklumatPermohonanResponseDto>()
+            });
+        }
+    }
+
+    //Amar
+    /// <summary>
+    /// SetHantarBilanganPermohonanPengisian
+    /// </summary>
+    /// <param name="request">List of records to update</param>
+    /// <returns>Returns a list of data</returns>
+    /// <response code="200">Success</response>
+    /// <response code="400">Invalid request data provided</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpPut("setHantarBilanganPermohonanPengisian")]
+    public async Task<IActionResult> SetHantarBilanganPermohonanPengisian([FromBody] HantarBilanganPermohonanPengisianRequestDto request)
+    {
+        _logger.LogInformation("SetHantarBilanganPermohonanPengisian: SetHantarBilanganPermohonanPengisian method called from controller with {Count} items", request?.Items?.Count ?? 0);
+        try
+        {
+            // Validate request
+            if (request == null || request.Items == null || !request.Items.Any())
+            {
+                _logger.LogWarning("SetHantarBilanganPermohonanPengisian: Invalid request - no items provided");
+                return BadRequest(new
+                {
+                    status = "Error",
+                    message = "Request must contain at least one item to update"
+                });
+            }
+
+            // Validate each item has required fields
+            var invalidItems = request.Items.Where(x => x.Id <= 0).ToList();
+            if (invalidItems.Any())
+            {
+                _logger.LogWarning("SetHantarBilanganPermohonanPengisian: Invalid request - items with invalid IDs found");
+                return BadRequest(new
+                {
+                    status = "Error",
+                    message = "All items must have valid IDs (greater than 0)"
+                });
+            }
+
+            var updateResult = await _service.SetHantarBilanganPermohonanPengisian(request);
+
+            _logger.LogInformation("SetHantarBilanganPermohonanPengisian: Update operation completed successfully with result: {Result}", updateResult);
+
+            return Ok(new
+            {
+                status = updateResult ? "Success" : "No Data Updated",
+                message = updateResult ? "All records updated successfully" : "No records were updated"
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "SetHantarBilanganPermohonanPengisian: Business logic error occurred in controller");
+
+            return BadRequest(new
+            {
+                status = "Error",
+                message = ex.Message
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "SetHantarBilanganPermohonanPengisian: Unexpected error occurred in controller while processing update request");
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while updating the records. All changes have been rolled back"
+            });
+        }
+    }
+
+    //Amar
+    /// <summary>
+    /// GetSenaraiJawatanSebenarGroupedAgency
+    /// </summary>
+    /// 
+    /// <returns>Returns a list of data</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpGet("getSenaraiJawatanSebenarGroupedAgency")]
+    public async Task<IActionResult> GetSenaraiJawatanSebenarGroupedAgency()
+    {
+        _logger.LogInformation("GetSenaraiJawatanSebenarGroupedAgency: GetSenaraiJawatanSebenarGroupedAgency method called from controller ");
+        try
+        {
+            var data = await _service.GetSenaraiJawatanSebenarGroupedAgency();
+            _logger.LogInformation("GetSenaraiJawatanSebenarGroupedAgency: Successfully retrieved {Count} agency records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetSenaraiJawatanSebenarGroupedAgency: Error occurred in controller while processing request");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while retrieving jawatan sebenar grouped by agency data",
+                items = new List<SenaraiJawatanSebenarGroupedAgencyResponseDto>()
+            });
+        }
+    
+}
+
+    // By Amar
+    /// <summary>
+    /// GetImplikasiKewanganJanaSimulasiKewangan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All  parameters are mandatory
+    /// 
+    /// </remarks>
+    [HttpPost("getImplikasiKewanganJanaSimulasiKewangan")]
+    public async Task<IActionResult> GetImplikasiKewanganJanaSimulasiKewangan([FromBody] ImplikasiKewanganJanaSimulasiKewanganFilterDto filter)
+    {
+
+        _logger.LogInformation("GetImplikasiKewanganJanaSimulasiKewangan: GetImplikasiKewanganJanaSimulasiKewangan method called from controller with filter: {@Filter}", filter);
+        try
+        {
+            var data = await _service.GetImplikasiKewanganJanaSimulasiKewangan(filter);
+
+            _logger.LogInformation("GetImplikasiKewanganJanaSimulasiKewangan: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetImplikasiKewanganJanaSimulasiKewangan: Error occurred in controller while processing request with filter: {@Filter}", filter);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while retrieving application data",
+                items = new List<ImplikasiKewanganJanaSimulasiKewanganResponseDto>()
+            });
+        }
+
+
+
+    }
 }
