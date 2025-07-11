@@ -195,5 +195,51 @@ namespace HR.API.Controllers.PDO
             }
         }
         //Nitya Code End
+
+
+        /// <summary>
+        /// GetJumlahDanSiling
+        /// </summary>
+        /// <param name="request">PaparPermohonanDanSilingRequestDto containing IdPermohonanPengisian and IdPermohonanPengisianSkim</param>
+        /// <returns>Returns aggregated data showing total JumlahBilanganPengisian and HadSilingDitetapkan</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Invalid parameters provided</response>
+        /// <response code="500">Internal server error occurred while processing the request</response>
+        /// <remarks>
+        /// This API may change as query is still not finalized.
+        /// 
+        /// </remarks>
+        [HttpGet("getJumlahDanSiling")]
+
+        public async Task<IActionResult> GetJumlahDanSiling([FromBody] PaparPermohonanDanSilingRequestDto request)
+        {
+            _logger.LogInformation("GetJumlahDanSiling: GetJumlahDanSiling method called from controller with  : {@Request}", request );
+            try
+            {
+
+                var data = await _permohonanPengisianSkimService.GetJumlahDanSilingAsync(request);
+
+                _logger.LogInformation("GetBilanganPengisianHadSiling: Successfully retrieved BilanganPengisian summary");
+
+                return Ok(new
+                {
+                    status = (data.JumlahBilanganPengisian > 0 || data.HadSilingDitetapkan > 0) ? "Success" : "Failed",
+                    data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetJumlahDanSiling: Error occurred in controller while processing ", request);
+
+                return StatusCode(500, new
+                {
+                    status = "Error",
+                    message = "An error occurred while retrieving data.",
+                    data = new PaparPermohonanDanSilingResponseDto()
+                });
+            }
+        }
+
+
     }
 }

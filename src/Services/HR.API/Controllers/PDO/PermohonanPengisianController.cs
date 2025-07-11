@@ -713,9 +713,78 @@ public class PermohonanPengisianController : ControllerBase
                 items = new List<ImplikasiKewanganJanaSimulasiKewanganResponseDto>()
             });
         }
+    }
+    /// <summary>
+    /// Get Papar Maklumat Permohonan Pengisian By Agensi And Rujukan
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("getPaparMaklumatPermohonanPengisiaByAgensiAndRujukan")]
+    public async Task<IActionResult> GetPaparMaklumatPermohonanPengisiaByAgensiAndRujukan([FromBody] GetPaparMaklumatPermohonanPengisianRequestDto request)
+    {
 
+        try
+        {
 
+            var result = await _service.GetPaparMaklumatPermohonanPengisiaAgensiIdAndNoRujukanAsync(request);
+            return Ok(new
+            {
+                status = result.Count > 0 ? "Success" : "Failed",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetPaparMaklumatPermohonanPengisiaByAgensiAndRujukan: Error occurred in controller while processing request with filter: {@Request}", request);
 
+            return StatusCode(500, new
+            {
+                status = "Error",
+                message = "An error occurred while retrieving application data",
+                items = new List<GetPaparMaklumatPermohonanPengisianResponseDto>()
+            });
+        }
+    }
+
+    /// <summary>
+    ///  PaparMaklumat Permohonan Pengisian Response ById
+    /// </summary>
+    /// <param name="idskimperkhidmatan"></param>
+    /// <returns></returns>
+    [HttpGet("getPaparMaklumatPermohonanPengisianResponseById/{idPermohonan}")]
+    public async Task<IActionResult> GetPaparMaklumatPermohonanPengisianResponseById(int idskimperkhidmatan)
+    {
+       
+
+        var result = await _service.GetPaparMaklumatPermohonanPengisianResponseByIdAsync(idskimperkhidmatan);
+        return Ok(result);
+    }
+    /// <summary>
+    /// Search Permohonan Pengisian Maklumat Permohonan
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+
+    [HttpPost("search")]
+    public async Task<IActionResult> Search([FromBody] PermohonanPengisianSearchRequestDto request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = await _service.SearchAsync(request);
+        return Ok(result);
+    }
+    /// <summary>
+    /// Get Maklumat Permohonan Pengisian
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("getMaklumat")]
+    public async Task<IActionResult> GetMaklumat([FromBody] MaklumatPermohonanRequestDto request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var result = await _service.GetMaklumatAsync(request);
+        return Ok(result);
     }
 
     //Nitya Code Start
@@ -950,3 +1019,5 @@ public class PermohonanPengisianController : ControllerBase
     }
     //Nitya Code End
 }
+
+

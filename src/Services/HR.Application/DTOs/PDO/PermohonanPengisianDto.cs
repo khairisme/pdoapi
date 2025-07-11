@@ -266,6 +266,54 @@ namespace HR.Application.DTOs.PDO
         public decimal JumlajImplikasiKewanganSetahun { get; set; }
     }
 
+    public class GetPaparMaklumatPermohonanPengisianRequestDto
+    {
+        public int AgensiId { get; set; }
+        public string NoRujukan { get; set; } = string.Empty;
+    }
+    public class GetPaparMaklumatPermohonanPengisianResponseDto
+    {
+        public string KodSkim { get; set; } = string.Empty;
+        public string NamaSkimPerkhidmatan { get; set; } = string.Empty;
+        public int BilanganPermohonanPengisian { get; set; }
+        public int HadSilingDitetapkan { get; set; }
+        public string? Ulasan { get; set; }
+    }
+    public class GetPaparMaklumatPermohonanPengisianResponseByIdDto
+    {
+        public string KodJawatan { get; set; } = string.Empty;
+        public string NamaJawatan { get; set; } = string.Empty;
+        public string UnitOrganisasi { get; set; } = string.Empty;
+        public string StatusPengisianJawatan { get; set; } = string.Empty;
+        public DateTime? TarikhKekosonganJawatan { get; set; }
+    }
+
+    public class PermohonanPengisianSearchRequestDto
+    {
+        public int? AgensiId { get; set; }
+    }
+
+    public class PermohonanPengisianSearchResponseDto
+    {
+        public string Tajuk { get; set; } = string.Empty;
+        public int BilanganPengisian { get; set; }
+        public int BilanganHadSIling { get; set; }
+    }
+
+    public class MaklumatPermohonanRequestDto
+    {
+        public int AgensiId { get; set; }
+        public string NoRujukan { get; set; } = string.Empty;
+    }
+    public class MaklumatPermohonanResponseDto
+    {
+        public string KodSkim { get; set; } = string.Empty;
+        public string NamaSkimPerkhidmatan { get; set; } = string.Empty;
+        public int BilanganPermohonanPengisian { get; set; }
+        public int HadSilingDitetapkan { get; set; }
+        public string? Ulasan { get; set; }
+    }
+
     //Nitya Code Start
     public class PermohonanPengisianDto
     {
@@ -352,5 +400,7 @@ namespace HR.Application.DTOs.PDO
         public int? HadSilingDitetapkan { get; set; }
         public string? Ulasan { get; set; }
     }
+
     //Nita Code End
+
 }

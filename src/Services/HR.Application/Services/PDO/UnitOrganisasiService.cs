@@ -59,6 +59,16 @@ namespace HR.Application.Services.PDO
             return result;
         }
 
-
+        public async Task<List<UnitOrganisasiAutocompleteDto>> SearchUnitOrganisasiAsync(string keyword)
+        {
+            return await _context.PDOUnitOrganisasi
+                .Where(x => x.Nama.Contains(keyword))
+                .Select(x => new UnitOrganisasiAutocompleteDto
+                {
+                    Kod = x.Kod,
+                    Nama = x.Nama
+                })
+                .ToListAsync();
+        }
     }
 }

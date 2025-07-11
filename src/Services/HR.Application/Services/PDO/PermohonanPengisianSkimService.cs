@@ -110,6 +110,23 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+        public async Task<PaparPermohonanDanSilingResponseDto?> GetJumlahDanSilingAsync(PaparPermohonanDanSilingRequestDto request)
+        {
+            var result = await _context.PDOPermohonanPengisianSkim
+                .Where(x => x.IdPermohonanPengisian == request.IdPermohonanPengisian
+                         && x.Id == request.IdPermohonanPengisianSkim)
+                .GroupBy(x => 1)
+                .Select(g => new PaparPermohonanDanSilingResponseDto
+                {
+                    JumlahBilanganPengisian = g.Sum(x => x.BilanganPengisian),
+                    HadSilingDitetapkan = g.Sum(x => x.BilanganHadSIling)
+                })
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
+
+
 
         //Nitya Code Start
         public async Task<int> GetBilanganPengisianByIdAsync(int idPermohonanPengisian)

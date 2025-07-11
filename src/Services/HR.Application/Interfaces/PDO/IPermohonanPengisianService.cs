@@ -38,6 +38,15 @@ namespace HR.Application.Interfaces.PDO
         //Amar
         Task<List<ImplikasiKewanganJanaSimulasiKewanganResponseDto>> GetImplikasiKewanganJanaSimulasiKewangan(ImplikasiKewanganJanaSimulasiKewanganFilterDto filter);
 
+
+        Task<List<GetPaparMaklumatPermohonanPengisianResponseDto>> GetPaparMaklumatPermohonanPengisiaAgensiIdAndNoRujukanAsync(GetPaparMaklumatPermohonanPengisianRequestDto request);
+
+        Task<List<GetPaparMaklumatPermohonanPengisianResponseByIdDto>> GetPaparMaklumatPermohonanPengisianResponseByIdAsync(int idskimperkhidmatan);
+
+        Task<List<PermohonanPengisianSearchResponseDto>> SearchAsync(PermohonanPengisianSearchRequestDto request);
+
+        Task<List<MaklumatPermohonanResponseDto>> GetMaklumatAsync(MaklumatPermohonanRequestDto request);
+
         //Nitya Code Start
         Task<PermohonanPengisianDto> getMaklumatPermohonanByIdAsync(int idPermohonanPengisian);
 

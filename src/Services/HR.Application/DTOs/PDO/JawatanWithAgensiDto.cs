@@ -50,4 +50,22 @@ namespace HR.Application.DTOs.PDO
         public DateTime? TarikhStatusKekosongan { get; set; }
         public bool TickCheckBox { get; set; }
     }
+
+    public class CarianJawatanSebenarReqDto
+    {
+        public int IdSkimPerkhidmatan { get; set; }
+        public string KodCarta { get; set; } = string.Empty;
+        public string? KodJawatanSebenar { get; set; }
+        public string? StatusKekosonganJawatan { get; set; }
+        public int? UnitOrganisasi { get; set; }
+    }
+    public class CarianJawatanSebenarRespDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; } = string.Empty;
+        public string NamaJawatan { get; set; } = string.Empty;
+        public string UnitOrganisasi { get; set; } = string.Empty;
+        public string StatusPengisian { get; set; } = string.Empty;
+        public DateTime? TarikhKekosonganJawatan { get; set; }
+    }
 }

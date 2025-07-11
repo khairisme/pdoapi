@@ -24,4 +24,9 @@ namespace HR.Application.DTOs.PDO
 
 
     }
+    public class UnitOrganisasiAutocompleteDto
+    {
+        public string Kod { get; set; } = string.Empty;
+        public string Nama { get; set; } = string.Empty;
+    }
 }

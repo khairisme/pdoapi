@@ -160,7 +160,42 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+
+        public async Task<List<CarianJawatanSebenarRespDto>> SearchCarianawatanSebenarAsync(CarianJawatanSebenarReqDto request)
+        {
+            var result = await (
+                from pj in _context.PDOJawatan
+                join pgsj in _context.PDOGredSkimJawatan on pj.Id equals pgsj.IdJawatan
+                join psp in _context.PDOSkimPerkhidmatan on pgsj.IdSkimPerkhidmatan equals psp.Id
+                join pg in _context.PDOGred on pgsj.IdGred equals pg.Id
+                join pkj in _context.PDOKekosonganJawatan on pj.Id equals pkj.IdJawatan
+                join e2 in _context.PDORujStatusKekosonganJawatan on pkj.KodRujStatusKekosonganJawatan equals e2.Kod
+                join puo in _context.PDOUnitOrganisasi on pj.IdUnitOrganisasi equals puo.Id
+                where pkj.KodRujStatusKekosonganJawatan == "01"
+                   && psp.Id == request.IdSkimPerkhidmatan
+                   && pg.StatusAktif == true
+                   && pg.IndikatorGredLantikanTerus == true
+                   && pkj.StatusAktif == true
+                   && puo.KodCartaOrganisasi.Contains(request.KodCarta)
+                   && (string.IsNullOrEmpty(request.KodJawatanSebenar) || pj.Kod == request.KodJawatanSebenar)
+                   && (string.IsNullOrEmpty(request.StatusKekosonganJawatan) || e2.Kod == request.StatusKekosonganJawatan)
+                   && (!request.UnitOrganisasi.HasValue || puo.Id == request.UnitOrganisasi)
+                select new CarianJawatanSebenarRespDto
+                {
+                    Id = pj.Id,
+                    Kod = pj.Kod,
+                    NamaJawatan = pj.Nama,
+                    UnitOrganisasi = puo.Nama,
+                    StatusPengisian = e2.Nama,
+                    TarikhKekosonganJawatan = pkj.TarikhStatusKekosongan
+                }
+            ).ToListAsync();
+
+            return result;
+        }
     }
+
+
 
 
 }

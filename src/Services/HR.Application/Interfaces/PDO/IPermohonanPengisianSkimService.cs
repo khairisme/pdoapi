@@ -19,5 +19,7 @@ namespace HR.Application.Interfaces.PDO
 
         //Nitya Code End
 
+        Task<PaparPermohonanDanSilingResponseDto?> GetJumlahDanSilingAsync(PaparPermohonanDanSilingRequestDto request);
+
     }
 }

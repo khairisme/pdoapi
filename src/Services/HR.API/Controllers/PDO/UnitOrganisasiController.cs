@@ -56,6 +56,19 @@ public class UnitOrganisasiController : ControllerBase
 
         });
     }
+    /// <summary>
+    /// Search UnitOrganisasi by keyword
+    /// </summary>
+    /// <param name="keyword"></param>
+    /// <returns></returns>
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+            return BadRequest("Keyword is required");
 
+        var result = await _unitOrganisasiService.SearchUnitOrganisasiAsync(keyword);
+        return Ok(result);
+    }
 
 }

@@ -11,5 +11,7 @@ namespace HR.Application.Interfaces.PDO
     {
         Task<IEnumerable<UnitOrganisasiDto>> GetAllAsync();
         Task<List<UnitOrganisasiKementerianDto>> GetUnitOrganisasiByKategoriAsync();
+
+        Task<List<UnitOrganisasiAutocompleteDto>> SearchUnitOrganisasiAsync(string keyword);
     }
 }
