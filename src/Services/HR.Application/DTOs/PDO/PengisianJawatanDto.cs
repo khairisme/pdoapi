@@ -76,4 +76,60 @@ namespace HR.Application.DTOs.PDO
         public DateTime? TarikhKekosonganJawatan { get; set; }
         #endregion
     }
+
+    //Nitya Code Start
+    public class AgensiDto
+    {
+        public int AgensiId { get; set; }
+        public string Kod { get; set; }
+        public string Agensi { get; set; }
+    }
+    public class SkimPerkhidmatanDataDto
+    {
+        public string KodSkim { get; set; }
+        public string NamaSkimPerkhidmatan { get; set; }
+        public int BilanganPengisian { get; set; }
+    }
+
+    public class AgensiWithSkimDto
+    {
+        public int AgensiId { get; set; }
+        public string Kod { get; set; }
+        public string Agensi { get; set; }
+        public List<SkimPerkhidmatanDataDto> SkimList { get; set; } = new List<SkimPerkhidmatanDataDto>();
+    }
+    public class PermohonanDetailDto
+    {
+        public string Kementerian { get; set; }
+        public string NomborRujukan { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public string Keterangan { get; set; }
+        public int BilanganPermohonan { get; set; }
+        public string Ulasan { get; set; }
+    }
+    public class SenaraiJawatanPengisianDto
+    {
+        public int Id { get; set; }
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string UnitOrganisasi { get; set; }
+        public string StatusPengisianJawatan { get; set; }
+        public DateTime? TarikhKekosonganJawatan { get; set; }
+    }
+    public class UnitOrganisasiDataDto
+    {
+        public int IdUnitOrganisasi { get; set; }
+        public string Kod { get; set; }
+        public string Agensi { get; set; }
+        public List<JawatanDto> JawatanList { get; set; }
+    }
+
+    public class JawatanDto
+    {
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string Gred { get; set; }
+    }
+
+    //Nitya Code End
 }

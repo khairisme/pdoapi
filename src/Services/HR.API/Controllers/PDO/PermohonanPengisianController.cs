@@ -717,4 +717,236 @@ public class PermohonanPengisianController : ControllerBase
 
 
     }
+
+    //Nitya Code Start
+    /// <summary>
+    ///Get BilanganPermohonan Pengisian Table POA 
+    /// <param name="idPermohonan">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+
+    [HttpGet("getMaklumatPermohonanById/{idPermohonan}")]
+    public async Task<IActionResult> getMaklumatPermohonanById(int idPermohonan)
+    {
+        _logger.LogInformation("Get getMaklumatPermohonanById ");
+        try
+        {
+            var result = await _service.getMaklumatPermohonanByIdAsync(idPermohonan);
+
+            return Ok(new
+            {
+                status = result != null ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "getMaklumatPermohonanById: Error occurred in controller while processing request with ID: {@idPermohonan}", idPermohonan);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new PermohonanPengisianHeaderResponseDto()
+            });
+        }
+    }
+    /// <summary>
+    ///Get getSkimDetails
+    /// <param name="agensiId">Filter criteria</param>
+    /// /// <param name="nomborRujukan">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+
+
+    [HttpGet("getSkimDetails")]
+    public async Task<IActionResult> GetSkimDetails([FromQuery] int agensiId, [FromQuery] string nomborRujukan)
+    {
+        _logger.LogInformation("Fetching skim details for AgensiId: {agensiId}, NomborRujukan: {nomborRujukan}", agensiId, nomborRujukan);
+
+        try
+        {
+            var result = await _service.GetSkimDetailsByAgensiIdAndNoRujukanAsync(agensiId, nomborRujukan);
+
+            return Ok(new
+            {
+                status = result.Any() ? "Success" : "No Data",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while fetching skim details for AgensiId: {agensiId}, NomborRujukan: {nomborRujukan}", agensiId, nomborRujukan);
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<PermohonanSkimDetailDto>()
+            });
+        }
+    }
+    /// <summary>
+    ///Get getSkimDetails
+    /// <param name="agensiId">Filter criteria</param>
+    /// /// <param name="nomborRujukan">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+    [HttpGet("GetMaklumatPermohananData/{idPermohonanPengisian}")]
+    public async Task<IActionResult> GetMaklumatPermohananData(int idPermohonanPengisian)
+    {
+        try
+        {
+            var result = await _service.GetMaklumatPermohananData(idPermohonanPengisian);
+            return Ok(new
+            {
+                status = result != null ? "Success" : "Not Found",
+                item = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching MaklumatPermohananData for ID: {id}", idPermohonanPengisian);
+            return StatusCode(500, new
+            {
+                status = "Error",
+                item = new MaklumatPermohonanDataDto()
+            });
+        }
+    }
+    /// <summary>
+    ///Get GetBilanganPermohonanPengisian
+    /// <param name="agensiId">Filter criteria</param>
+    /// /// <param name="noRujukan">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+    [HttpGet("GetBilanganPermohonanPengisian")]
+    public async Task<IActionResult> GetBilanganPermohonanPengisian([FromQuery] int agensiId, [FromQuery] string noRujukan)
+    {
+        try
+        {
+            var result = await _service.GetBilanganPermohonanPengisian(agensiId, noRujukan);
+
+            return Ok(new
+            {
+                status = result.Any() ? "Success" : "Not Found",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching BilanganPermohonanPengisian for AgensiId: {agensiId}, NoRujukan: {noRujukan}", agensiId, noRujukan);
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<BilanganPermohonanPengisianDto>()
+            });
+        }
+    }
+    /// <summary>
+    ///Update SimpanPermohonanDanSkim
+    /// <param name="request"></param>
+    /// </summary>
+
+
+    [HttpPost("SimpanPermohonanDanSkim")]
+    public async Task<IActionResult> SimpanPermohonanDanSkim([FromBody] PermohonanUpdateDto request)
+    {
+        try
+        {
+            var result = await _service.SimpanPermohonanDanSkimAsync(request);
+            return Ok(new
+            {
+                status = result ? "Success" : "Failed"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating Permohonan and Skim");
+            return StatusCode(500, new
+            {
+                status = "Error"
+            });
+        }
+    }
+    /// <summary>
+    ///Get GetBilanganPermohonanPengisian
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+
+    /// <remarks>
+
+    /// </remarks>
+    [HttpPost("GetJawatanKekosongan")]
+    public async Task<IActionResult> GetJawatanKekosongan([FromBody] JawatanKekosonganFilterDto filter)
+    {
+        try
+        {
+            var result = await _service.GetJawatanKekosonganAsync(filter);
+            return Ok(new
+            {
+                status = result.Any() ? "Success" : "Not Found",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetJawatanKekosongan");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<JawatanKekosonganDto>()
+            });
+        }
+    }
+    /// <summary>
+    /// API Endpoint: GetMaklumatPermohonan
+    /// Description: Fetches a list of permohonan (application) details based on optional filter criteria:
+    ///              - AgensiId (Unit Organisasi ID)
+    ///              - NoRujukan (Reference Number)
+    /// This endpoint will return all matching records with skim, jumlah permohonan, had siling and ulasan.
+    /// </summary>
+    /// <param name="filter">Contains optional filtering parameters (AgensiId and NoRujukan)</param>
+    /// <returns>
+    ///     200 OK - On success with result set (status = "Success" or "Not Found")
+    ///     500 Internal Server Error - If an exception occurs
+    /// </returns>
+    [HttpPost("GetMaklumatPermohonan")]
+    public async Task<IActionResult> GetMaklumatPermohonan([FromBody] MaklumatPermohonanFilterDto filter)
+    {
+        try
+        {
+            var result = await _service.GetMaklumatPermohonanAsync(filter);
+            return Ok(new
+            {
+                status = result.Any() ? "Success" : "Not Found",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetMaklumatPermohonan");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<MaklumatPermohonanDto>()
+            });
+        }
+    }
+    //Nitya Code End
 }

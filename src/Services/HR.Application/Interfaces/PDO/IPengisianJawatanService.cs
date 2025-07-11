@@ -14,5 +14,15 @@ namespace HR.Application.Interfaces.PDO
         Task<int> GetPengisianJawatanCountAsync(int idSkimPerkhidmatan);
         Task<bool> CreateAsync(PengisianJawatanDto dto);
         Task<bool> DeleteAsync(Guid Id);
+        //Nitya Code Start
+        Task<bool> CreateAsync(List<PengisianJawatanDto> dtos);
+        Task<bool> DeleteAsync(int Id);
+
+        Task<List<AgensiWithSkimDto>> GetAgensiWithSkimPengisianAsync();
+        Task<PermohonanDetailDto> GetPermohonanDetailByIdAsync(int idPermohonan);
+        Task<List<SenaraiJawatanPengisianDto>> GetSenaraiJawatanUntukPengisian(int idSkimPerkhidmatan);
+        Task<List<UnitOrganisasiDataDto>> GetSenaraiJawatanSebenarAsync();
+
+        //Nitya Code End
     }
 }
