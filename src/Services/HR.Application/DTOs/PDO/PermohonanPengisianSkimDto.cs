@@ -17,22 +17,9 @@ namespace HR.Application.DTOs.PDO
         public DateTime? TarikhKekosonganJawatan { get; set; }
 
     }
-    //Nitya Code Start
-    public class CombinedUpdateRequestDto
-    {
-        public int IdPermohonanPengisianSkim { get; set; }
-        public int IdPermohonanPengisian { get; set; }
-        public string Ulasan { get; set; }
-        public Guid? UserId { get; set; }
+   
 
-        public List<HadSilingUpdateRequestDto> GridItems { get; set; }
-    }
-
-    public class HadSilingUpdateRequestDto
-    {
-        public int RecordId { get; set; }
-        public int BilanganHadSiling { get; set; }
-    }
+   
     public class BilanganPengisianHadSilingResponseDto
     {
         public int JumlahBilanganPengisian { get; set; }
