@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.API.Controllers.PDO;
 [Authorize]
@@ -68,7 +69,13 @@ public class UnitOrganisasiController : ControllerBase
             return BadRequest("Keyword is required");
 
         var result = await _unitOrganisasiService.SearchUnitOrganisasiAsync(keyword);
-        return Ok(result);
+        return Ok(new
+        {
+            status = result.Count() > 0 ? "Sucess" : "Failed",
+            items = result
+
+        });
+        
     }
 
 }

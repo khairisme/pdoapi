@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HR.API.Controllers.PDO
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/pdo/[controller]")]
     public class PermohonanPengisianSkimController : ControllerBase
@@ -209,7 +209,7 @@ namespace HR.API.Controllers.PDO
         /// This API may change as query is still not finalized.
         /// 
         /// </remarks>
-        [HttpGet("getJumlahDanSiling")]
+        [HttpPost("getJumlahDanSiling")]
 
         public async Task<IActionResult> GetJumlahDanSiling([FromBody] PaparPermohonanDanSilingRequestDto request)
         {
@@ -220,7 +220,16 @@ namespace HR.API.Controllers.PDO
                 var data = await _permohonanPengisianSkimService.GetJumlahDanSilingAsync(request);
 
                 _logger.LogInformation("GetBilanganPengisianHadSiling: Successfully retrieved BilanganPengisian summary");
-
+                if (data == null)
+                {
+                    _logger.LogWarning("GetJumlahDanSiling: No data found for IdPermohonanPengisian: {IdPermohonanPengisian}, IdPermohonanPengisianSkim: {IdPermohonanPengisianSkim}", request.IdPermohonanPengisian, request.IdPermohonanPengisianSkim);
+                    return NotFound(new
+                    {
+                        status = "Failed",
+                       
+                        data = new PaparPermohonanDanSilingResponseDto()
+                    });
+                }
                 return Ok(new
                 {
                     status = (data.JumlahBilanganPengisian > 0 || data.HadSilingDitetapkan > 0) ? "Success" : "Failed",

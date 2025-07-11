@@ -757,7 +757,11 @@ public class PermohonanPengisianController : ControllerBase
        
 
         var result = await _service.GetPaparMaklumatPermohonanPengisianResponseByIdAsync(idskimperkhidmatan);
-        return Ok(result);
+        return  Ok(new
+        {
+            status = result.Count > 0 ? "Success" : "Failed",
+            items = result
+        });
     }
     /// <summary>
     /// Search Permohonan Pengisian Maklumat Permohonan
@@ -771,7 +775,11 @@ public class PermohonanPengisianController : ControllerBase
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var result = await _service.SearchAsync(request);
-        return Ok(result);
+         return Ok(new
+        {
+            status = result.Count > 0 ? "Success" : "Failed",
+            items = result
+        });
     }
     /// <summary>
     /// Get Maklumat Permohonan Pengisian
@@ -781,10 +789,14 @@ public class PermohonanPengisianController : ControllerBase
     [HttpPost("getMaklumat")]
     public async Task<IActionResult> GetMaklumat([FromBody] MaklumatPermohonanRequestDto request)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+       
 
         var result = await _service.GetMaklumatAsync(request);
-        return Ok(result);
+        return Ok(new
+        {
+            status = result.Count > 0 ? "Success" : "Failed",
+            items = result
+        });
     }
 
     //Nitya Code Start
