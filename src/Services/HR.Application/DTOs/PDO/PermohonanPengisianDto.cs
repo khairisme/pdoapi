@@ -265,4 +265,92 @@ namespace HR.Application.DTOs.PDO
         public decimal JumlajImplikasiKewanganSebulan { get; set; }
         public decimal JumlajImplikasiKewanganSetahun { get; set; }
     }
+
+    //Nitya Code Start
+    public class PermohonanPengisianDto
+    {
+        public string Kementerian { get; set; }
+        public string NomborRujukan { get; set; }
+        public string TajukPermhonan { get; set; }
+        public string Keterangan { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public int BilanganPermohonan { get; set; }
+        public string Ulasan { get; set; }
+    }
+    public class SkimPerkhidmatanAgensiDto
+    {
+        public string KodSkim { get; set; }
+        public string NamaSkimPerkhidmatan { get; set; }
+        public int BilanganPengisian { get; set; }
+    }
+    public class PermohonanSkimDetailDto
+    {
+        public int RecordId { get; set; }
+        public string KodSkim { get; set; }
+        public string NamaSkimPerkhidmatan { get; set; }
+        public int BilanganPengisian { get; set; }
+        public int? BilanganHadSiling { get; set; }
+    }
+    public class MaklumatPermohonanDataDto
+    {
+        public string Agensi { get; set; }
+        public string NoRujukan { get; set; }
+        public string TajukPermohonan { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public string Keterangan { get; set; }
+        public int HadSilingDitetapkan { get; set; }
+    }
+    public class BilanganPermohonanPengisianDto
+    {
+        public string KodSkim { get; set; }
+        public string NamaSkimPerkhidmatan { get; set; }
+        public int BilanganPermohonanPengisian { get; set; }
+        public int? HadSilingDitetapkan { get; set; }
+        public string Ulasan { get; set; }
+    }
+    public class PermohonanUpdateDto
+    {
+        public int IdPermohonanPengisian { get; set; }
+        public int AgensiId { get; set; }
+        public string Tajuk { get; set; }
+        public string Keterangan { get; set; }
+        public List<SkimUpdateDto> GridItems { get; set; }
+    }
+
+    public class SkimUpdateDto
+    {
+        public int Id { get; set; }  // ppps.Id
+        public int BilanganHadSiling { get; set; }
+        public string Ulasan { get; set; }
+    }
+    public class JawatanKekosonganFilterDto
+    {
+        public int AgensiId { get; set; }
+        public int IdSkimPerkhidmatan { get; set; }
+        public string KodJawatan { get; set; }
+        public string KodStatusJawatan { get; set; }
+    }
+
+    public class JawatanKekosonganDto
+    {
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+        public string UnitOrganisasi { get; set; }
+        public string StatusPengisianJawatan { get; set; }
+        public DateTime? TarikhKekosongan { get; set; }
+    }
+    public class MaklumatPermohonanFilterDto
+    {
+        public int? AgensiId { get; set; }
+        public string? NoRujukan { get; set; }
+    }
+    public class MaklumatPermohonanDto
+    {
+        public string KodSkim { get; set; }
+        public string NamaSkimPerkhidmatan { get; set; }
+        public int? BilanganPermohonanPengisian { get; set; }
+        public int? HadSilingDitetapkan { get; set; }
+        public string? Ulasan { get; set; }
+    }
+    //Nita Code End
 }

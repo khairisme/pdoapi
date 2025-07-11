@@ -13,6 +13,11 @@ namespace HR.Application.Interfaces.PDO
         
         Task<List<PegawaiTeknologiMaklumatResponseDto>> GetPegawaiTeknologiMaklumat(int IdSkimPerkhidmatan, int IdPermohonanPengisian);
         Task<BilanganPengisianHadSilingResponseDto> GetBilanganPengisianHadSiling(int IdPermohonanPengisian, int IdPermohonanPengisianSkim);
+        //Nitya Code Start
+        Task<int> GetBilanganPengisianByIdAsync(int idPermohonanPengisian);
+        Task<bool> UpdateUlasanAndHadSilingAsync(CombinedUpdateRequestDto request);
+
+        //Nitya Code End
 
     }
 }

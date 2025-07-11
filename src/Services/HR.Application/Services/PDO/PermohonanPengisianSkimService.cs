@@ -110,5 +110,44 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+
+        //Nitya Code Start
+        public async Task<int> GetBilanganPengisianByIdAsync(int idPermohonanPengisian)
+        {
+            return await _context.PDOPermohonanPengisianSkim
+                .Where(ppps => ppps.IdPermohonanPengisian == idPermohonanPengisian)
+                .CountAsync();
+        }
+        public async Task<bool> UpdateUlasanAndHadSilingAsync(CombinedUpdateRequestDto request)
+        {
+            // 1. Update Ulasan
+            var ulasanRecord = await _context.PDOPermohonanPengisianSkim
+                .FirstOrDefaultAsync(x => x.Id == request.IdPermohonanPengisianSkim &&
+                                          x.IdPermohonanPengisian == request.IdPermohonanPengisian);
+
+            if (ulasanRecord == null) return false;
+
+            ulasanRecord.Ulasan = request.Ulasan;
+
+            // 2. Update Grid Items (BilanganHadSiling)
+            var ids = request.GridItems.Select(x => x.RecordId).ToList();
+            var gridRecords = await _context.PDOPermohonanPengisianSkim
+                .Where(x => ids.Contains(x.Id)).ToListAsync();
+
+            foreach (var dto in request.GridItems)
+            {
+                var record = gridRecords.FirstOrDefault(x => x.Id == dto.RecordId);
+                if (record != null)
+                {
+                    record.BilanganHadSIling = dto.BilanganHadSiling;
+                    record.IdPinda = request.UserId;
+                    record.TarikhPinda = DateTime.Now;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        //Nitya Code End
     }
 }

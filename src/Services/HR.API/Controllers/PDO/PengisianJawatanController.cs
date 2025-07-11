@@ -61,7 +61,7 @@ namespace HR.API.Controllers.PDO
             try
             {
                 var result = await _pengisianJawatanService.GetPengisianJawatanCountAsync(idSkimPerkhidmatan);
-                if (result == null)
+                if (result == 0)
                     return NotFound($"No Pengisian Jawatan Count found for idSkimPerkhidmatan {idSkimPerkhidmatan}");
 
                 return Ok(result);
@@ -72,33 +72,17 @@ namespace HR.API.Controllers.PDO
                 return StatusCode(500, "Internal Server Error");
             }
         }
+        
+
+       
+        // Nitya Code Start
         /// <summary>
-        ///Create pengisianJawatan
+        /// Delete pengisian jawatan
         /// </summary>
-        /// <param name="pengisianJawatanDto"></param>
-        /// <returns></returns>
-        /// Need confirmation from Pernec
-        //[HttpPost("newPengisianJawatan")]
-        //public async Task<IActionResult> Create([FromBody] PengisianJawatanDto pengisianJawatanDto)
-        //{
-        //    _logger.LogInformation("Creating a new PengisianJawatan");
-
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-
-        //    var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDto);
-
-        //    return Ok(new
-        //    {
-        //        status = isSuccess ? "Sucess" : "Failed",
-        //        items = isSuccess
-
-        //    });
-
-        //}
-
+        /// <param name="id">id</param>
+        /// <returns>ActionResult with success status</returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             _logger.LogInformation("Deleting Pengisian Jawatan with ID: {Id} using Entity Framework Core", id);
 
@@ -111,6 +95,143 @@ namespace HR.API.Controllers.PDO
 
             return NoContent();
         }
+        /// <summary>
+        /// Create pengisian jawatan
+        /// </summary>
+        /// <param name="pengisianJawatanDtos">List of pengisian jawatan data transfer objects</param>
+        /// <returns>ActionResult with success status</returns>
+
+        [HttpPost("newPengisianJawatan")]
+        public async Task<IActionResult> Create([FromBody] List<PengisianJawatanDto> pengisianJawatanDtos)
+        {
+            _logger.LogInformation("Creating new PengisianJawatan records");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDtos);
+
+            return Ok(new { status = isSuccess ? "Success" : "Failed", items = isSuccess });
+        }
+
+        /// <summary>
+        /// Get AgensiWithSkim
+        /// </summary>
+        /// <param name="pengisianJawatanDtos">List of pengisian jawatan data transfer objects</param>
+        /// <returns>ActionResult with success status</returns>
+
+        [HttpGet("getAgensiWithSkim")]
+        public async Task<IActionResult> GetAgensiWithSkim()
+        {
+            _logger.LogInformation("Fetching Agensi with Skim Pengisian");
+
+            try
+            {
+                var result = await _pengisianJawatanService.GetAgensiWithSkimPengisianAsync();
+
+                return Ok(new
+                {
+                    status = result.Any() ? "Success" : "No Data",
+                    items = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while fetching Agensi with Skim Pengisian");
+
+                return StatusCode(500, new
+                {
+                    status = "Error",
+                    items = new List<AgensiWithSkimDto>()
+                });
+            }
+        }
+
+        /// <summary>
+        /// Get getPermohonanDetailById
+        /// </summary>
+        /// <param name="idPermohonan">List of pengisian jawatan data transfer objects</param>
+        /// <returns>ActionResult with success status</returns>
+        [HttpGet("getPermohonanDetailById/{idPermohonan}")]
+        public async Task<IActionResult> GetPermohonanDetailById(int idPermohonan)
+        {
+            _logger.LogInformation("Fetching permohonan detail for ID: {id}", idPermohonan);
+
+            try
+            {
+                var result = await _pengisianJawatanService.GetPermohonanDetailByIdAsync(idPermohonan);
+
+                return Ok(new
+                {
+                    status = result != null ? "Success" : "No Data",
+                    item = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching permohonan detail for ID: {id}", idPermohonan);
+                return StatusCode(500, new
+                {
+                    status = "Error",
+                    item = new PermohonanDetailDto()
+                });
+            }
+        }
+        /// <summary>
+        /// Get GetSenaraiJawatanUntukPengisian
+        /// </summary>
+        /// <param name="idSkimPerkhidmatan">List of pengisian jawatan data transfer objects</param>
+        /// <returns>ActionResult with success status</returns>
+        [HttpGet("GetSenaraiJawatanUntukPengisian")]
+        public async Task<IActionResult> GetSenaraiJawatanUntukPengisian([FromQuery] int idSkimPerkhidmatan)
+        {
+            try
+            {
+                var result = await _pengisianJawatanService.GetSenaraiJawatanUntukPengisian(idSkimPerkhidmatan);
+                return Ok(new
+                {
+                    status = result.Any() ? "Success" : "Not Found",
+                    items = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching Senarai Jawatan Untuk Pengisian for SkimId: {idSkim}", idSkimPerkhidmatan);
+                return StatusCode(500, new
+                {
+                    status = "Error",
+                    items = new List<SenaraiJawatanPengisianDto>()
+                });
+            }
+        }
+        /// <summary>
+        /// Get GetSenaraiJawatanSebenar
+        /// </summary>
+
+        /// <returns>ActionResult with success status</returns>
+        [HttpGet("GetSenaraiJawatanSebenar")]
+        public async Task<IActionResult> GetSenaraiJawatanSebenar()
+        {
+            try
+            {
+                var result = await _pengisianJawatanService.GetSenaraiJawatanSebenarAsync();
+                return Ok(new
+                {
+                    status = result.Any() ? "Success" : "Not Found",
+                    items = result
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetSenaraiJawatanSebenar");
+                return StatusCode(500, new
+                {
+                    status = "Error",
+                    items = new List<UnitOrganisasiDataDto>()
+                });
+            }
+        }
+        // Nitya Code End
         #endregion
 
     }

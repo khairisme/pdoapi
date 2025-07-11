@@ -130,5 +130,70 @@ namespace HR.API.Controllers.PDO
                 });
             }
         }
+
+        //Nitya Code Start
+        /// <summary>
+        /// GetBilanganPengisian
+        /// </summary>
+        /// <param name="IdPermohonanPengisian">IdPermohonanPengisian</param>
+
+        /// <returns>Returns aggregated data showing total JumlahBilanganPengisian and HadSilingDitetapkan</returns>
+
+        /// <remarks>
+        /// 
+        /// 
+        /// </remarks>
+        [HttpGet("getBilanganPengisian/{idPermohonanPengisian}")]
+        public async Task<IActionResult> GetBilanganPengisian(int idPermohonanPengisian)
+        {
+            _logger.LogInformation("Fetching count for IdPermohonanPengisian: {id}", idPermohonanPengisian);
+
+            try
+            {
+                int count = await _permohonanPengisianSkimService.GetBilanganPengisianByIdAsync(idPermohonanPengisian);
+
+                return Ok(new
+                {
+                    status = "Success",
+                    bilangan = count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting bilangan pengisian for Id: {id}", idPermohonanPengisian);
+
+                return StatusCode(500, new
+                {
+                    status = "Error",
+                    bilangan = 0
+                });
+            }
+        }
+        /// <summary>
+        /// updateUlasanAndHadSiling
+        /// </summary>
+        /// <param name="request">IdPermohonanPengisian</param>
+
+        /// <returns>Returns aggregated data showing total JumlahBilanganPengisian and HadSilingDitetapkan</returns>
+
+        /// <remarks>
+        /// 
+        /// 
+        /// </remarks>
+        [HttpPost("updateUlasanAndHadSiling")]
+        public async Task<IActionResult> UpdateUlasanAndHadSiling([FromBody] CombinedUpdateRequestDto request)
+        {
+            try
+            {
+                var result = await _permohonanPengisianSkimService.UpdateUlasanAndHadSilingAsync(request);
+                return Ok(new { status = result ? "Success" : "Failed" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating ulasan and grid data");
+                return StatusCode(500, new { status = "Error" });
+            }
+        }
+        //Nitya Code End
     }
 }
