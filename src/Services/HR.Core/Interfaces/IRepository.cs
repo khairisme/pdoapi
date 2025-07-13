@@ -24,7 +24,9 @@ public interface IRepository<T> where T : class
     /// Get entity by id
     /// </summary>
     Task<T?> GetByIdAsync(Guid id);
-    
+
+    Task<T?> GetByIdAsync(int id);
+
     /// <summary>
     /// Get all entities
     /// </summary>

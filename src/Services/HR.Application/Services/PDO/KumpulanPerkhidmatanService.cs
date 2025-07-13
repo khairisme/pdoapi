@@ -623,6 +623,71 @@ namespace HR.Application.Services.PDO
                 KodJana=dto.KodJana
             };
         }
+
+        public async Task<bool> DeleteOrUpdateKumpulanPerkhidmatanAsync(int id)
+        {
+            _logger.LogInformation("DeleteOrUpdateKumpulanPerkhidmatanAsync by ID {Id} using Entity Framework", id);
+            try
+            {
+
+                var result = await (from a in _dbContext.PDOKumpulanPerkhidmatan
+                                    join b in _dbContext.PDOStatusPermohonanKumpulanPerkhidmatan
+                                        on a.Id equals b.IdKumpulanPerkhidmatan
+                                    join b2 in _dbContext.PDORujStatusPermohonan
+                                        on b.KodRujStatusPermohonan equals b2.Kod
+                                    where b.StatusAktif == true && a.Id == id
+                                    select new KumpulanPerkhidmatanStatusDto
+                                    {
+                                        Id = a.Id,
+                                        Kod = a.Kod,
+                                        Nama = a.Nama,
+                                        Keterangan = a.Keterangan,
+                                        StatusAktif = a.StatusAktif,
+                                        KodRujStatusPermohonan = b.KodRujStatusPermohonan,
+                                        StatusPermohonan = b2.Nama,
+                                        TarikhKemaskini = b.TarikhKemaskini
+                                    }).FirstOrDefaultAsync();
+                if (result == null)
+                    return false;
+
+                var kumpulanPerkhidmatan = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().GetByIdAsync(id);
+                if (kumpulanPerkhidmatan == null)
+                    return false;
+
+                if (!result.StatusAktif && result.KodRujStatusPermohonan == "01")
+                {
+                    // Delete children first
+                    var statusList = await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>()
+                        .FindByFieldAsync("IdKumpulanPerkhidmatan", id);
+
+                    _dbContext.PDOStatusPermohonanKumpulanPerkhidmatan.RemoveRange(statusList);
+                    await _dbContext.SaveChangesAsync();
+                    // Then delete parent
+                    _dbContext.PDOKumpulanPerkhidmatan.Remove(kumpulanPerkhidmatan);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    // Just set to inactive
+                    kumpulanPerkhidmatan.StatusAktif = false;
+                    await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(kumpulanPerkhidmatan);
+                    await _unitOfWork.SaveChangesAsync();
+                    return true;
+                }
+
+               
+
+
+
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "DeleteOrUpdateKumpulanPerkhidmatanAsync");
+                throw;
+            }
+        }
     }
 }
 

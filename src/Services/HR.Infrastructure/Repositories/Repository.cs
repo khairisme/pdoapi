@@ -29,7 +29,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         var query = $"SELECT * FROM {_tableName} WHERE Id = @Id AND IsDeleted = 0";
         return await conn.QueryFirstOrDefaultAsync<T>(query, new { Id = id });
     }
-
+    public async Task<T?> GetByIdAsync(int  id)
+    {
+        using var conn = _connection.CreateConnection();
+        var query = $"SELECT * FROM {_tableName} WHERE Id = @Id AND IsDeleted = 0";
+        return await conn.QueryFirstOrDefaultAsync<T>(query, new { Id = id });
+    }
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         using var conn = _connection.CreateConnection();

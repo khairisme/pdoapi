@@ -24,7 +24,10 @@ public class EfRepository<T> : IRepository<T> where T : BaseEntity
     {
         return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
     }
-
+    public async Task<T?> GetByIdAsync(int id)
+    {
+        return null;
+    }
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _dbSet.Where(e => !e.IsDeleted).ToListAsync();

@@ -27,7 +27,10 @@ public class EfPNSRepository<T> : IRepository<T> where T : PNSBaseEntity
     {
         return await _dbSet.FirstOrDefaultAsync(e =>  Convert.ToBoolean(e.StatusAktif));
     }
-
+    public async Task<T?> GetByIdAsync(int id)
+    {
+        return await _dbSet.Where(e => e.Id == id).FirstOrDefaultAsync(e => Convert.ToBoolean(e.StatusAktif));
+    }
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif)).ToListAsync();
