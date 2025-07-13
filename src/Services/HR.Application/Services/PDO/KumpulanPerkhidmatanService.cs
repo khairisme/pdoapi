@@ -76,7 +76,7 @@ namespace HR.Application.Services.PDO
                 if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
                     query = query.Where(q => q.b2.Kod == filter.StatusPermohonan);
 
-                var data = await query.OrderBy(q => q.a.Kod).ToListAsync();
+                var data = await query.Where(q=>q.b.StatusAktif  == true).OrderBy(q => q.a.Kod).ToListAsync();
 
 
 
