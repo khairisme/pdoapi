@@ -656,16 +656,28 @@ namespace HR.Application.Services.PDO
 
                 if (!result.StatusAktif && result.KodRujStatusPermohonan == "01")
                 {
-                    // Delete children first
-                    var statusList = await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>()
+                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    try
+                    {
+                        // Delete children first
+                        var statusList = await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>()
                         .FindByFieldAsync("IdKumpulanPerkhidmatan", id);
 
-                    _dbContext.PDOStatusPermohonanKumpulanPerkhidmatan.RemoveRange(statusList);
-                    await _dbContext.SaveChangesAsync();
-                    // Then delete parent
-                    _dbContext.PDOKumpulanPerkhidmatan.Remove(kumpulanPerkhidmatan);
-                    await _dbContext.SaveChangesAsync();
-                    return true;
+                        _dbContext.PDOStatusPermohonanKumpulanPerkhidmatan.RemoveRange(statusList);
+                        await _dbContext.SaveChangesAsync();
+                        // Then delete parent
+                        _dbContext.PDOKumpulanPerkhidmatan.Remove(kumpulanPerkhidmatan);
+                        await _dbContext.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "DeleteOrUpdateKumpulanPerkhidmatanAsync failed during transaction");
+                        throw;
+                    }
                 }
                 else
                 {
