@@ -25,7 +25,7 @@ namespace HR.Application.Interfaces.PDO
         Task<IEnumerable<CarlStatusKumpulanPerkhidmatanDto>> GetStatusKumpulanPerkhidmatan(KumpulanPerkhidmatanFilterDto filter);
 
         Task<KumpulanPerkhidmatanStatusDto?> GetMaklumatSediaAda(int id);
-        Task<KumpulanPerkhidmatanButiranDto> GetMaklumatBaharuAsync(int id);
+        Task<KumpulanPerkhidmatanSubListDto> GetMaklumatBaharuAsync(int id);
 
         Task<bool> KemaskiniStatusAsync(KumpulanPerkhidmatanRefStatusDto perkhidmatanDto);
 

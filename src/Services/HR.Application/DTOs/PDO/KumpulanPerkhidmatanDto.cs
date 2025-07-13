@@ -75,6 +75,8 @@ namespace HR.Application.DTOs.PDO
         public string Kod { get; set; }
         public string? ButiranKemaskini { get; set; }
         public string KodRujStatusPermohonan { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
         public string StatusPermohonan { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
     }
@@ -98,5 +100,15 @@ namespace HR.Application.DTOs.PDO
     {
         public string Kod { get; set; } = string.Empty;
     }
-
+    public class KumpulanPerkhidmatanSubListDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public bool StatusAktif { get; set; }
+        public string KodRujStatusPermohonan { get; set; }
+        public string StatusPermohonan { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+    }
 }

@@ -12,6 +12,8 @@ using HR.Application.Extensions;
 using HR.Core.Entities.PDO;
 using HR.Application.DTOs.PDO;
 using HR.Application.Interfaces.PDO;
+using Grpc.Core;
+using Newtonsoft.Json;
 
 namespace HR.Application.Services.PDO
 {
@@ -380,7 +382,10 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
-        public async Task<KumpulanPerkhidmatanButiranDto> GetMaklumatBaharuAsync(int id)
+
+
+
+        public async Task<KumpulanPerkhidmatanSubListDto> GetMaklumatBaharuAsync(int id)
         {
             _logger.LogInformation("Getting ButiranKemaskini by ID {Id} using Entity Framework", id);
             try
@@ -393,15 +398,27 @@ namespace HR.Application.Services.PDO
                                     where b.StatusAktif == true && a.Id == id
                                     select new KumpulanPerkhidmatanButiranDto
                                     {
-                                        Id = a.Id,
-                                        Kod = a.Kod,
+                                        //Id = a.Id,
+                                        //Kod = a.Kod,
                                         ButiranKemaskini = a.ButiranKemaskini,
-                                        KodRujStatusPermohonan = b.KodRujStatusPermohonan,
-                                        StatusPermohonan = b2.Nama,
-                                        TarikhKemaskini = b.TarikhKemaskini
+                                        //KodRujStatusPermohonan = b.KodRujStatusPermohonan,
+                                        //StatusPermohonan = b2.Nama,
+                                        //TarikhKemaskini = b.TarikhKemaskini
                                     }).FirstOrDefaultAsync();
 
-                return result;
+                if (String.IsNullOrEmpty(result.ButiranKemaskini))
+                {
+                    return new KumpulanPerkhidmatanSubListDto
+                    {
+                        Keterangan = "Tiada butiran kemaskini"
+                    };
+                }
+
+                KumpulanPerkhidmatanSubListDto obj = JsonConvert.DeserializeObject<KumpulanPerkhidmatanSubListDto>(result.ButiranKemaskini);
+
+               
+
+                return obj;
             }
             catch (Exception ex)
             {
