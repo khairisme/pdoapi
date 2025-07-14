@@ -234,7 +234,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("getMaklumatBaharu/{id}")]
-    public async Task<ActionResult<KumpulanPerkhidmatanSubListDto>> GetMaklumatBaharu(int id)
+    public async Task<ActionResult<KumpulanPerkhidmatanRefStatusDto>> GetMaklumatBaharu(int id)
     {
         try
         {
@@ -304,7 +304,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost("sethantar")]
-    public async Task<IActionResult> setHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanDto dto)
+    public async Task<IActionResult> setHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanHantarDto dto)
     {
         try
         {

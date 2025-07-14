@@ -111,4 +111,20 @@ namespace HR.Application.DTOs.PDO
         public string StatusPermohonan { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
     }
+
+    //Amar
+    public class KumpulanPerkhidmatanHantarDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string? Keterangan { get; set; }
+        public KumpulanPerkhidmatanDto? ButiranKemaskini { get; set; }
+        public string? Ulasan { get; set; }
+        public string? KodJana { get; set; }
+        public bool StatusAktif { get; set; } = true;
+
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndikatorTanpaSkim { get; set; }
+    }
 }

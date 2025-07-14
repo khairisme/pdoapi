@@ -385,7 +385,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task<KumpulanPerkhidmatanSubListDto> GetMaklumatBaharuAsync(int id)
+        public async Task<KumpulanPerkhidmatanRefStatusDto> GetMaklumatBaharuAsync(int id)
         {
             _logger.LogInformation("Getting ButiranKemaskini by ID {Id} using Entity Framework", id);
             try
@@ -408,14 +408,14 @@ namespace HR.Application.Services.PDO
 
                 if (String.IsNullOrEmpty(result.ButiranKemaskini))
                 {
-                    return new KumpulanPerkhidmatanSubListDto
+                    return new KumpulanPerkhidmatanRefStatusDto
                     {
                         Keterangan = "Tiada butiran kemaskini"
                     };
                 }
 
-                KumpulanPerkhidmatanSubListDto obj = JsonConvert.DeserializeObject<KumpulanPerkhidmatanSubListDto>(result.ButiranKemaskini);
-
+                KumpulanPerkhidmatanRefStatusDto obj = JsonConvert.DeserializeObject<KumpulanPerkhidmatanRefStatusDto>(result.ButiranKemaskini);
+                obj.KodRujStatusPermohonan = string.Empty;
                
 
                 return obj;
@@ -556,7 +556,7 @@ namespace HR.Application.Services.PDO
             }
         }
 
-        public async Task<bool> UpdateHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanDto perkhidmatanDto)
+        public async Task<bool> UpdateHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanHantarDto perkhidmatanDto)
         {
             _logger.LogInformation("Service: Updating Hantar KumpulanPerkhidmatan");
             await _unitOfWork.BeginTransactionAsync();
@@ -564,7 +564,7 @@ namespace HR.Application.Services.PDO
             try
             {
                 // Step 1: update into PDO_KumpulanPerkhidmatan
-                var perkhidmatan = MapToEntity(perkhidmatanDto);
+                var perkhidmatan = MapToHantarEntity(perkhidmatanDto);
                 perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
                 // perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
 
@@ -623,7 +623,20 @@ namespace HR.Application.Services.PDO
                 KodJana=dto.KodJana
             };
         }
-
+        private PDOKumpulanPerkhidmatan MapToHantarEntity(KumpulanPerkhidmatanHantarDto dto)
+        {
+            return new PDOKumpulanPerkhidmatan
+            {
+                Id = dto.Id,
+                Kod = dto.Kod,
+                Nama = dto.Nama,
+                Keterangan = dto.Keterangan,
+                IndikatorSkim = dto.IndikatorSkim,
+                IndikatorTanpaSkim = dto.IndikatorTanpaSkim,
+                ButiranKemaskini =JsonConvert.SerializeObject( dto.ButiranKemaskini),
+                KodJana = dto.KodJana
+            };
+        }
         public async Task<bool> DeleteOrUpdateKumpulanPerkhidmatanAsync(int id)
         {
             _logger.LogInformation("DeleteOrUpdateKumpulanPerkhidmatanAsync by ID {Id} using Entity Framework", id);
