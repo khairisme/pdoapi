@@ -234,7 +234,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpGet("getMaklumatBaharu/{id}")]
-    public async Task<ActionResult<KumpulanPerkhidmatanDto>> GetMaklumatBaharu(int id)
+    public async Task<ActionResult<KumpulanPerkhidmatanRefStatusDto>> GetMaklumatBaharu(int id)
     {
         try
         {

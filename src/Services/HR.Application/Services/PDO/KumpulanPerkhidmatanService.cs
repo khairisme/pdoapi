@@ -385,7 +385,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task<KumpulanPerkhidmatanDto> GetMaklumatBaharuAsync(int id)
+        public async Task<KumpulanPerkhidmatanRefStatusDto> GetMaklumatBaharuAsync(int id)
         {
             _logger.LogInformation("Getting ButiranKemaskini by ID {Id} using Entity Framework", id);
             try
@@ -408,14 +408,14 @@ namespace HR.Application.Services.PDO
 
                 if (String.IsNullOrEmpty(result.ButiranKemaskini))
                 {
-                    return new KumpulanPerkhidmatanDto
+                    return new KumpulanPerkhidmatanRefStatusDto
                     {
                         Keterangan = "Tiada butiran kemaskini"
                     };
                 }
 
-                KumpulanPerkhidmatanDto obj = JsonConvert.DeserializeObject<KumpulanPerkhidmatanDto>(result.ButiranKemaskini);
-
+                KumpulanPerkhidmatanRefStatusDto obj = JsonConvert.DeserializeObject<KumpulanPerkhidmatanRefStatusDto>(result.ButiranKemaskini);
+                obj.KodRujStatusPermohonan = string.Empty;
                
 
                 return obj;
