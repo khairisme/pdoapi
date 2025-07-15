@@ -1,5 +1,6 @@
 ﻿using HR.Application.DTOs.PDO;
 using HR.Application.Interfaces.PDO;
+using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
@@ -51,16 +52,19 @@ namespace HR.Application.Services.PDO
                 var query = from a in _context.PDOJawatan
                             join b in _context.PDOGredSkimJawatan on a.Id equals b.IdJawatan
                             join c in _context.PDOSkimPerkhidmatan on b.IdSkimPerkhidmatan equals c.Id
-                            join d in _context.PDOGred on b.IdGred equals d.Id into dGroup
-                            from d in dGroup.Where(x => x.StatusAktif == true && x.IndikatorGredLantikanTerus == true)
-                            join e in _context.PDOKekosonganJawatan on a.Id equals e.IdJawatan into eGroup
-                            from e in eGroup.Where(x => x.StatusAktif == true)
+                            join d in _context.PDOGred on b.IdGred equals d.Id
+                            join e in _context.PDOKekosonganJawatan on a.Id equals e.IdJawatan
                             join e2 in _context.PDORujStatusKekosonganJawatan on e.KodRujStatusKekosonganJawatan equals e2.Kod
                             join f in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals f.Id
-                            from ppps in _context.PDOPermohonanPengisianSkim.Where(x => x.IdSkimPerkhidmatan == c.Id).DefaultIfEmpty()
-                            from ppj in _context.PDOPengisianJawatan.Where(x => x.IdJawatan == a.Id && (ppps == null || x.IdPermohonanPengisianSkim == ppps.Id)).DefaultIfEmpty()
-                            where e.KodRujStatusKekosonganJawatan == "01"
-                                  && c.Id == filter.SkimPerkhidmatanId
+                            from ppps in _context.PDOPermohonanPengisianSkim
+                                .Where(x => x.IdSkimPerkhidmatan == c.Id).DefaultIfEmpty()
+                            from ppj in _context.PDOPengisianJawatan
+                                .Where(x => x.IdJawatan == a.Id && x.IdPermohonanPengisianSkim == ppps.Id).DefaultIfEmpty()
+                            where d.StatusAktif == true
+                                && d.IndikatorGredLantikanTerus == true
+                                && e.StatusAktif == true
+                                && e.KodRujStatusKekosonganJawatan == "01"
+                                                  && c.Id == filter.SkimPerkhidmatanId
                                   && (string.IsNullOrEmpty(filter.NamaJawatan) || a.Nama.Contains(filter.NamaJawatan))
                                   && (string.IsNullOrEmpty(filter.UnitOrganisasi) || f.Nama.Contains(filter.UnitOrganisasi))
                             orderby a.Kod
@@ -109,15 +113,18 @@ namespace HR.Application.Services.PDO
                 var query = from a in _context.PDOJawatan
                             join b in _context.PDOGredSkimJawatan on a.Id equals b.IdJawatan
                             join c in _context.PDOSkimPerkhidmatan on b.IdSkimPerkhidmatan equals c.Id
-                            join d in _context.PDOGred on b.IdGred equals d.Id into dGroup
-                            from d in dGroup.Where(x => x.StatusAktif == true && x.IndikatorGredLantikanTerus == true)
-                            join e in _context.PDOKekosonganJawatan on a.Id equals e.IdJawatan into eGroup
-                            from e in eGroup.Where(x => x.StatusAktif == true)
+                            join d in _context.PDOGred on b.IdGred equals d.Id
+                            join e in _context.PDOKekosonganJawatan on a.Id equals e.IdJawatan
                             join e2 in _context.PDORujStatusKekosonganJawatan on e.KodRujStatusKekosonganJawatan equals e2.Kod
                             join f in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals f.Id
-                            from ppps in _context.PDOPermohonanPengisianSkim.Where(x => x.IdSkimPerkhidmatan == c.Id).DefaultIfEmpty()
-                            from ppj in _context.PDOPengisianJawatan.Where(x => x.IdJawatan == a.Id && (ppps == null || x.IdPermohonanPengisianSkim == ppps.Id)).DefaultIfEmpty()
-                            where e.KodRujStatusKekosonganJawatan == "01"
+                            from ppps in _context.PDOPermohonanPengisianSkim
+                                .Where(x => x.IdSkimPerkhidmatan == c.Id).DefaultIfEmpty()
+                            from ppj in _context.PDOPengisianJawatan
+                                .Where(x => x.IdJawatan == a.Id && x.IdPermohonanPengisianSkim == ppps.Id).DefaultIfEmpty()
+                            where d.StatusAktif == true
+                                && d.IndikatorGredLantikanTerus == true
+                                && e.StatusAktif == true
+                                && e.KodRujStatusKekosonganJawatan == "01"
                                   && (filter.SkimPerkhidmatanId == null || c.Id == filter.SkimPerkhidmatanId)
                                   && (string.IsNullOrEmpty(filter.KodJawatanSebenar) || a.Kod == filter.KodJawatanSebenar)
                                   && (string.IsNullOrEmpty(filter.NamaJawatanSebenar) || a.Nama.Contains(filter.NamaJawatanSebenar))
@@ -171,15 +178,15 @@ namespace HR.Application.Services.PDO
                 join pkj in _context.PDOKekosonganJawatan on pj.Id equals pkj.IdJawatan
                 join e2 in _context.PDORujStatusKekosonganJawatan on pkj.KodRujStatusKekosonganJawatan equals e2.Kod
                 join puo in _context.PDOUnitOrganisasi on pj.IdUnitOrganisasi equals puo.Id
-                where pkj.KodRujStatusKekosonganJawatan == "01"
-                   && psp.Id == request.IdSkimPerkhidmatan
-                   && pg.StatusAktif == true
-                   && pg.IndikatorGredLantikanTerus == true
-                   && pkj.StatusAktif == true
-                   && puo.KodCartaOrganisasi.Contains(request.KodCarta)
-                   && (string.IsNullOrEmpty(request.KodJawatanSebenar) || pj.Kod == request.KodJawatanSebenar)
-                   && (string.IsNullOrEmpty(request.StatusKekosonganJawatan) || e2.Kod == request.StatusKekosonganJawatan)
-                   && (!request.UnitOrganisasi.HasValue || puo.Id == request.UnitOrganisasi)
+                where pg.StatusAktif == true
+                    && pg.IndikatorGredLantikanTerus == true
+                    && pkj.StatusAktif == true
+                    && pkj.KodRujStatusKekosonganJawatan == "01"
+                    && psp.Id == request.IdSkimPerkhidmatan
+                    && puo.KodCartaOrganisasi.Contains(request.KodCarta)
+                    && (string.IsNullOrEmpty(request.KodJawatanSebenar) || pj.Kod == request.KodJawatanSebenar)
+                    && (string.IsNullOrEmpty(request.StatusKekosonganJawatan) || e2.Kod == request.StatusKekosonganJawatan)
+                    && (request.UnitOrganisasi == null || puo.Id == request.UnitOrganisasi)
                 select new CarianJawatanSebenarRespDto
                 {
                     Id = pj.Id,

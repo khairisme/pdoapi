@@ -32,18 +32,17 @@ namespace HR.Application.Services.PDO
             {
                 var query = from ppps in _context.PDOPermohonanPengisianSkim
                             join ppj in _context.PDOPengisianJawatan on ppps.Id equals ppj.IdPermohonanPengisianSkim
-                            join b in _context.PDOJawatan on ppj.IdJawatan equals b.Id into bGroup
-                            from b in bGroup.Where(x => x.StatusAktif == true)
+                            join b in _context.PDOJawatan on ppj.IdJawatan equals b.Id
                             join c in _context.PDOUnitOrganisasi on b.IdUnitOrganisasi equals c.Id
                             join d in _context.PDOKekosonganJawatan on b.Id equals d.IdJawatan
                             join e in _context.PDORujStatusKekosonganJawatan on d.KodRujStatusKekosonganJawatan equals e.Kod
                             join f in _context.PDOGredSkimJawatan on ppj.IdJawatan equals f.IdJawatan
-                            where ppps.Id == IdPermohonanPengisianSkim
-                                  && ppps.IdSkimPerkhidmatan == IdSkimPerkhidmatan
-                            orderby b.Kod
+                            where b.StatusAktif == true
+                                && ppps.Id == IdPermohonanPengisianSkim
+                                && ppps.IdSkimPerkhidmatan == IdSkimPerkhidmatan
                             select new
                             {
-                                ppj.Id,
+                                Id = ppj.Id,
                                 KodJawatan = b.Kod,
                                 NamaJawatan = b.Nama,
                                 UnitOrganisasi = c.Nama,
