@@ -2,6 +2,7 @@
 using HR.Application.Interfaces.PDO;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,44 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+        public async Task<List<PermohonanJawatanResponseDto>> GetSenaraiPermohonanJawatanAsync(PermohonanJawatanFilterDto2 filter)
+        {
+            var query = from ppj in _dbContext.PDOPermohonanJawatan
+                        join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                        join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                        where
+                            (string.IsNullOrEmpty(filter.NomborRujukan) || ppj.NomborRujukan == filter.NomborRujukan)
+                            && (string.IsNullOrEmpty(filter.TajukPermohonan) || ppj.Tajuk.Contains(filter.TajukPermohonan))
+                            && (string.IsNullOrEmpty(filter.KodStatusPermohonan) || prsp.Kod == filter.KodStatusPermohonan)
+                        select new PermohonanJawatanResponseDto
+                        {
+                            RecordId = ppj.Id,
+                            NomborRujukan = ppj.NomborRujukan,
+                            TajukPermohonan = ppj.Tajuk,
+                            TarikhPermohonan = ppj.TarikhPermohonan,
+                            Status = prsp.Nama
+                        };
 
+            return await query.ToListAsync();
+        }
+        public async Task<List<PermohonanPindaanResponseDto>> GetSenaraiPermohonanPindaanAsync(PermohonanPindaanFilterDto filter)
+        {
+            var query = from ppj in _dbContext.PDOPermohonanJawatan
+                        join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                        join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                        where (string.IsNullOrEmpty(filter.NomborRujukan) || ppj.NomborRujukan.Contains(filter.NomborRujukan))
+                              && (string.IsNullOrEmpty(filter.TajukPermohonan) || ppj.Tajuk.Contains(filter.TajukPermohonan))
+                              && (string.IsNullOrEmpty(filter.KodStatusPermohonan) || prsp.Kod == filter.KodStatusPermohonan)
+                        select new PermohonanPindaanResponseDto
+                        {
+                            RecordId = ppj.Id,
+                            NomborRujukan = ppj.NomborRujukan,
+                            TajukPermohonan = ppj.Tajuk,
+                            TarikhPermohonan = ppj.TarikhPermohonan,
+                            Status = prsp.Nama
+                        };
+
+            return await query.ToListAsync();
+        }
     }
 }

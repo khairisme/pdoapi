@@ -58,5 +58,8 @@ namespace HR.Application.Interfaces.PDO
         Task<List<MaklumatPermohonanDto>> GetMaklumatPermohonanAsync(MaklumatPermohonanFilterDto filter);
 
         //Nitya Code End
+        Task<PermohonanPengisianByIdResponseDto?> GetPermohonanPengisianByIdAsync(int idPermohonanPengisian);
+        Task<List<SenaraiPermohonanResponseDto>> GetSenaraiPermohonanPengisianJawatanAsync(SenaraiPermohonanFilterDto filter);
+        Task<List<BilanganPermohonanResponseDto>> GetBilanganPermohonanPengisianListAsync(BilanganPermohonanFilterDto filter);
     }
 }

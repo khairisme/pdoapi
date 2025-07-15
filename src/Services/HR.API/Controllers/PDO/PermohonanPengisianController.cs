@@ -1030,6 +1030,107 @@ public class PermohonanPengisianController : ControllerBase
         }
     }
     //Nitya Code End
+    /// <summary>
+    /// GetPermohonanPengisianById
+    /// ---------------------------
+    /// Fetches detailed information of a Permohonan Pengisian based on its ID.
+    /// Includes details such as: Agensi, No. Rujukan, Tajuk, Tarikh, and Keterangan.
+    /// </summary>
+    /// <param name="filter">Contains the IdPermohonanPengisian to filter</param>
+    /// <returns>
+    /// 200 OK - if record is found
+    /// 404 NotFound - if no matching record
+    /// 500 - in case of error
+    /// </returns>
+    [HttpPost("GetPermohonanPengisianById")]
+    public async Task<IActionResult> GetPermohonanPengisianById([FromBody] PermohonanPengisianFilterDto filter)
+    {
+        try
+        {
+            var result = await _service.GetPermohonanPengisianByIdAsync(filter.IdPermohonanPengisian);
+
+            if (result == null)
+                return NotFound(new { status = "Not Found", item = (object?)null });
+
+            return Ok(new
+            {
+                status = "Success",
+                item = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetPermohonanPengisianById for Id: {Id}", filter.IdPermohonanPengisian);
+            return StatusCode(500, new
+            {
+                status = "Error",
+                item = new object()
+            });
+        }
+    }
+    /// <summary>
+    /// GetSenaraiPermohonanPengisianJawatan
+    /// -------------------------------------
+    /// Returns the list of "Permohonan Pengisian Jawatan" records based on selected:
+    /// - Kementerian (unit/department)
+    /// - Status Permohonan
+    /// Filters only active units with Kod = '0001'.
+    /// </summary>
+    /// <param name="filter">Filter containing Kementerian and StatusPermohonan</param>
+    /// <returns>List of matching permohonan pengisian records</returns>
+    [HttpPost("GetSenaraiPermohonanPengisianJawatan")]
+    public async Task<IActionResult> GetSenaraiPermohonanPengisianJawatan([FromBody] SenaraiPermohonanFilterDto filter)
+    {
+        try
+        {
+            var result = await _service.GetSenaraiPermohonanPengisianJawatanAsync(filter);
+
+            return Ok(new
+            {
+                status = result.Any() ? "Success" : "Not Found",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetSenaraiPermohonanPengisianJawatan");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SenaraiPermohonanResponseDto>()
+            });
+        }
+    }
+    /// <summary>
+    /// GetBilanganPermohonanPengisianList
+    /// ------------------------------------
+    /// Returns a filtered list of Bilangan Permohonan Pengisian entries
+    /// based on Unit Organisasi, No Rujukan, Tajuk Permohonan, and Keterangan.
+    /// </summary>
+    /// <param name="filter">Filter parameters for query</param>
+    /// <returns>List of Permohonan Pengisian with Bilangan counts</returns>
+    [HttpPost("GetBilanganPermohonanPengisianList")]
+    public async Task<IActionResult> GetBilanganPermohonanPengisianList([FromBody] BilanganPermohonanFilterDto filter)
+    {
+        try
+        {
+            var result = await _service.GetBilanganPermohonanPengisianListAsync(filter);
+            return Ok(new
+            {
+                status = result.Any() ? "Success" : "Not Found",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetBilanganPermohonanPengisianList");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<BilanganPermohonanResponseDto>()
+            });
+        }
+    }
 }
 
 

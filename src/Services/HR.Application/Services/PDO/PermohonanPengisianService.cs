@@ -1306,9 +1306,68 @@ namespace HR.Application.Services.PDO
 
             return result;
         }
+        public async Task<PermohonanPengisianByIdResponseDto?> GetPermohonanPengisianByIdAsync(int idPermohonanPengisian)
+        {
+            var result = await (from ppp in _context.PDOPermohonanPengisian
+                                join puo in _context.PDOUnitOrganisasi on ppp.IdUnitOrganisasi equals puo.Id
+                                where puo.StatusAktif == true && ppp.Id == idPermohonanPengisian
+                                select new PermohonanPengisianByIdResponseDto
+                                {
+                                    Agensi = puo.Nama,
+                                    NomborRujukan = ppp.NomborRujukan,
+                                    TajukPermhonan = ppp.Tajuk,
+                                    TarikhPermohonan = ppp.TarikhPermohonan,
+                                    Keterangan = ppp.Keterangan
+                                }).FirstOrDefaultAsync();
 
+            return result;
+        }
 
-        
+        public async Task<List<SenaraiPermohonanResponseDto>> GetSenaraiPermohonanPengisianJawatanAsync(SenaraiPermohonanFilterDto filter)
+        {
+            var result = await (from ppj in _context.PDOPermohonanJawatan
+                                join pbp in _context.PDOButiranPermohonan on ppj.Id equals pbp.IdPermohonanJawatan
+                                join pspj in _context.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                                join puo in _context.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                                join prsp in _context.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                                where puo.StatusAktif == true &&
+                                      puo.Kod == "0001" &&
+                                      puo.Id == filter.Kementerian &&
+                                      prsp.Kod == filter.StatusPermohonan
+                                select new SenaraiPermohonanResponseDto
+                                {
+                                    RecordId = ppj.Id,
+                                    Nama = puo.Nama,
+                                    BilanganPermohonanPengisian = pbp.BilanganJawatan,
+                                    TarikhPermohonan = ppj.TarikhPermohonan,
+                                    Status = prsp.Nama
+                                }).ToListAsync();
+
+            return result;
+        }
+        public async Task<List<BilanganPermohonanResponseDto>> GetBilanganPermohonanPengisianListAsync(BilanganPermohonanFilterDto filter)
+        {
+            var result = await (
+                from ppp in _context.PDOPermohonanPengisian
+                join ppps in _context.PDOPermohonanPengisianSkim on ppp.Id equals ppps.IdPermohonanPengisian
+                join psp in _context.PDOSkimPerkhidmatan on ppps.IdSkimPerkhidmatan equals psp.Id
+                join pssp in _context.PDOStatusSkimPerkhidmatan on psp.Id equals pssp.IdSkimPerkhidmatan
+                join prsr in _context.PDORujStatusRekod on pssp.KodRujStatusRekod equals prsr.Kod
+                where
+                    (filter.AgensiId == null || ppp.IdUnitOrganisasi == filter.AgensiId) &&
+                    (string.IsNullOrEmpty(filter.NoRujukan) || ppp.NomborRujukan == filter.NoRujukan) &&
+                    (string.IsNullOrEmpty(filter.TajukPermohonan) || ppp.Tajuk.Contains(filter.TajukPermohonan)) &&
+                    (string.IsNullOrEmpty(filter.Keterangan) || ppp.Keterangan.Contains(filter.Keterangan))
+                select new BilanganPermohonanResponseDto
+                {
+                    RecordId = ppps.Id,
+                    KodSkim = psp.Kod,
+                    NamaSkimPerkhidmatan = psp.Nama,
+                    Bilangan = ppps.BilanganPengisian
+                }).ToListAsync();
+
+            return result;
+        }
     }
 
 }

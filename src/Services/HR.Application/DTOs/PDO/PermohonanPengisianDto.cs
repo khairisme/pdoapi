@@ -402,5 +402,45 @@ namespace HR.Application.DTOs.PDO
     }
 
     //Nita Code End
+    public class PermohonanPengisianFilterDto
+    {
+        public int IdPermohonanPengisian { get; set; }
+    }
+    public class PermohonanPengisianByIdResponseDto
+    {
+        public string Agensi { get; set; }
+        public string NomborRujukan { get; set; }
+        public string TajukPermhonan { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public string Keterangan { get; set; }
+    }
+    public class SenaraiPermohonanFilterDto
+    {
+        public int Kementerian { get; set; }
+        public string StatusPermohonan { get; set; }
+    }
+    public class SenaraiPermohonanResponseDto
+    {
+        public int RecordId { get; set; }
+        public string Nama { get; set; }               // Unit Organisasi
+        public int BilanganPermohonanPengisian { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public string Status { get; set; }
+    }
+    public class BilanganPermohonanFilterDto
+    {
+        public int? AgensiId { get; set; }
+        public string? NoRujukan { get; set; }
+        public string? TajukPermohonan { get; set; }
+        public string? Keterangan { get; set; }
+    }
+    public class BilanganPermohonanResponseDto
+    {
+        public int RecordId { get; set; }
+        public string KodSkim { get; set; }
+        public string NamaSkimPerkhidmatan { get; set; }
+        public int Bilangan { get; set; }
+    }
+
 
 }
