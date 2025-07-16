@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class PermohonanJawatanController : ControllerBase
@@ -113,6 +113,53 @@ public class PermohonanJawatanController : ControllerBase
                 items = new List<PermohonanPindaanResponseDto>()
             });
         }
+    }
+
+    /// <summary>
+    /// Get Senarai Permohonan Perjawatan
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    [HttpPost("getsenaraiPermohonanPerjawatan")]
+    public async Task<IActionResult> getsenaraiPermohonanPerjawatan([FromBody] PermohonanJawatanRequestDto filter)
+    {
+        var result = await _permohonanJawatanService.GetSenaraiAsalAsync(filter.AgensiId, filter.NoRujukan, filter.Tajuk, filter.StatusKod);
+        return Ok(new
+        {
+            status = result.Any() ? "Success" : "Not Found",
+            items = result
+        });
+
+    }
+    /// <summary>
+    ///  Get Salinan Baharu
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("getSenaraiBaru/{id}")]
+    public async Task<IActionResult> GetSenaraiBaru(int id)
+    {
+        var result = await _permohonanJawatanService.GetSenaraiBaruByIdAsync(id);
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+
+
+    /// <summary>
+    /// Get Senarai Permohonan List
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    [HttpPost("getsenaraiPermohonanList")]
+    public async Task<IActionResult> GetsenaraiPermohonanList([FromBody] PermohonanJawatanRequestDto filter)
+    {
+        var result = await _permohonanJawatanService.GetPermohonanListAsync(filter.AgensiId, filter.NoRujukan, filter.Tajuk, filter.StatusKod);
+        return Ok(new
+        {
+            status = result.Any() ? "Success" : "Not Found",
+            items = result
+        });
+
     }
 
     //Amar Code Start
@@ -265,4 +312,5 @@ public class PermohonanJawatanController : ControllerBase
     }
 
     //Amar Code end
+
 }

@@ -28,5 +28,10 @@ namespace HR.Application.DTOs.PDO
         public string? Keterangan { get; set; }                         // optional
     }
 
+    public class SimpanStatusPermohonanDto
+    {
+        public int IdPermohonanJawatan { get; set; }
+        public string Ulasan { get; set; } = string.Empty;
 
+    }
 }

@@ -10,6 +10,12 @@ namespace HR.Application.Interfaces.PDO
     public interface IAktivitiOrganisasiService
     {
         Task<List<AktivitiOrganisasiDto>> GetAktivitiOrganisasiAsync();
+
+
+        Task<List<AktivitiOrganisasiResponseDto>> GetAktivitiOrganisasibyIdAsync(int Id);
+
+        Task<int> SimpanAktivitiAsync(AktivitiOrganisasiCreateRequest request);
+
         //Amar Code Start
         Task<List<StrukturAktivitiOrganisasiResponseDto>> GetTreeStrukturAktivitiOrganisasi(int IdAktivitiOrganisasi);
          Task<string> GetNamaAktivitiOrganisasi(int IdIndukAktivitiOrganisasi);
@@ -19,5 +25,6 @@ namespace HR.Application.Interfaces.PDO
 
         Task<bool> SetAktivitiOrganisasi(AktivitiOrganisasiRequestDto aktivitiOrganisasiRequestDto);
         //Amar Code End
+
     }
 }

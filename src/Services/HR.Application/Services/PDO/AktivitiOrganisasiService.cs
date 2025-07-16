@@ -5,6 +5,7 @@ using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,102 @@ namespace HR.Application.Services.PDO
                                 }).ToListAsync();
 
             return result;
+        }
+
+<
+
+        public async Task<List<AktivitiOrganisasiResponseDto>> GetAktivitiOrganisasibyIdAsync(int Id)
+        {
+            var result = await (from a in _context.PDOAktivitiOrganisasi
+                                join b in _context.PDORujKategoriAktivitiOrganisasi
+                                    on a.KodRujKategoriAktivitiOrganisasi equals b.Kod
+                                where a.Id==Id
+                                select new AktivitiOrganisasiResponseDto
+                                {
+                                   AktivitOrganisasiInduk=a.Nama,
+                                    KodAktivitiOrganisasi=a.Kod,
+                                    KategoriProgramAktiviti = b.Nama
+                                }).ToListAsync();
+
+            return result;
+        }
+
+
+        public async Task<int> SimpanAktivitiAsync(AktivitiOrganisasiCreateRequest request)
+        {
+            _logger.LogInformation("Service: SimpanAktivitiAsync");
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                // Auto-generate Tahap
+                int newTahap = await _context.PDOAktivitiOrganisasi
+                    .Where(x => x.Id == request.IdAktivitiOrganisasi)
+                    .Select(x => x.Tahap + 1)
+                    .FirstOrDefaultAsync();
+
+                // Auto-generate KodProgram
+                var childKodPrograms = await _context.PDOAktivitiOrganisasi
+                 .Where(x => x.IdIndukAktivitiOrganisasi == request.IdAktivitiOrganisasi && x.KodProgram.Contains("."))
+                 .Select(x => x.KodProgram)
+                 .ToListAsync();
+
+                string? lastKodProgram = childKodPrograms
+                    .Where(kp => int.TryParse(kp.Split('.').Last(), out _))
+                    .OrderByDescending(kp => int.Parse(kp.Split('.').Last()))
+                    .FirstOrDefault();
+
+                string newKodProgram;
+
+                if (string.IsNullOrEmpty(lastKodProgram))
+                {
+                    string? parentKodProgram = await _context.PDOAktivitiOrganisasi
+                        .Where(x => x.Id == request.IdAktivitiOrganisasi)
+                        .Select(x => x.KodProgram)
+                        .FirstOrDefaultAsync();
+
+                    newKodProgram = parentKodProgram + ".1";
+                }
+                else
+                {
+                    int lastDigit = int.TryParse(lastKodProgram.Split('.').Last(), out var digit) ? digit : 0;
+                    string prefix = lastKodProgram.Substring(0, lastKodProgram.LastIndexOf('.'));
+                    newKodProgram = $"{prefix}.{lastDigit + 1}";
+                }
+
+                // Get parent data as JSON for ButiranKemaskini
+                var parentData = await _context.PDOAktivitiOrganisasi
+                    .FirstOrDefaultAsync(x => x.Id == request.IdAktivitiOrganisasi);
+
+                string butiranKemaskini = parentData != null
+                    ? JsonConvert.SerializeObject(parentData)
+                    : "{}";
+
+                var newEntity = new PDOAktivitiOrganisasi
+                {
+                    KodRujKategoriAktivitiOrganisasi = request.KodRujKategoriAktivitiOrganisasi,
+                    IdIndukAktivitiOrganisasi = request.IdAktivitiOrganisasi,
+                    Kod = request.Kod,
+                    Nama = request.Nama,
+                    Keterangan = request.Keterangan,
+                    KodProgram = newKodProgram,
+                    Tahap = newTahap,
+                    KodCartaAktiviti = request.KodCartaAktiviti,
+                    ButiranKemaskini = butiranKemaskini,
+                    StatusAktif = false
+                };
+                newEntity = await _unitOfWork.Repository<PDOAktivitiOrganisasi>().AddAsync(newEntity);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+                
+
+                return newEntity.Id;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service CreateAsync:" + ex.InnerException.ToString());
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
 
         //Amar Code Start
@@ -281,5 +378,6 @@ namespace HR.Application.Services.PDO
             }
         }
         //Amar Code End
+
     }
 }

@@ -107,5 +107,61 @@ namespace HR.Application.Services.PDO
         }
 
 
+        public async Task<string?> GetUlasanStatusAsync(int idPermohonanJawatan)
+        {
+            return await _dbContext.PDOStatusPermohonanJawatan
+                .Where(p => p.IdPermohonanJawatan == idPermohonanJawatan && p.StatusAktif == true)
+                .Select(p => p.UlasanStatusPermohonan)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> SimpanStatusPermohonanAsync(SimpanStatusPermohonanDto dto)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // 1. Set existing statuses to inactive
+                var existingStatuses = await _dbContext.PDOStatusPermohonanJawatan
+                    .Where(x => x.IdPermohonanJawatan == dto.IdPermohonanJawatan && x.StatusAktif == true)
+                    .ToListAsync();
+
+                foreach (var status in existingStatuses)
+                {
+                    status.StatusAktif = false;
+                  
+                    status.TarikhPinda = DateTime.Now;
+                }
+
+                await _unitOfWork.Repository<PDOStatusPermohonanJawatan>().AddRangeAsync(existingStatuses);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+
+
+                // 2. Insert new status
+                var newStatus = new PDOStatusPermohonanJawatan
+                {
+
+                    IdPermohonanJawatan = dto.IdPermohonanJawatan,
+                    KodRujStatusPermohonan = "02", // Hardcoded as per requirement
+
+                    UlasanStatusPermohonan = dto.Ulasan,
+                    StatusAktif = true
+                };
+
+                await _unitOfWork.Repository<PDOStatusPermohonanJawatan>().AddAsync(newStatus);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
+
     }
 }

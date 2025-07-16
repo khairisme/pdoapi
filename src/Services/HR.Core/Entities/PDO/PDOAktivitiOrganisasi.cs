@@ -29,13 +29,13 @@ namespace HR.Core.Entities.PDO
         public string? Keterangan { get; set; }
 
        
-        public string KodProgram { get; set; }
+        public string? KodProgram { get; set; }
 
       
         public int Tahap { get; set; }
 
        
-        public string KodCartaAktiviti { get; set; }
+        public string? KodCartaAktiviti { get; set; }
 
         
         public string? ButiranKemaskini { get; set; }

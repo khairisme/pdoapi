@@ -13,7 +13,7 @@ using Shared.Contracts.DTOs;
 using System.Diagnostics;
 
 namespace HR.API.Controllers.PDO;
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class AktivitiOrganisasiController : ControllerBase
@@ -41,6 +41,42 @@ public class AktivitiOrganisasiController : ControllerBase
             items = data
 
         });
+    }
+    /// <summary>
+    /// Wujud Aktiviti Organisasi
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("getAktivitiOrganisasiById/{id}")]
+    public async Task<ActionResult<IEnumerable<AktivitiOrganisasiDto>>> GetAktivitiOrganisasiById(int id)
+    {
+        var data = await _aktivitiOrganisasiService.GetAktivitiOrganisasibyIdAsync(id);
+        return Ok(new
+        {
+            status = data.Count() > 0 ? "Sucess" : "Failed",
+            items = data
+
+        });
+    }
+    /// <summary>
+    ///  Simpan  Wujud Aktiviti Organisasi
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+
+
+    [HttpPost("newWujudAktivitiOrganisasi")]
+    public async Task<IActionResult> NewWujudAktivitiOrganisasi([FromBody] AktivitiOrganisasiCreateRequest request)
+    {
+        try
+        {
+            int newId = await _aktivitiOrganisasiService.SimpanAktivitiAsync(request);
+            return Ok(new { message = "Successfully saved", Id = newId });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Error while saving", error = ex.Message });
+        }
     }
 
     // Amar Code Start

@@ -100,6 +100,77 @@ namespace HR.Application.Services.PDO
             return await query.ToListAsync();
         }
 
+
+        public async Task<List<PermohonanJawatanDto>> GetSenaraiAsalAsync(int agensiId, string? noRujukan, string? tajuk, string? statusKod)
+        {
+            var result = await (from ppj in _dbContext.PDOPermohonanJawatan
+                                join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                                join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                                join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                                where ppj.IdUnitOrganisasi == agensiId
+                                   && (string.IsNullOrEmpty(noRujukan) || ppj.NomborRujukan.Contains(noRujukan))
+                                   && (string.IsNullOrEmpty(tajuk) || ppj.Tajuk.Contains(tajuk))
+                                   && prsp.Kod == statusKod
+                                select new PermohonanJawatanDto
+                                {
+                                    Agensi = puo.Nama,
+                                    NomborRujukan = ppj.NomborRujukan,
+                                    Tajuk = ppj.Tajuk,
+                                    TarikhPermohonan =Convert.ToDateTime( ppj.TarikhPermohonan),
+                                    Status = prsp.Nama
+                                }).ToListAsync();
+
+            return result;
+        }
+
+        public async Task<PermohonanJawatanDto?> GetSenaraiBaruByIdAsync(int idPermohonanJawatan)
+        {
+            var result = await (from ppj in _dbContext.PDOPermohonanJawatan
+                                join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                                join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                                join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                                where ppj.Id == idPermohonanJawatan
+                                select new PermohonanJawatanDto
+                                {
+                                    Agensi = puo.Nama,
+                                    NomborRujukan = ppj.NomborRujukan,
+                                    Tajuk = ppj.Tajuk,
+                                    TarikhPermohonan = Convert.ToDateTime(ppj.TarikhPermohonan),
+                                    Status = prsp.Nama
+                                }).FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<List<PermohonanJawatanListDto>> GetPermohonanListAsync( int agensiId, string? noRujukan,string? tajuk,string? kodStatus)
+        {
+            var query = from ppj in _dbContext.PDOPermohonanJawatan
+                        join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                        join prjp in _dbContext.PDORujJenisPermohonan on ppj.KodRujJenisPermohonan equals prjp.Kod
+                        join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                        join prspj in _dbContext.PDORujStatusPermohonanJawatan on pspj.KodRujStatusPermohonan equals prspj.Kod
+                        where ppj.IdAgensi == agensiId
+                            && (string.IsNullOrEmpty(noRujukan) || ppj.NomborRujukan.Contains(noRujukan))
+                            && (string.IsNullOrEmpty(tajuk) || ppj.Tajuk.Contains(tajuk))
+                            && (string.IsNullOrEmpty(kodStatus) || prspj.Kod == kodStatus)
+                        select new PermohonanJawatanListDto
+                        {
+                            IdPermohonanJawatan = ppj.Id,
+                            IdUnitOrganisasi = ppj.IdUnitOrganisasi,
+                            IdAgensi = ppj.IdAgensi,
+                            Agensi = puo.Nama,
+                            NomborRujukan = ppj.NomborRujukan,
+                            JenisPermohonan = prjp.Nama,
+                            TajukPermohonan = ppj.Tajuk,
+                            TarikhPermohonan =Convert.ToDateTime( ppj.TarikhPermohonan),
+                            Status = prspj.Nama
+                        };
+
+            return await query.ToListAsync();
+        }
+
+
+
         //Amar Code Start
         public async Task<List<SalinanAsaResponseDto>> GetSalinanAsa(SalinanAsaFilterDto filter)
         {
@@ -301,5 +372,6 @@ namespace HR.Application.Services.PDO
             }
         }
         //Amar Code End
+
     }
 }

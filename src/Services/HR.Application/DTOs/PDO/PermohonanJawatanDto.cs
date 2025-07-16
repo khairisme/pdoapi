@@ -51,6 +51,36 @@ namespace HR.Application.DTOs.PDO
         public DateTime? TarikhPermohonan { get; set; }
         public string Status { get; set; }
     }
+
+    public class PermohonanJawatanDto
+    {
+        public string Agensi { get; set; }
+        public string NomborRujukan { get; set; }
+        public string Tajuk { get; set; }
+        public DateTime TarikhPermohonan { get; set; }
+        public string Status { get; set; }
+    }
+    public class PermohonanJawatanRequestDto
+    {
+        public int AgensiId { get; set; }
+        public string? NoRujukan { get; set; }
+        public string? Tajuk { get; set; }
+        public string? StatusKod { get; set; }
+    }
+
+    public class PermohonanJawatanListDto
+    {
+        public int IdPermohonanJawatan { get; set; }
+        public int IdUnitOrganisasi { get; set; }
+        public int IdAgensi { get; set; }
+        public string Agensi { get; set; }
+        public string NomborRujukan { get; set; }
+        public string JenisPermohonan { get; set; }
+        public string TajukPermohonan { get; set; }
+        public DateTime TarikhPermohonan { get; set; }
+        public string Status { get; set; }
+    }
+
     //Amar Code Start
     public class SalinanAsaFilterDto
     {
@@ -116,7 +146,6 @@ namespace HR.Application.DTOs.PDO
        
     }
     //Amar Code End
-
 
 
 }

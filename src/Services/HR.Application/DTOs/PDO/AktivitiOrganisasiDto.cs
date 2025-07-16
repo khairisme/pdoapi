@@ -15,6 +15,28 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public int? Tahap { get; set; }
     }
+
+
+    public class AktivitiOrganisasiResponseDto
+    {
+      
+        public string AktivitOrganisasiInduk { get; set; }
+        public string KodAktivitiOrganisasi { get; set; }
+        public string KategoriProgramAktiviti { get; set; }
+       
+    }
+
+    public class AktivitiOrganisasiCreateRequest
+    {
+        public int IdAktivitiOrganisasi { get; set; }
+        public string KodRujKategoriAktivitiOrganisasi { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string KodCartaAktiviti { get; set; }
+    }
+
+
     //Amar Code Start
     public class StrukturAktivitiOrganisasiResponseDto
     {
@@ -47,4 +69,5 @@ namespace HR.Application.DTOs.PDO
     
 
     //Amar Code End
+
 }

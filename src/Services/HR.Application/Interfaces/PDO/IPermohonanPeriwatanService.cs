@@ -11,5 +11,8 @@ namespace HR.Application.Interfaces.PDO
     {
         Task<bool> CreateAsync(PermohonanPeriwatanCreateRequestDto dto);
         Task<bool> CreateAktivitiOrganisasiAsync(AktivitiOrganisasiCreateRequestDto dto);
+
+        Task<bool> SimpanStatusPermohonanAsync(SimpanStatusPermohonanDto dto);
+        Task<string?> GetUlasanStatusAsync(int idPermohonanJawatan);
     }
 }
