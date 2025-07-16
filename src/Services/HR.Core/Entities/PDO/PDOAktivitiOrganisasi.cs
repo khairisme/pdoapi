@@ -26,7 +26,7 @@ namespace HR.Core.Entities.PDO
         public string Nama { get; set; }
 
        
-        public string Keterangan { get; set; }
+        public string? Keterangan { get; set; }
 
        
         public string KodProgram { get; set; }
@@ -38,7 +38,7 @@ namespace HR.Core.Entities.PDO
         public string KodCartaAktiviti { get; set; }
 
         
-        public string ButiranKemaskini { get; set; }
+        public string? ButiranKemaskini { get; set; }
 
        
 

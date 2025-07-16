@@ -1,5 +1,6 @@
 ﻿using HR.Application.DTOs.PDO;
 using HR.Application.Interfaces.PDO;
+using HR.Core.Entities.PDO;
 using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
@@ -98,5 +99,207 @@ namespace HR.Application.Services.PDO
 
             return await query.ToListAsync();
         }
+
+        //Amar Code Start
+        public async Task<List<SalinanAsaResponseDto>> GetSalinanAsa(SalinanAsaFilterDto filter)
+        {
+            _logger.LogInformation("GetSalinanAsa: Getting SalinanAsa with filter: {@Filter}", filter);
+            try
+            {
+                var query = from ppj in _dbContext.PDOPermohonanJawatan
+                            join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                            join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                            join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                            where ppj.IdUnitOrganisasi == filter.AgensiId
+                                && (string.IsNullOrEmpty(filter.NoRujukan) || ppj.NomborRujukan.Contains(filter.NoRujukan))
+                                && (string.IsNullOrEmpty(filter.TajukPermohonan) || ppj.Tajuk.Contains(filter.TajukPermohonan))
+                                && prsp.Kod == filter.StatusPermohonan
+                            orderby ppj.TarikhPermohonan
+                            select new
+                            {
+                                Agensi = puo.Nama,
+                                ppj.NomborRujukan,
+                                ppj.Tajuk,
+                                ppj.TarikhPermohonan,
+                                Status = prsp.Nama
+                            };
+
+                _logger.LogInformation("GetSalinanAsa: Executing query to fetch SalinanAsa data");
+                var data = await query.ToListAsync();
+                _logger.LogInformation("GetSalinanAsa: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select((x, index) => new SalinanAsaResponseDto
+                {
+                    Bil = index + 1,
+                    Agensi = x.Agensi ?? String.Empty,
+                    NomborRujukan = x.NomborRujukan ?? String.Empty,
+                    Tajuk = x.Tajuk ?? String.Empty,
+                    TarikhPermohonan = x.TarikhPermohonan,
+                    Status = x.Status ?? String.Empty
+                }).ToList();
+
+                _logger.LogInformation("GetSalinanAsa: Successfully processed {Count} SalinanAsa records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSalinanAsa: Failed to retrieve SalinanAsa data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
+
+        public async Task<List<SalinanBaharuResponseDto>> GetSalinanBaharu(int IdUnitOrganisasi)
+        {
+            _logger.LogInformation("GetSalinanBaharu: Getting SalinanBaharu with IdUnitOrganisasi: {IdUnitOrganisasi}", IdUnitOrganisasi);
+            try
+            {
+                var query = from ppj in _dbContext.PDOPermohonanJawatan
+                            join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                            join prjp in _dbContext.PDORujJenisPermohonan on ppj.KodRujJenisPermohonan equals prjp.Kod
+                            join prpp in _dbContext.PDORujPasukanPerunding on ppj.KodRujPasukanPerunding equals prpp.Kod
+                            where ppj.IdUnitOrganisasi == IdUnitOrganisasi
+                                && pspj.KodRujStatusPermohonanJawatan == "02"
+                            orderby ppj.TarikhPermohonan
+                            select new
+                            {
+                                AgensiId = ppj.IdUnitOrganisasi,
+                                ppj.NomborRujukan,
+                                TajukPermohonan = ppj.Tajuk,
+                                ppj.TarikhPermohonan,
+                                ppj.Keterangan,
+                                PrjpKod = prjp.Kod,
+                                PrppKod = prpp.Kod
+                            };
+
+                _logger.LogInformation("GetSalinanBaharu: Executing query to fetch SalinanBaharu data");
+                var data = await query.ToListAsync();
+                _logger.LogInformation("GetSalinanBaharu: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select((x, index) => new SalinanBaharuResponseDto
+                {
+                    Bil = index + 1,
+                    AgensiId = x.AgensiId,
+                    NomborRujukan = x.NomborRujukan ?? String.Empty,
+                    TajukPermohonan = x.TajukPermohonan ?? String.Empty,
+                    TarikhPermohonan = x.TarikhPermohonan,
+                    Keterangan = x.Keterangan ?? String.Empty,
+                    PrjpKod = x.PrjpKod ?? String.Empty,
+                    PrppKod = x.PrppKod ?? String.Empty
+                }).ToList();
+
+                _logger.LogInformation("GetSalinanBaharu: Successfully processed {Count} SalinanBaharu records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSalinanBaharu: Failed to retrieve SalinanBaharu data with IdUnitOrganisasi: {IdUnitOrganisasi}", IdUnitOrganisasi);
+                throw;
+            }
+        }
+
+        public async Task<bool> SetUlasanPasukanPerunding(UlasanPasukanPerundingRequestDto ulasanPasukanPerundingRequestDto)
+        {
+            _logger.LogInformation("Service: Updating UlasanPasukanPerunding");
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                // Step 1: Update PDO_PermohonanJawatan
+                var permohonanJawatan = await _unitOfWork.Repository<PDOPermohonanJawatan>()
+                    .FirstOrDefaultAsync(x => x.IdUnitOrganisasi == ulasanPasukanPerundingRequestDto.AgensiId && x.Id == ulasanPasukanPerundingRequestDto.IdPermohonanJawatan);
+
+                if (permohonanJawatan != null)
+                {
+                    permohonanJawatan.KodRujJenisPermohonan = ulasanPasukanPerundingRequestDto.KodRujJenisPermohonan;
+                    permohonanJawatan.KodRujJenisPermohonanJPA = ulasanPasukanPerundingRequestDto.KodRujJenisPermohonanPP;
+                   
+
+                    await _unitOfWork.Repository<PDOPermohonanJawatan>().UpdateAsync(permohonanJawatan);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                // Step 2: Deactivate existing PDO_StatusPermohonanJawatan record
+                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanJawatan>()
+                    .FirstOrDefaultAsync(x => x.IdPermohonanJawatan == ulasanPasukanPerundingRequestDto.IdPermohonanJawatan && x.StatusAktif == true);
+
+                if (existingStatus != null)
+                {
+                    existingStatus.StatusAktif = false;
+                   
+
+                    await _unitOfWork.Repository<PDOStatusPermohonanJawatan>().UpdateAsync(existingStatus);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                // Step 3: Insert new PDO_StatusPermohonanJawatan record
+                var newStatusEntity = new PDOStatusPermohonanJawatan
+                {
+                    IdPermohonanJawatan = ulasanPasukanPerundingRequestDto.IdPermohonanJawatan,
+                    KodRujStatusPermohonanJawatan = "02",
+                    TarikhStatusPermohonan = DateTime.Now,
+                    UlasanStatusPermohonan = ulasanPasukanPerundingRequestDto.Ulasan,
+                    StatusAktif = true,
+                };
+
+                await _unitOfWork.Repository<PDOStatusPermohonanJawatan>().AddAsync(newStatusEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service SetUlasanPasukanPerunding");
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
+
+        public async Task<List<SenaraiPermohonanPerjawatanResponseDto>> GetSenaraiPermohonanPerjawatan(SenaraiPermohonanPerjawatanFilterDto filter)
+        {
+            _logger.LogInformation("GetSenaraiPermohonanPerjawatan: Getting SenaraiPermohonanPerjawatan with filter: {@Filter}", filter);
+            try
+            {
+                var query = from a in _dbContext.PDOPermohonanJawatan
+                            join b in _dbContext.PDOStatusPermohonanJawatan on a.Id equals b.IdPermohonanJawatan
+                            join c in _dbContext.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals c.Kod
+                            where (string.IsNullOrEmpty(filter.NomborRujukan) || a.NomborRujukan.Contains(filter.NomborRujukan))
+                                && (string.IsNullOrEmpty(filter.TajukPermohonan) || a.Tajuk.Contains(filter.TajukPermohonan))
+                                && (string.IsNullOrEmpty(filter.StatusPermohonan) || c.Kod == filter.StatusPermohonan)
+                           
+                            select new
+                            {
+                                a.Id,
+                                a.NomborRujukan,
+                                a.Tajuk,
+                                a.TarikhPermohonan,
+                                b.KodRujStatusPermohonan,
+                                Status = c.Nama
+                            };
+
+                _logger.LogInformation("GetSenaraiPermohonanPerjawatan: Executing query to fetch SenaraiPermohonanPerjawatan data");
+                var data = await query.ToListAsync();
+                _logger.LogInformation("GetSenaraiPermohonanPerjawatan: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select((x, index) => new SenaraiPermohonanPerjawatanResponseDto
+                {
+                    Bil = index + 1,
+                    Id = x.Id,
+                    NomborRujukan = x.NomborRujukan ?? String.Empty,
+                    Tajuk = x.Tajuk ?? String.Empty,
+                    TarikhPermohonan = x.TarikhPermohonan,
+                    KodRujStatusPermohonan = x.KodRujStatusPermohonan ?? String.Empty,
+                    Status = x.Status ?? String.Empty
+                }).ToList();
+
+                _logger.LogInformation("GetSenaraiPermohonanPerjawatan: Successfully processed {Count} SenaraiPermohonanPerjawatan records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSenaraiPermohonanPerjawatan: Failed to retrieve SenaraiPermohonanPerjawatan data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
+        //Amar Code End
     }
 }

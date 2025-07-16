@@ -20,6 +20,8 @@ namespace HR.Core.Entities.PDO
         public string? KodRujPasukanPerunding { get; set; }
         public string? NoWaranPerjawatan { get; set; }
         public DateTime? TarikhPermohonan { get; set; }
+        public string? KodRujJenisPermohonanJPA { get; set; }
+        
         //[NotMapped]
         //public bool StatusAktif { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,4 +15,36 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public int? Tahap { get; set; }
     }
+    //Amar Code Start
+    public class StrukturAktivitiOrganisasiResponseDto
+    {
+        public int Id { get; set; }
+        public int IdIndukAktivitiOrganisasi { get; set; }
+        public string Nama { get; set; }
+        public string FullPath { get; set; }
+        public int Level { get; set; }
+    }
+    public class StrukturAktivitiOrganisasiTempDto
+    {
+        public int Id { get; set; }
+        public int IdIndukAktivitiOrganisasi { get; set; }
+        public string Nama { get; set; } = String.Empty;
+        public int Level { get; set; }
+        public string FullPath { get; set; } = String.Empty;
+    }
+    public class PenjenamaanSemulaRequestDto
+    {
+        public int IdAktivitiOrganisasi { get; set; }
+        public string NamaAktivitiOrganisasiBaharu { get; set; }
+       
+    }
+    public class AktivitiOrganisasiRequestDto
+    {
+        public int NewParentId { get; set; }
+        public int OldParentId { get; set; }
+
+    }
+    
+
+    //Amar Code End
 }

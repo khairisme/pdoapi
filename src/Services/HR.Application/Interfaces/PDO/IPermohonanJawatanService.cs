@@ -12,5 +12,11 @@ namespace HR.Application.Interfaces.PDO
         IQueryable<PermohonanJawatanSearchResponseDto> Search(PermohonanJawatanFilterDto filter);
         Task<List<PermohonanJawatanResponseDto>> GetSenaraiPermohonanJawatanAsync(PermohonanJawatanFilterDto2 filter);
         Task<List<PermohonanPindaanResponseDto>> GetSenaraiPermohonanPindaanAsync(PermohonanPindaanFilterDto filter);
+        //Amar Code Start
+        Task<List<SalinanAsaResponseDto>> GetSalinanAsa(SalinanAsaFilterDto filter);
+        Task<List<SalinanBaharuResponseDto>> GetSalinanBaharu(int IdUnitOrganisasi);
+        Task<bool> SetUlasanPasukanPerunding(UlasanPasukanPerundingRequestDto ulasanPasukanPerundingRequestDto);
+        Task<List<SenaraiPermohonanPerjawatanResponseDto>> GetSenaraiPermohonanPerjawatan(SenaraiPermohonanPerjawatanFilterDto filter);
+        //Amar Code End
     }
 }
