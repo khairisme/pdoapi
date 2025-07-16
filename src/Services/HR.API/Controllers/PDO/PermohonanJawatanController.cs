@@ -6,6 +6,7 @@ using HR.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
@@ -113,4 +114,155 @@ public class PermohonanJawatanController : ControllerBase
             });
         }
     }
+
+    //Amar Code Start
+    /// <summary>
+    /// GetSalinanAsa
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpPost("getSalinanAsa")]
+    public async Task<IActionResult> GetSalinanAsa([FromBody] SalinanAsaFilterDto filter)
+    {
+        try
+        {
+            var result = await _permohonanJawatanService.GetSalinanAsa(filter);
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetSalinanAsa");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SalinanAsaResponseDto>()
+            });
+        }
+    }
+
+    /// <summary>
+    /// GetSalinanBaharu
+    /// </summary>
+    /// <param name="IdUnitOrganisasi">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpGet("getSalinanBaharu")]
+    public async Task<IActionResult> GetSalinanBaharu([FromQuery] int IdUnitOrganisasi)
+    {
+        try
+        {
+            var result = await _permohonanJawatanService.GetSalinanBaharu(IdUnitOrganisasi);
+
+            return Ok(new
+            {
+                status = result.Any() ? "Success" : "Not Found",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetSalinanBaharu");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SalinanBaharuResponseDto>()
+            });
+        }
+    }
+
+    // One cop API need to be created
+
+    /// <summary>
+    /// SetUlasanPasukanPerunding
+    /// </summary>
+    /// <param name="ulasanPasukanPerundingRequestDto">Request</param>
+    /// <returns>Returns message</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpPost("setUlasanPasukanPerunding")]
+    public async Task<IActionResult> SetUlasanPasukanPerunding([FromBody] UlasanPasukanPerundingRequestDto ulasanPasukanPerundingRequestDto)
+    {
+        _logger.LogInformation("update SetUlasanPasukanPerunding");
+
+
+        try
+        {
+            var isSuccess = await _permohonanJawatanService.SetUlasanPasukanPerunding(ulasanPasukanPerundingRequestDto);
+
+            if (!isSuccess)
+                return StatusCode(500, "Failed to update the record.");
+
+            return Ok("Updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during updation");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
+
+    /// <summary>
+    /// GetSenaraiPermohonanPerjawatan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpPost("getSenaraiPermohonanPerjawatan")]
+    public async Task<IActionResult> GetSenaraiPermohonanPerjawatan([FromBody] SenaraiPermohonanPerjawatanFilterDto filter)
+    {
+        try
+        {
+            var result = await _permohonanJawatanService.GetSenaraiPermohonanPerjawatan(filter);
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetSenaraiPermohonanPerjawatan");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SenaraiPermohonanPerjawatanResponseDto>()
+            });
+        }
+    }
+
+    //Amar Code end
 }

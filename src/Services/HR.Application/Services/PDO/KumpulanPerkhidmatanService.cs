@@ -566,7 +566,7 @@ namespace HR.Application.Services.PDO
                 // Step 1: update into PDO_KumpulanPerkhidmatan
                 var perkhidmatan = MapToHantarEntity(perkhidmatanDto);
                 perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
-                // perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
+                 perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
 
                 var result = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(perkhidmatan);
                 await _unitOfWork.SaveChangesAsync();
