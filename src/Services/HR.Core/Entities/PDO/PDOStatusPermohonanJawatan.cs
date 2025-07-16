@@ -17,6 +17,6 @@ namespace HR.Core.Entities.PDO
         public string ? UlasanStatusPermohonan { get; set; } = null!;
         public DateTime TarikhStatusPermohonan { get; set; }
         public string KodRujStatusPermohonanJawatan { get; set; }
-        public string UlasanStatusPermohonan { get; set; }
+        
     }
 }
