@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class PermohonanJawatanController : ControllerBase
@@ -203,7 +203,7 @@ public class PermohonanJawatanController : ControllerBase
     /// <summary>
     /// GetSalinanBaharu
     /// </summary>
-    /// <param name="IdUnitOrganisasi">Filter criteria</param>
+    /// <param name="IdPermohonanJawatanSelected">Filter criteria</param>
     /// <returns>Returns a list of data matching the filter criteria</returns>
     /// <response code="200">Success</response>
     /// <response code="500">Internal server error occurred while processing the request</response>
@@ -214,15 +214,15 @@ public class PermohonanJawatanController : ControllerBase
     /// 
     /// </remarks>
     [HttpGet("getSalinanBaharu")]
-    public async Task<IActionResult> GetSalinanBaharu([FromQuery] int IdUnitOrganisasi)
+    public async Task<IActionResult> GetSalinanBaharu([FromQuery] int IdPermohonanJawatanSelected)
     {
         try
         {
-            var result = await _permohonanJawatanService.GetSalinanBaharu(IdUnitOrganisasi);
+            var result = await _permohonanJawatanService.GetSalinanBaharu(IdPermohonanJawatanSelected);
 
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Count() > 0 ? "Sucess" : "Failed",
                 items = result
             });
         }
@@ -287,7 +287,7 @@ public class PermohonanJawatanController : ControllerBase
     /// 
     /// 
     /// </remarks>
-    [HttpPost("getSenaraiPermohonanPerjawatan")]
+    [HttpPost("getSenaraiPermohonanPerjawatanCari")]
     public async Task<IActionResult> GetSenaraiPermohonanPerjawatan([FromBody] SenaraiPermohonanPerjawatanFilterDto filter)
     {
         try
