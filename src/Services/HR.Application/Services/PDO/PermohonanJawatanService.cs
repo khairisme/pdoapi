@@ -219,51 +219,50 @@ namespace HR.Application.Services.PDO
             }
         }
 
-        public async Task<List<SalinanBaharuResponseDto>> GetSalinanBaharu(int IdUnitOrganisasi)
+        public async Task<List<SalinanBaharuResponseDto>> GetSalinanBaharu(int IdPermohonanJawatanSelected)
         {
-            _logger.LogInformation("GetSalinanBaharu: Getting SalinanBaharu with IdUnitOrganisasi: {IdUnitOrganisasi}", IdUnitOrganisasi);
+            _logger.LogInformation("GetSalinanBaharu: Getting SalinanBaharu with IdPermohonanJawatanSelected: {IdPermohonanJawatanSelected}", IdPermohonanJawatanSelected);
+
             try
             {
                 var query = from ppj in _dbContext.PDOPermohonanJawatan
+                            join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
                             join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
-                            join prjp in _dbContext.PDORujJenisPermohonan on ppj.KodRujJenisPermohonan equals prjp.Kod
-                            join prpp in _dbContext.PDORujPasukanPerunding on ppj.KodRujPasukanPerunding equals prpp.Kod
-                            where ppj.IdUnitOrganisasi == IdUnitOrganisasi
-                                && pspj.KodRujStatusPermohonanJawatan == "02"
+                            join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonanJawatan equals prsp.Kod
+                            where ppj.Id == IdPermohonanJawatanSelected
                             orderby ppj.TarikhPermohonan
                             select new
                             {
-                                AgensiId = ppj.IdUnitOrganisasi,
+                                Agensi = puo.Nama ?? String.Empty,
                                 ppj.NomborRujukan,
-                                TajukPermohonan = ppj.Tajuk,
+                                Tajuk = ppj.Tajuk,
                                 ppj.TarikhPermohonan,
-                                ppj.Keterangan,
-                                PrjpKod = prjp.Kod,
-                                PrppKod = prpp.Kod
+                                Status = prsp.Nama ?? String.Empty
                             };
 
                 _logger.LogInformation("GetSalinanBaharu: Executing query to fetch SalinanBaharu data");
+
                 var data = await query.ToListAsync();
+
                 _logger.LogInformation("GetSalinanBaharu: Retrieved {Count} records from database", data.Count);
 
                 var result = data.Select((x, index) => new SalinanBaharuResponseDto
                 {
                     Bil = index + 1,
-                    AgensiId = x.AgensiId,
+                    Agensi = x.Agensi,
                     NomborRujukan = x.NomborRujukan ?? String.Empty,
-                    TajukPermohonan = x.TajukPermohonan ?? String.Empty,
+                    Tajuk = x.Tajuk ?? String.Empty,
                     TarikhPermohonan = x.TarikhPermohonan,
-                    Keterangan = x.Keterangan ?? String.Empty,
-                    PrjpKod = x.PrjpKod ?? String.Empty,
-                    PrppKod = x.PrppKod ?? String.Empty
+                    Status = x.Status
                 }).ToList();
 
                 _logger.LogInformation("GetSalinanBaharu: Successfully processed {Count} SalinanBaharu records", result.Count);
+
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "GetSalinanBaharu: Failed to retrieve SalinanBaharu data with IdUnitOrganisasi: {IdUnitOrganisasi}", IdUnitOrganisasi);
+                _logger.LogError(ex, "GetSalinanBaharu: Failed to retrieve SalinanBaharu data with IdPermohonanJawatanSelected: {IdPermohonanJawatanSelected}", IdPermohonanJawatanSelected);
                 throw;
             }
         }

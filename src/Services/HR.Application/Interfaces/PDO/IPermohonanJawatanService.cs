@@ -20,7 +20,7 @@ namespace HR.Application.Interfaces.PDO
 
         //Amar Code Start
         Task<List<SalinanAsaResponseDto>> GetSalinanAsa(SalinanAsaFilterDto filter);
-        Task<List<SalinanBaharuResponseDto>> GetSalinanBaharu(int IdUnitOrganisasi);
+        Task<List<SalinanBaharuResponseDto>> GetSalinanBaharu(int IdPermohonanJawatanSelected);
         Task<bool> SetUlasanPasukanPerunding(UlasanPasukanPerundingRequestDto ulasanPasukanPerundingRequestDto);
         Task<List<SenaraiPermohonanPerjawatanResponseDto>> GetSenaraiPermohonanPerjawatan(SenaraiPermohonanPerjawatanFilterDto filter);
         //Amar Code End

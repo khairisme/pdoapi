@@ -103,13 +103,13 @@ namespace HR.Application.DTOs.PDO
     public class SalinanBaharuResponseDto
     {
         public int Bil { get; set; }
-        public int AgensiId { get; set; }
+        public string Agensi { get; set; }
+
         public string NomborRujukan { get; set; }
-        public string TajukPermohonan { get; set; }
+        public string Tajuk { get; set; }
         public DateTime? TarikhPermohonan { get; set; }
-        public string? Keterangan { get; set; }
-        public string PrjpKod { get; set; }
-        public string PrppKod { get; set; }
+        public string Status { get; set; }
+       
 
     }
 
