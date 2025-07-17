@@ -66,8 +66,29 @@ namespace HR.Application.DTOs.PDO
         public int OldParentId { get; set; }
 
     }
-    
+
 
     //Amar Code End
+
+    //Amar Code Start 17/07/25
+
+    public class MansuhAktivitiOrganisasiRequestDto
+    {
+        public int IdAktivitiOrganisasi { get; set; }
+    }
+    public class AktivitiOrganisasiButiranJawatanResponseDto
+    {
+        public int Id { get; set; }
+        public int IdIndukAktivitiOrganisasi { get; set; }
+        public string KodProgram { get; set; }
+        public string Nama { get; set; }
+        public int Tahap { get; set; }
+        
+
+
+
+    }
+    
+    //Amar Code End 17/07/25
 
 }

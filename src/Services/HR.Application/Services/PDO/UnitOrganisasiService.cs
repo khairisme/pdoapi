@@ -70,5 +70,51 @@ namespace HR.Application.Services.PDO
                 })
                 .ToListAsync();
         }
+
+        //Amar Code 17/07/25
+        public async Task<string> GetNamaUnitOrganisasi(int IdUnitOrganisasi)
+        {
+            _logger.LogInformation("GetNamaUnitOrganisasi: Getting NamaUnitOrganisasi with IdUnitOrganisasi: {IdUnitOrganisasi}", IdUnitOrganisasi);
+            try
+            {
+                var result = await _context.PDOUnitOrganisasi
+                    .Where(puo => puo.Id == IdUnitOrganisasi)
+                    .Select(puo => puo.Nama)
+                    .FirstOrDefaultAsync();
+                _logger.LogInformation("GetNamaUnitOrganisasi: Successfully retrieved NamaUnitOrganisasi");
+                return result ?? String.Empty;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetNamaUnitOrganisasi: Failed to retrieve NamaUnitOrganisasi with IdUnitOrganisasi: {IdUnitOrganisasi}", IdUnitOrganisasi);
+                throw;
+            }
+        }
+        public async Task<bool> SetPenjenamaanSemula(UnitOrganisasiPenjenamaanSemulaRequestDto penjenamaanSemulaRequestDto)
+        {
+            _logger.LogInformation("Service: Updating PenjenamaanSemula");
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                // Step 1: Update PDO_UnitOrganisasi
+                var unitOrganisasi = await _unitOfWork.Repository<PDOUnitOrganisasi>()
+                    .FirstOrDefaultAsync(x => x.Id == penjenamaanSemulaRequestDto.IdUnitOrganisasi);
+                if (unitOrganisasi != null)
+                {
+                    unitOrganisasi.Nama = penjenamaanSemulaRequestDto.NamaUnitOrganisasiBaharu;
+                    await _unitOfWork.Repository<PDOUnitOrganisasi>().UpdateAsync(unitOrganisasi);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service SetPenjenamaanSemula");
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
+        //End
     }
 }

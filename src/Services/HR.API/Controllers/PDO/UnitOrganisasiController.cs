@@ -2,6 +2,7 @@
 using HR.Application.DTOs.PDO;
 using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
+using HR.Application.Services.PDO;
 using HR.Core.Entities;
 using HR.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ using Shared.Contracts.DTOs;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.API.Controllers.PDO;
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class UnitOrganisasiController : ControllerBase
@@ -77,5 +78,78 @@ public class UnitOrganisasiController : ControllerBase
         });
         
     }
+
+    //Code Added by Amar 17/05/25
+    /// <summary>
+    /// GetNamaUnitOrganisasi
+    /// </summary>
+    /// <param name="IdUnitOrganisasi">Filter criteria</param>
+    /// <returns>Returns the name of aktiviti organisasi</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpGet("getNamaUnitOrganisasi")]
+    public async Task<IActionResult> GetNamaUnitOrganisasi([FromQuery] int IdUnitOrganisasi)
+    {
+        try
+        {
+            var result = await _unitOrganisasiService.GetNamaUnitOrganisasi(IdUnitOrganisasi);
+            return Ok(new
+            {
+                status = !string.IsNullOrEmpty(result) ? "Success" : "Failed",
+                data = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetNamaUnitOrganisasi");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                data = string.Empty
+            });
+        }
+    }
+
+    /// <summary>
+    /// SetPenjenamaanSemula
+    /// </summary>
+    /// <param name="penjenamaanSemulaRequestDto">Request</param>
+    /// <returns>Returns message</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpPost("setPenjenamaanSemula")]
+    public async Task<IActionResult> SetPenjenamaanSemula([FromBody] UnitOrganisasiPenjenamaanSemulaRequestDto penjenamaanSemulaRequestDto)
+    {
+        _logger.LogInformation("update SetPenjenamaanSemula");
+
+
+        try
+        {
+            var isSuccess = await _unitOrganisasiService.SetPenjenamaanSemula(penjenamaanSemulaRequestDto);
+
+            if (!isSuccess)
+                return StatusCode(500, "Failed to update the record.");
+
+            return Ok("Updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during updation");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
+    //End
 
 }

@@ -29,4 +29,12 @@ namespace HR.Application.DTOs.PDO
         public string Kod { get; set; } = string.Empty;
         public string Nama { get; set; } = string.Empty;
     }
+    // Code by Amar 17/05/25
+    public class UnitOrganisasiPenjenamaanSemulaRequestDto
+    {
+        public int IdUnitOrganisasi { get; set; }
+        public string NamaUnitOrganisasiBaharu { get; set; }
+
+    }
+    //End
 }

@@ -379,5 +379,149 @@ namespace HR.Application.Services.PDO
         }
         //Amar Code End
 
+        //Amar Code Start 17/07/25
+        public async Task<List<StrukturAktivitiOrganisasiResponseDto>> GetMansuhAktivitiOrganisasi(int IdAktivitiOrganisasi)
+        {
+            _logger.LogInformation("GetMansuhAktivitiOrganisasi: Getting StrukturAktivitiOrganisasi with IdAktivitiOrganisasi: {IdAktivitiOrganisasi}", IdAktivitiOrganisasi);
+
+            try
+            {
+                var sql = @"
+            WITH ParentChain AS (
+                SELECT *
+                FROM PDO_AktivitiOrganisasi
+                WHERE Id = {0}
+                UNION ALL
+                SELECT parent.*
+                FROM PDO_AktivitiOrganisasi parent
+                INNER JOIN ParentChain child ON parent.Id = child.IdIndukAktivitiOrganisasi
+            ),
+            FullTree AS (
+                SELECT
+                    Id,
+                    IdIndukAktivitiOrganisasi,
+                    Nama,
+                    0 AS Level,
+                    CAST(Nama AS VARCHAR(MAX)) AS FullPath
+                FROM PDO_AktivitiOrganisasi
+                WHERE Id = (SELECT TOP 1 Id FROM ParentChain WHERE IdIndukAktivitiOrganisasi = 0)
+                UNION ALL
+                SELECT
+                    child.Id,
+                    child.IdIndukAktivitiOrganisasi,
+                    child.Nama,
+                    parent.Level + 1,
+                    CAST(parent.FullPath + ' > ' + child.Nama AS VARCHAR(MAX)) AS FullPath
+                FROM PDO_AktivitiOrganisasi child
+                INNER JOIN FullTree parent ON child.IdIndukAktivitiOrganisasi = parent.Id
+            )
+            SELECT * FROM FullTree
+            ORDER BY FullPath;";
+
+                _logger.LogInformation("GetMansuhAktivitiOrganisasi: Executing query to fetch StrukturAktivitiOrganisasi data");
+
+                var data = await _context.Database.SqlQueryRaw<StrukturAktivitiOrganisasiTempDto>(sql, IdAktivitiOrganisasi).ToListAsync();
+
+                _logger.LogInformation("GetMansuhAktivitiOrganisasi: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select((x, index) => new StrukturAktivitiOrganisasiResponseDto
+                {
+                    Id = x.Id,
+                    IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
+                    Nama = x.Nama ?? String.Empty,
+                    Level = x.Level,
+                    FullPath = x.FullPath ?? String.Empty
+                }).ToList();
+
+                _logger.LogInformation("GetMansuhAktivitiOrganisasi: Successfully processed {Count} StrukturAktivitiOrganisasi records", result.Count);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetMansuhAktivitiOrganisasi: Failed to retrieve StrukturAktivitiOrganisasi data with IdAktivitiOrganisasi: {IdAktivitiOrganisasi}", IdAktivitiOrganisasi);
+                throw;
+            }
+        }
+
+        public async Task<bool> SetMansuhAktivitiOrganisasi(MansuhAktivitiOrganisasiRequestDto mansuhAktivitiOrganisasiRequestDto)
+        {
+            _logger.LogInformation("SetMansuhAktivitiOrganisasi: Updating AktivitiOrganisasi status to inactive with IdAktivitiOrganisasi: {IdAktivitiOrganisasi}", mansuhAktivitiOrganisasiRequestDto.IdAktivitiOrganisasi);
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: Update PDO_AktivitiOrganisasi StatusAktif to 0
+                var aktivitiOrganisasi = await _unitOfWork.Repository<PDOAktivitiOrganisasi>()
+                    .FirstOrDefaultAsync(x => x.Id == mansuhAktivitiOrganisasiRequestDto.IdAktivitiOrganisasi && x.StatusAktif == true);
+
+                if (aktivitiOrganisasi != null)
+                {
+                    aktivitiOrganisasi.StatusAktif = false;
+                    await _unitOfWork.Repository<PDOAktivitiOrganisasi>().UpdateAsync(aktivitiOrganisasi);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    _logger.LogInformation("SetMansuhAktivitiOrganisasi: Successfully updated StatusAktif to 0 for IdAktivitiOrganisasi: {IdAktivitiOrganisasi}", mansuhAktivitiOrganisasiRequestDto.IdAktivitiOrganisasi);
+                }
+                else
+                {
+                    _logger.LogWarning("SetMansuhAktivitiOrganisasi: No active AktivitiOrganisasi found with IdAktivitiOrganisasi: {IdAktivitiOrganisasi}", mansuhAktivitiOrganisasiRequestDto.IdAktivitiOrganisasi);
+                }
+
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "SetMansuhAktivitiOrganisasi: Error during mansuh operation for IdAktivitiOrganisasi: {IdAktivitiOrganisasi}", mansuhAktivitiOrganisasiRequestDto.IdAktivitiOrganisasi);
+                await _unitOfWork.RollbackAsync();
+                return false;
+            }
+        }
+
+
+        public async Task<List<AktivitiOrganisasiButiranJawatanResponseDto>> GeTreeButiranJawatan(string KodChartaOrganisasi)
+        {
+            _logger.LogInformation("GeTreeButiranJawatan: Getting ButiranJawatan with KodChartaOrganisasi: {KodChartaOrganisasi}", KodChartaOrganisasi);
+            try
+            {
+                var query = from a in _context.PDOAktivitiOrganisasi
+                            join b in _context.PDORujKategoriAktivitiOrganisasi on a.KodRujKategoriAktivitiOrganisasi equals b.Kod
+                            where a.KodCartaAktiviti.StartsWith(KodChartaOrganisasi)
+                            select new
+                            {
+                                a.Id,
+                                a.IdIndukAktivitiOrganisasi,
+                                KodProgram = b.Nama.ToUpper() + " " + a.KodProgram,
+                                a.Nama,
+                                a.Tahap
+                            };
+
+                _logger.LogInformation("GeTreeButiranJawatan: Executing query to fetch ButiranJawatan data");
+                var data = await query.ToListAsync();
+                _logger.LogInformation("GeTreeButiranJawatan: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select((x, index) => new AktivitiOrganisasiButiranJawatanResponseDto
+                {
+                    Id = x.Id,
+                    IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
+                    KodProgram = x.KodProgram ?? String.Empty,
+                    Nama = x.Nama ?? String.Empty,
+                    Tahap = x.Tahap
+                }).ToList();
+
+                _logger.LogInformation("GeTreeButiranJawatan: Successfully processed {Count} ButiranJawatan records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GeTreeButiranJawatan: Failed to retrieve ButiranJawatan data with KodChartaOrganisasi: {KodChartaOrganisasi}", KodChartaOrganisasi);
+                throw;
+            }
+        }
+
+        //Amar Code End 17/07/25
+
     }
 }
