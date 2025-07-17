@@ -403,7 +403,7 @@ namespace HR.Application.Services
                     return await _context.PDOGred.AnyAsync(x =>
 
                         // x.Kod.Trim() == dto.Kod.Trim() || 
-                        x.Nama.Trim() == dto.Nama.Trim());
+                        x.Nama.Trim() == dto.Nama.Trim() && x.KodRujJenisSaraan==dto.KodRujJenisSaraan);
                 }
                 else
                 {
@@ -412,7 +412,7 @@ namespace HR.Application.Services
 
                         (
                         //x.Kod.Trim() == dto.Kod.Trim() || 
-                        x.Nama.Trim() == dto.Nama.Trim()) &&
+                        x.Nama.Trim() == dto.Nama.Trim()) && x.KodRujJenisSaraan == dto.KodRujJenisSaraan &&
                         x.Id != dto.Id);
                 }
             }
