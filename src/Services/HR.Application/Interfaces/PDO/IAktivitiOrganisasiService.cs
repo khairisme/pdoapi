@@ -26,5 +26,12 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> SetAktivitiOrganisasi(AktivitiOrganisasiRequestDto aktivitiOrganisasiRequestDto);
         //Amar Code End
 
+        //Amar Code Start17/07/25
+      
+        Task<List<StrukturAktivitiOrganisasiResponseDto>> GetMansuhAktivitiOrganisasi(int IdAktivitiOrganisasi);
+        Task<bool> SetMansuhAktivitiOrganisasi(MansuhAktivitiOrganisasiRequestDto mansuhAktivitiOrganisasiRequestDto);
+       
+        //Amar Code End
+
     }
 }

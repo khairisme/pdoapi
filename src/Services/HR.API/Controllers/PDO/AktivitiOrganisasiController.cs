@@ -13,7 +13,7 @@ using Shared.Contracts.DTOs;
 using System.Diagnostics;
 
 namespace HR.API.Controllers.PDO;
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class AktivitiOrganisasiController : ControllerBase
@@ -296,6 +296,83 @@ public class AktivitiOrganisasiController : ControllerBase
     }
 
     //Amar Code End
+
+    //Amar Code start 170725
+
+    // <summary>
+    /// GetMansuhAktivitiOrganisasi
+    /// </summary>
+    /// <param name="IdAktivitiOrganisasi">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpGet("getMansuhAktivitiOrganisasi")]
+    public async Task<IActionResult> GetMansuhAktivitiOrganisasi([FromQuery] int IdAktivitiOrganisasi)
+    {
+        try
+        {
+            var result = await _aktivitiOrganisasiService.GetMansuhAktivitiOrganisasi(IdAktivitiOrganisasi);
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetMansuhAktivitiOrganisasi");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<StrukturAktivitiOrganisasiResponseDto>()
+            });
+        }
+    }
+
+    /// <summary>
+    /// SetMansuhAktivitiOrganisasi
+    /// </summary>
+    /// <param name="mansuhAktivitiOrganisasiRequestDto">Request</param>
+    /// <returns>Returns message</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpPost("setMansuhAktivitiOrganisasi")]
+    public async Task<IActionResult> SetMansuhAktivitiOrganisasi([FromBody] MansuhAktivitiOrganisasiRequestDto mansuhAktivitiOrganisasiRequestDto)
+    {
+        _logger.LogInformation("update MansuhAktivitiOrganisasi");
+
+
+        try
+        {
+            var isSuccess = await _aktivitiOrganisasiService.SetMansuhAktivitiOrganisasi(mansuhAktivitiOrganisasiRequestDto);
+
+            if (!isSuccess)
+                return StatusCode(500, "Failed to update the record.");
+
+            return Ok("Updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception during updation");
+            return StatusCode(500, ex.InnerException.Message.ToString());
+        }
+    }
+
+    
+    //Amar Code end 170725
 
 
 }

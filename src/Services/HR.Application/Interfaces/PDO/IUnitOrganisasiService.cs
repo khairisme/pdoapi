@@ -13,5 +13,10 @@ namespace HR.Application.Interfaces.PDO
         Task<List<UnitOrganisasiKementerianDto>> GetUnitOrganisasiByKategoriAsync();
 
         Task<List<UnitOrganisasiAutocompleteDto>> SearchUnitOrganisasiAsync(string keyword);
+
+        // Amar Code 17/07/25
+        Task<string> GetNamaUnitOrganisasi(int IdUnitOrganisasi);
+        Task<bool> SetPenjenamaanSemula(UnitOrganisasiPenjenamaanSemulaRequestDto penjenamaanSemulaRequestDto);
+        //End
     }
 }
