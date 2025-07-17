@@ -90,6 +90,9 @@ namespace HR.Application.DTOs.PDO
         public string KodRujStatusPermohonan { get; set; }
         public string StatusPermohonan { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
+        public string? KodJana { get; set; }
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndikatorTanpaSkim { get; set; }
     }
     public class KumpulanPerkhidmatanRefStatusDto : KumpulanPerkhidmatanDto
     {

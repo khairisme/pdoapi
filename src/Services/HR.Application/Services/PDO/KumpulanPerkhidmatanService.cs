@@ -371,7 +371,11 @@ namespace HR.Application.Services.PDO
                                         StatusAktif = a.StatusAktif,
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                         StatusPermohonan = b2.Nama,
-                                        TarikhKemaskini = b.TarikhKemaskini
+                                        TarikhKemaskini = b.TarikhKemaskini,
+                                         KodJana = a.KodJana,
+                                        IndikatorSkim = a.IndikatorSkim,
+                                        IndikatorTanpaSkim = a.IndikatorTanpaSkim
+
                                     }).FirstOrDefaultAsync();
 
                 return result;
