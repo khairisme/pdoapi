@@ -966,7 +966,7 @@ public class PermohonanPengisianController : ControllerBase
         }
     }
     /// <summary>
-    ///Get GetBilanganPermohonanPengisian
+    ///Get GetJawatanKekosongan
     /// <param name="filter">Filter criteria</param>
     /// <returns>Returns a list of data matching the filter criteria</returns>
 
