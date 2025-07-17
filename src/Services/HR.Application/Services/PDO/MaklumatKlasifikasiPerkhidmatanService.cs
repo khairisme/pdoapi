@@ -198,8 +198,10 @@ namespace HR.Application.Services.PDO
                                        StatusKlasifikasiPerkhidmatan = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
                                        Status = b2.Nama,
                                        TarikhKemaskini = b.TarikhKemaskini,
-                                       IndikatorSkim = a.IndikatorSkim
-                                      // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
+                                       IndikatorSkim = a.IndikatorSkim,
+                                       StatusAktif=a.StatusAktif
+
+                                       // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
                                    }).FirstOrDefaultAsync();
 
                 return query;

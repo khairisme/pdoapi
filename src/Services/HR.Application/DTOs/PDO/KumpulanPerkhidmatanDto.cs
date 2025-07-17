@@ -51,6 +51,8 @@ namespace HR.Application.DTOs.PDO
 
         public bool? IndikatorSkim { get; set; }
         public bool? IndikatorTanpaSkim { get; set; }
+
+        public bool StatusAktif { get; set; }
     }
 
     public class CarlStatusKumpulanPerkhidmatanDto
@@ -78,7 +80,9 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public string Keterangan { get; set; }
         public string StatusPermohonan { get; set; }
+        public bool StatusAktif { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
+
     }
     public class KumpulanPerkhidmatanStatusDto
     {

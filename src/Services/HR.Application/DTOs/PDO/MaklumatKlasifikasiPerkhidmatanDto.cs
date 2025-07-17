@@ -47,6 +47,7 @@ namespace HR.Application.DTOs.PDO
 
         public bool? IndikatorSkim { get; set; }
         public bool? IndSkimPerkhidmatan { get; set; }
+        public bool StatusAktif { get; set; }
     }
 
     public class PenapisMaklumatKlasifikasiPerkhidmatanDto
