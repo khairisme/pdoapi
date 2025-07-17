@@ -480,7 +480,47 @@ namespace HR.Application.Services.PDO
             }
         }
 
-      
+
+        public async Task<List<AktivitiOrganisasiButiranJawatanResponseDto>> GeTreeButiranJawatan(string KodChartaOrganisasi)
+        {
+            _logger.LogInformation("GeTreeButiranJawatan: Getting ButiranJawatan with KodChartaOrganisasi: {KodChartaOrganisasi}", KodChartaOrganisasi);
+            try
+            {
+                var query = from a in _context.PDOAktivitiOrganisasi
+                            join b in _context.PDORujKategoriAktivitiOrganisasi on a.KodRujKategoriAktivitiOrganisasi equals b.Kod
+                            where a.KodCartaAktiviti.StartsWith(KodChartaOrganisasi)
+                            select new
+                            {
+                                a.Id,
+                                a.IdIndukAktivitiOrganisasi,
+                                KodProgram = b.Nama.ToUpper() + " " + a.KodProgram,
+                                a.Nama,
+                                a.Tahap
+                            };
+
+                _logger.LogInformation("GeTreeButiranJawatan: Executing query to fetch ButiranJawatan data");
+                var data = await query.ToListAsync();
+                _logger.LogInformation("GeTreeButiranJawatan: Retrieved {Count} records from database", data.Count);
+
+                var result = data.Select((x, index) => new AktivitiOrganisasiButiranJawatanResponseDto
+                {
+                    Id = x.Id,
+                    IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
+                    KodProgram = x.KodProgram ?? String.Empty,
+                    Nama = x.Nama ?? String.Empty,
+                    Tahap = x.Tahap
+                }).ToList();
+
+                _logger.LogInformation("GeTreeButiranJawatan: Successfully processed {Count} ButiranJawatan records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GeTreeButiranJawatan: Failed to retrieve ButiranJawatan data with KodChartaOrganisasi: {KodChartaOrganisasi}", KodChartaOrganisasi);
+                throw;
+            }
+        }
+
         //Amar Code End 17/07/25
 
     }

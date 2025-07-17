@@ -371,7 +371,43 @@ public class AktivitiOrganisasiController : ControllerBase
         }
     }
 
-    
+
+    // <summary>
+    /// GetMansuhAktivitiOrganisasi
+    /// </summary>
+    /// <param name="IdAktivitiOrganisasi">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// 
+    /// 
+    /// </remarks>
+    [HttpGet("geTreeButiranJawatan")]
+    public async Task<IActionResult> GeTreeButiranJawatan([FromQuery] string KodChartaOrganisasi)
+    {
+        try
+        {
+            var result = await _aktivitiOrganisasiService.GeTreeButiranJawatan(KodChartaOrganisasi);
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GeTreeButiranJawatan");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<AktivitiOrganisasiButiranJawatanResponseDto>()
+            });
+        }
+    }
     //Amar Code end 170725
 
 
