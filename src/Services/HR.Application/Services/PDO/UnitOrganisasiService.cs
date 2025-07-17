@@ -96,21 +96,15 @@ namespace HR.Application.Services.PDO
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-
-                // Step 1: Update PDO_AktivitiOrganisasi
-                var aktivitiOrganisasi = await _unitOfWork.Repository<PDOAktivitiOrganisasi>()
-                    .FirstOrDefaultAsync(x => x.Id == penjenamaanSemulaRequestDto.IdAktivitiOrganisasi);
-
-
-
-                if (aktivitiOrganisasi != null)
+                // Step 1: Update PDO_UnitOrganisasi
+                var unitOrganisasi = await _unitOfWork.Repository<PDOUnitOrganisasi>()
+                    .FirstOrDefaultAsync(x => x.Id == penjenamaanSemulaRequestDto.IdUnitOrganisasi);
+                if (unitOrganisasi != null)
                 {
-                    aktivitiOrganisasi.Nama = penjenamaanSemulaRequestDto.NamaAktivitiOrganisasiBaharu;
-
-                    await _unitOfWork.Repository<PDOAktivitiOrganisasi>().UpdateAsync(aktivitiOrganisasi);
+                    unitOrganisasi.Nama = penjenamaanSemulaRequestDto.NamaUnitOrganisasiBaharu;
+                    await _unitOfWork.Repository<PDOUnitOrganisasi>().UpdateAsync(unitOrganisasi);
                     await _unitOfWork.SaveChangesAsync();
                 }
-
                 await _unitOfWork.CommitAsync();
                 return true;
             }

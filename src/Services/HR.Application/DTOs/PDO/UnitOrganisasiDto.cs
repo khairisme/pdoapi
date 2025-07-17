@@ -32,8 +32,8 @@ namespace HR.Application.DTOs.PDO
     // Code by Amar 17/05/25
     public class UnitOrganisasiPenjenamaanSemulaRequestDto
     {
-        public int IdAktivitiOrganisasi { get; set; }
-        public string NamaAktivitiOrganisasiBaharu { get; set; }
+        public int IdUnitOrganisasi { get; set; }
+        public string NamaUnitOrganisasiBaharu { get; set; }
 
     }
     //End
