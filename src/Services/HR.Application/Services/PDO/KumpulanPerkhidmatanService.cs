@@ -240,29 +240,29 @@ namespace HR.Application.Services.PDO
 
 
                 // Step 2: Deactivate existing PDO_StatusPermohonanKumpulanPerkhidmatan record
-                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdKumpulanPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
+                //var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>()
+                //        .FirstOrDefaultAsync(x => x.IdKumpulanPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
 
-                if (existingStatus != null)
-                {
-                    existingStatus.StatusAktif = false;
-                    existingStatus.TarikhPinda = DateTime.Now;
-                    await _unitOfWork.SaveChangesAsync();
-                }
+                //if (existingStatus != null)
+                //{
+                //    existingStatus.StatusAktif = false;
+                //    existingStatus.TarikhPinda = DateTime.Now;
+                //    await _unitOfWork.SaveChangesAsync();
+                //}
 
 
-                // Step 3: Insert into PDO_StatusPermohonanKumpulanPerkhidmatan
-                var statusEntity = new PDOStatusPermohonanKumpulanPerkhidmatan
-                {
-                    IdKumpulanPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
-                    KodRujStatusPermohonan = "01",
-                    TarikhKemaskini = DateTime.Now,
-                    StatusAktif = true
-                };
-                await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>().AddAsync(statusEntity);
-                await _unitOfWork.SaveChangesAsync();
+                //// Step 3: Insert into PDO_StatusPermohonanKumpulanPerkhidmatan
+                //var statusEntity = new PDOStatusPermohonanKumpulanPerkhidmatan
+                //{
+                //    IdKumpulanPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
+                //    KodRujStatusPermohonan = "01",
+                //    TarikhKemaskini = DateTime.Now,
+                //    StatusAktif = true
+                //};
+                //await _unitOfWork.Repository<PDOStatusPermohonanKumpulanPerkhidmatan>().AddAsync(statusEntity);
+                //await _unitOfWork.SaveChangesAsync();
 
-                await _unitOfWork.CommitAsync();
+                //await _unitOfWork.CommitAsync();
 
 
                 return true;
