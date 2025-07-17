@@ -304,7 +304,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost("sethantar")]
-    public async Task<IActionResult> setHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanHantarDto dto)
+    public async Task<IActionResult> setHantarKumpulanPermohonan([FromBody] KumpulanPerkhidmatanDto dto)
     {
         try
         {

@@ -31,7 +31,7 @@ namespace HR.Application.Interfaces.PDO
 
         Task<bool> DaftarHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanDto dto);
 
-        Task<bool> UpdateHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanHantarDto perkhidmatanDto);
+        Task<bool> UpdateHantarKumpulanPermohonanAsync(KumpulanPerkhidmatanDto perkhidmatanDto);
 
 
         Task<bool> DeleteOrUpdateKumpulanPerkhidmatanAsync(int id);
