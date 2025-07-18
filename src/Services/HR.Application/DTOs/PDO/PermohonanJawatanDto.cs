@@ -146,6 +146,36 @@ namespace HR.Application.DTOs.PDO
 
     }
     //Amar Code End
+    public class SenaraiPermohonanPerjawatanResponseDto2
+    {
+        public int IdPermohonanJawatan { get; set; }
+        public int IdUnitOrganisasi { get; set; }
+        public int IdAgensi { get; set; }
+        public string NomborRujukan { get; set; }
+        public string Agensi { get; set; }
+        public string JenisPermohonan { get; set; }
+        public string TajukPermohonan { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class SimpanSemakanPermohonanPerjawatanRequestDto
+    {
+        public int IdPermohonanJawatan { get; set; }
+        public string? Ulasan { get; set; }
+        public int UserId { get; set; }
+    }
+    public class SenaraiPermohonanJawatanResponseDto3
+    {
+        public int IdPermohonanJawatan { get; set; }
+        public int IdUnitOrganisasi { get; set; }
+        public int IdAgensi { get; set; }
+        public string NomborRujukan { get; set; } = string.Empty;
+        public string JenisPermohonan { get; set; } = string.Empty;
+        public string TajukPermohonan { get; set; } = string.Empty;
+        public DateTime? TarikhPermohonan { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
 
     #region //Akhilesh code start
     public class SenaraiPermohonanPerjawatanSearchRequestDto

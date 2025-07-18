@@ -1,7 +1,9 @@
 using HR.Application.DTOs.PDO;
 using HR.Application.Interfaces.PDO;
 using HR.Application.Services;
+using HR.Application.Services.PDO;
 using HR.Core.Entities;
+using HR.Core.Entities.PDO;
 using HR.Core.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -312,6 +314,87 @@ public class PermohonanJawatanController : ControllerBase
     }
 
     //Amar Code end
+    /// <summary>
+    /// Retrieves the full list of Senarai Permohonan Perjawatan records without filters.
+    /// </summary>
+    /// <remarks>
+    /// Joins multiple tables:
+    /// - PDO_PermohonanJawatan
+    /// - PDO_UnitOrganisasi
+    /// - PDO_RujJenisPermohonan
+    /// - PDO_StatusPermohonanJawatan
+    /// - PDO_RujStatusPermohonanJawatan
+    /// 
+    /// Returns all records with their status, agency, type, and reference info.
+    /// </remarks>
+    /// <returns>List of SenaraiPermohonanPerjawatanResponseDto2</returns>
+
+    [HttpGet("GetSenaraiPermohonanPerjawatan")]
+    public IActionResult GetSenaraiPermohonanPerjawatan()
+    {
+        try
+        {
+            _logger.LogInformation("Fetching GetSenaraiPermohonanPerjawatan");
+            var result = _permohonanJawatanService.GetSenaraiPermohonanPerjawatan();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetSenaraiPermohonanPerjawatan");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SenaraiPermohonanPerjawatanResponseDto2>()
+            });
+        }
+
+    }
+
+    /// <summary>
+    /// newSemakanPermohonan - updates existing status and adds a new status with '02' code.
+    /// </summary>
+    /// <param name="request">Request DTO containing IdPermohonanJawatan, Ulasan, and UserId.</param>
+    /// <returns>Returns true if status updated and inserted successfully, otherwise false.</returns>
+    [HttpPost("newSemakanPermohonan")]
+    public async Task<IActionResult> SimpanSemakanPermohonanPerjawatan([FromBody] SimpanSemakanPermohonanPerjawatanRequestDto request)
+    {
+        try
+        {
+            _logger.LogInformation("Creating new SemakanPermohonan records");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var isSuccess = await _permohonanJawatanService.SimpanSemakanPermohonanPerjawatanAsync(request);
+
+            return Ok(new { status = isSuccess ? "Success" : "Failed", items = isSuccess });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error occurred while fetching Agensi with Skim Pengisian");
+            return StatusCode(500, new { status = "Error" });
+        }
+        
+    }
+    /// <summary>
+    /// Retrieves the full list of Senarai Permohonan jawatan records without filters.
+    /// </summary>
+    [HttpGet("senaraiPermohonanJawatan")]
+    public async Task<IActionResult> GetSenaraiPermohonanJawatan()
+    {
+        _logger.LogInformation("API GET /senaraiPermohonanJawatan called.");
+
+        try
+        {
+            var list = await _permohonanJawatanService.GetSenaraiPermohonanJawatanAsync();
+            return Ok(list);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching Senarai Permohonan Jawatan");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
 
     #region Akhilesh Code
     /// <summary>

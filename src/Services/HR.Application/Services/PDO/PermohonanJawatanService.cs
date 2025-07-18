@@ -371,6 +371,97 @@ namespace HR.Application.Services.PDO
             }
         }
         //Amar Code End
+        public async Task<List<SenaraiPermohonanPerjawatanResponseDto2>> GetSenaraiPermohonanPerjawatan()
+        {
+            var result = await (from ppj in _dbContext.PDOPermohonanJawatan
+                          join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                          join prjp in _dbContext.PDORujJenisPermohonan on ppj.KodRujJenisPermohonan equals prjp.Kod
+                          join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                          join prspj in _dbContext.PDORujStatusPermohonanJawatan on pspj.KodRujStatusPermohonanJawatan equals prspj.Kod
+                          select new SenaraiPermohonanPerjawatanResponseDto2
+                          {
+                              IdPermohonanJawatan = ppj.Id,
+                              IdUnitOrganisasi = ppj.IdUnitOrganisasi,
+                              IdAgensi = ppj.IdAgensi,
+                              NomborRujukan = ppj.NomborRujukan,
+                              Agensi = puo.Nama,
+                              JenisPermohonan = prjp.Nama,
+                              TajukPermohonan = ppj.Tajuk,
+                              TarikhPermohonan = ppj.TarikhPermohonan,
+                              Status = prspj.Nama
+                          }).ToListAsync();
+
+            return result;
+        }
+        public async Task<bool> SimpanSemakanPermohonanPerjawatanAsync(SimpanSemakanPermohonanPerjawatanRequestDto request)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+            try
+            {
+                // 1. Mark existing active status as inactive
+                var existingStatus = await _dbContext.PDOStatusPermohonanJawatan
+                    .Where(x => x.IdPermohonanJawatan == request.IdPermohonanJawatan && x.StatusAktif == true)
+                    .ToListAsync();
+
+                foreach (var status in existingStatus)
+                {
+                    status.StatusAktif = false;
+                    status.IdPinda = Guid.Empty;
+                    status.TarikhPinda = DateTime.Now;
+                    _dbContext.PDOStatusPermohonanJawatan.Update(status);
+                }
+
+                // 2. Add new status record
+                var newStatus = new PDOStatusPermohonanJawatan
+                {
+                    IdPermohonanJawatan = request.IdPermohonanJawatan,
+                    KodRujStatusPermohonanJawatan = "02", // status code for new state
+                    TarikhStatusPermohonan = DateTime.Now,
+                    UlasanStatusPermohonan = request.Ulasan,
+                    StatusAktif = true,
+                    IdCipta = Guid.Empty,
+                    TarikhCipta = DateTime.Now
+                };
+
+                await _dbContext.PDOStatusPermohonanJawatan.AddAsync(newStatus);
+
+
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+        }
+        public async Task<List<SenaraiPermohonanJawatanResponseDto3>> GetSenaraiPermohonanJawatanAsync()
+        {
+            _logger.LogInformation("Fetching Senarai Permohonan Perjawatan");
+
+            var result = await (from ppj in _dbContext.PDOPermohonanJawatan
+                                join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                                join prjp in _dbContext.PDORujJenisPermohonan on ppj.KodRujJenisPermohonan equals prjp.Kod
+                                join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                                join prspj in _dbContext.PDORujStatusPermohonanJawatan on pspj.KodRujStatusPermohonanJawatan equals prspj.Kod
+                                where pspj.StatusAktif == true
+                                select new SenaraiPermohonanJawatanResponseDto3
+                                {
+                                    IdPermohonanJawatan = ppj.Id,
+                                    IdUnitOrganisasi = ppj.IdUnitOrganisasi,
+                                    IdAgensi = ppj.IdAgensi,
+                                    NomborRujukan = ppj.NomborRujukan,
+                                    JenisPermohonan = prjp.Nama,
+                                    TajukPermohonan = ppj.Tajuk,
+                                    TarikhPermohonan = ppj.TarikhPermohonan,
+                                    Status = prspj.Nama
+                                }).ToListAsync();
+
+            return result;
+        }
 
         #region AKhilesh Region
         public async Task<List<SenaraiPermohonanPerjawatanSearchResponseDto>> SenaraiPermohonanPerjawatanSearchData(SenaraiPermohonanPerjawatanSearchRequestDto filter)
@@ -425,6 +516,7 @@ namespace HR.Application.Services.PDO
             }
         }
         #endregion
+
 
     }
 }

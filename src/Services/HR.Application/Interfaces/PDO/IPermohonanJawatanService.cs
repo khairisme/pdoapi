@@ -24,6 +24,9 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> SetUlasanPasukanPerunding(UlasanPasukanPerundingRequestDto ulasanPasukanPerundingRequestDto);
         Task<List<SenaraiPermohonanPerjawatanResponseDto>> GetSenaraiPermohonanPerjawatan(SenaraiPermohonanPerjawatanFilterDto filter);
         //Amar Code End
+        Task<List<SenaraiPermohonanPerjawatanResponseDto2>> GetSenaraiPermohonanPerjawatan();
+        Task<bool> SimpanSemakanPermohonanPerjawatanAsync(SimpanSemakanPermohonanPerjawatanRequestDto request);
+        Task<List<SenaraiPermohonanJawatanResponseDto3>> GetSenaraiPermohonanJawatanAsync();
 
         #region Akhilesh Region
         Task<List<SenaraiPermohonanPerjawatanSearchResponseDto>> SenaraiPermohonanPerjawatanSearchData(SenaraiPermohonanPerjawatanSearchRequestDto filter);
