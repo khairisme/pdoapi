@@ -7,6 +7,7 @@ using HR.Core.Interfaces;
 using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace HR.Application.Services.PDO
 {
@@ -107,6 +108,18 @@ namespace HR.Application.Services.PDO
             }
         }
 
+        private string GenerateNextKODFromDb()
+        {
+
+            int maxId = _dbContext.PDOKumpulanPerkhidmatan
+           .Select(c => c.Id)  // Or use your primary key name
+            .AsEnumerable()    // <-- Force client-side evaluation
+            .DefaultIfEmpty(0)
+           .Max();
+
+            return (maxId + 1).ToString("D3"); // Formats to 3-digit KOD like "001"
+
+        }
         public async Task<bool> NewAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto CreateRequestDto)
         {
             _logger.LogInformation("Service: Creating new KumpulanPerkhidmatan");
@@ -115,6 +128,7 @@ namespace HR.Application.Services.PDO
             try
             {
                 // Step 1: Insert into PDO_KlasifikasiPerkhidmatan
+               // CreateRequestDto.Kod = GenerateNextKODFromDb();
                 var KlasifikasiPerkhidmatan = MapToEntity(CreateRequestDto);
                 KlasifikasiPerkhidmatan.StatusAktif = false;
 
@@ -154,8 +168,8 @@ namespace HR.Application.Services.PDO
                 {
                     // Create: check if Kod or Nama already exists
                     return await _dbContext.PDOKlasifikasiPerkhidmatan.AnyAsync(x =>
-
-                        x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim());
+                     //x.Nama.Trim() == dto.Nama.Trim());
+                     x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim());
                 }
                 else
                 {
@@ -165,6 +179,8 @@ namespace HR.Application.Services.PDO
                         (x.Kod.Trim() == dto.Kod.Trim() || x.Nama.Trim() == dto.Nama.Trim()) &&
                         x.Id != dto.Id);
                 }
+
+            
             }
             catch (Exception ex)
             {
@@ -172,7 +188,6 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
-
         public async Task<MaklumatKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatan(int id)
         {
             try
@@ -189,7 +204,7 @@ namespace HR.Application.Services.PDO
                                    orderby a.Kod
                                    select new MaklumatKlasifikasiPerkhidmatanResponseDto
                                    {
-                                       Id= a.Id,
+                                       Id = a.Id,
                                        Kod = a.Kod,
                                        Nama = a.Nama,
                                        Keterangan = a.Keterangan,
@@ -199,12 +214,51 @@ namespace HR.Application.Services.PDO
                                        Status = b2.Nama,
                                        TarikhKemaskini = b.TarikhKemaskini,
                                        IndikatorSkim = a.IndikatorSkim,
-                                       StatusAktif=a.StatusAktif
+                                       StatusAktif = a.StatusAktif
 
                                        // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
                                    }).FirstOrDefaultAsync();
 
                 return query;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Failed to retrive data");
+            }
+        }
+
+        public async Task<ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatanView(int id)
+        {
+            try
+            {
+
+                _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanDto using EF Core join");
+
+                var query = await (from a in _dbContext.PDOKlasifikasiPerkhidmatan
+                                   join b in _dbContext.PDOStatusPermohonanKlasifikasiPerkhidmatan
+                                                 on a.Id equals b.IdKlasifikasiPerkhidmatan
+                                   join b2 in _dbContext.PDORujStatusPermohonan
+                                                 on b.KodRujStatusPermohonan equals b2.Kod
+                                   where b.StatusAktif == true && a.Id == id
+                                   orderby a.Kod
+                                   select new MaklumatKlasifikasiPerkhidmatanResponseDto
+                                   {
+                                       ButiranKemaskini = a.ButiranKemaskini
+
+                                       // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
+                                   }).FirstOrDefaultAsync();
+
+                if (String.IsNullOrEmpty(query.ButiranKemaskini))
+                {
+                    return new ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto
+                    {
+                        Keterangan = "Tiada butiran kemaskini"
+                    };
+                }
+
+                ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto obj = JsonConvert.DeserializeObject<ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto>(query.ButiranKemaskini);
+                return obj;
             }
             catch (Exception ex)
             {
@@ -220,43 +274,69 @@ namespace HR.Application.Services.PDO
 
             try
             {
-                // Step 1: update into PDO_KlasifikasiPerkhidmatan
-                var perkhidmatan = MapToEntity(updateRequestDto);
-                perkhidmatan.StatusAktif = updateRequestDto.StatusAktif;
+                var klasifikasiPerkhidmatan = await _dbContext.PDOKlasifikasiPerkhidmatan
+                      .Where(x => x.Id == updateRequestDto.Id && x.Kod == updateRequestDto.Kod)
+                      .FirstOrDefaultAsync();
 
-                var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(perkhidmatan);
-                await _unitOfWork.SaveChangesAsync();
-                await _unitOfWork.CommitAsync();
-
-
-
-                // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
-                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
-
-                if (existingStatus != null)
+                if (klasifikasiPerkhidmatan == null)
                 {
-                    existingStatus.StatusAktif = false;
-                    existingStatus.TarikhPinda = DateTime.Now;
-                    await _unitOfWork.SaveChangesAsync();
+                    _logger.LogError("KlasifikasiPerkhidmatan with ID {Id} not found", updateRequestDto.Id);
+                    return false; // or throw an exception
                 }
-
-
-                // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
-                var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                if (!klasifikasiPerkhidmatan.StatusAktif)
                 {
-                    IdKlasifikasiPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
-                    KodRujStatusPermohonan = "01",
-                    TarikhKemaskini = DateTime.Now,
-                    StatusAktif = true
-                };
-                await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
-                await _unitOfWork.SaveChangesAsync();
-
-                await _unitOfWork.CommitAsync();
+                    // Step 1: update into PDO_KlasifikasiPerkhidmatan
+                    var klasifikasiPerkhidmatanupdate = MapToEntity(updateRequestDto);
+                    klasifikasiPerkhidmatanupdate.StatusAktif = updateRequestDto.StatusAktif;
+                    klasifikasiPerkhidmatanupdate.Ulasan = updateRequestDto.Ulasan;
 
 
-                return true;
+                    var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(klasifikasiPerkhidmatanupdate);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+                }
+                else
+                {
+                    // Step 1: update into PDO_KlasifikasiPerkhidmatan
+                    var ButiranKemaskiniklasifikasiPerkhidmatan = MapToEntity(updateRequestDto);
+                    ButiranKemaskiniklasifikasiPerkhidmatan.StatusAktif = updateRequestDto.StatusAktif;
+                    ButiranKemaskiniklasifikasiPerkhidmatan.Ulasan = updateRequestDto.Ulasan;
+
+                    klasifikasiPerkhidmatan.ButiranKemaskini = JsonConvert.SerializeObject(ButiranKemaskiniklasifikasiPerkhidmatan);
+
+
+                    var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(klasifikasiPerkhidmatan);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+
+                    // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
+                    var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                            .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == klasifikasiPerkhidmatan.Id && x.StatusAktif);
+
+                    if (existingStatus != null)
+                    {
+                        existingStatus.StatusAktif = false;
+                        existingStatus.TarikhPinda = DateTime.Now;
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+
+                    // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
+                    var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                    {
+                        IdKlasifikasiPerkhidmatan = klasifikasiPerkhidmatan.Id, // use the ID from step 1
+                        KodRujStatusPermohonan = "01",
+                        TarikhKemaskini = DateTime.Now,
+                        StatusAktif = true
+                    };
+                    await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    await _unitOfWork.CommitAsync();
+
+                }
+                  
+                    return true;
             }
             catch (Exception ex)
             {
@@ -350,6 +430,65 @@ namespace HR.Application.Services.PDO
             result = result.ToList().Where(e => e.StatusAktif);
             return result.Select(MapToDto);
         }
+
+        public async Task<bool> KemaskiniStatusAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
+        {
+            _logger.LogInformation("Service: Updating KemaskiniStatusAsync");
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: update into PDO_KlasifikasiPerkhidmatan
+                var klasifikasiPerkhidmatan = MapToEntity(dto);
+                klasifikasiPerkhidmatan.StatusAktif = dto.StatusAktif;
+                klasifikasiPerkhidmatan.Ulasan = dto.Ulasan;
+                //if (!string.IsNullOrWhiteSpace(perkhidmatan.ButiranKemaskini))
+                //{
+                //    perkhidmatan.ButiranKemaskini = null;
+                //}
+
+                var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(klasifikasiPerkhidmatan);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+
+
+                // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
+                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                        .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == klasifikasiPerkhidmatan.Id && x.StatusAktif);
+
+                if (existingStatus != null)
+                {
+                    existingStatus.StatusAktif = false;
+                    existingStatus.TarikhPinda = DateTime.Now;
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+
+                // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
+                var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                {
+                    IdKlasifikasiPerkhidmatan = klasifikasiPerkhidmatan.Id, // use the ID from step 1
+                    KodRujStatusPermohonan = dto.KodRujStatusPermohonan,
+                    TarikhKemaskini = DateTime.Now,
+                    StatusAktif = true
+                };
+                await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service CreateAsync");
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+
         public async Task<bool> DaftarHanatarMaklumatKlasifikasiPerkhidmatanAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto)
         {
             _logger.LogInformation("Service: Hantar  MaklumatKlasifikasiPerkhidmatan");
@@ -431,43 +570,101 @@ namespace HR.Application.Services.PDO
 
             try
             {
-                // Step 1: update into PDO_KlasifikasiPerkhidmatan
-                var perkhidmatan = MapToEntity(updateRequestDto);
-               // perkhidmatan.StatusAktif = updateRequestDto.StatusAktif;
-
-                var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(perkhidmatan);
-                await _unitOfWork.SaveChangesAsync();
-                await _unitOfWork.CommitAsync();
-
-
-
-                // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
-                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
-
-                if (existingStatus != null)
+                var klasifikasiPerkhidmatan = await _dbContext.PDOKlasifikasiPerkhidmatan
+                     .Where(x => x.Id == updateRequestDto.Id && x.Kod == updateRequestDto.Kod)
+                     .FirstOrDefaultAsync();
+                if (klasifikasiPerkhidmatan == null)
                 {
-                    existingStatus.StatusAktif = false;
-                    existingStatus.TarikhPinda = DateTime.Now;
-                    await _unitOfWork.SaveChangesAsync();
+                    _logger.LogError("KlasifikasiPerkhidmatan with ID {Id} not found", updateRequestDto.Id);
+                    return false; // or throw an exception
                 }
 
-
-                // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
-                var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                if (!klasifikasiPerkhidmatan.StatusAktif)
                 {
-                    IdKlasifikasiPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
-                    KodRujStatusPermohonan = "02",
-                    TarikhKemaskini = DateTime.Now,
-                    StatusAktif = true
-                };
-                await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
-                await _unitOfWork.SaveChangesAsync();
 
-                await _unitOfWork.CommitAsync();
+                    // Step 1: update into PDO_KumpulanPerkhidmatan
+                    klasifikasiPerkhidmatan = MapToEntity(updateRequestDto);
+                    klasifikasiPerkhidmatan.StatusAktif = updateRequestDto.StatusAktif;
+                    klasifikasiPerkhidmatan.Ulasan = updateRequestDto.Ulasan;
 
+
+                    //perkhidmatan.ButiranKemaskini = JsonConvert.SerializeObject(ButiranKemaskiniperkhidmatan);
+
+
+                    var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(klasifikasiPerkhidmatan);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+
+
+                    // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
+                    var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                            .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == klasifikasiPerkhidmatan.Id && x.StatusAktif);
+
+                    if (existingStatus != null)
+                    {
+                        existingStatus.StatusAktif = false;
+                        existingStatus.TarikhPinda = DateTime.Now;
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+
+                    // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
+                    var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                    {
+                        IdKlasifikasiPerkhidmatan = klasifikasiPerkhidmatan.Id, // use the ID from step 1
+                        KodRujStatusPermohonan = "02",
+                        TarikhKemaskini = DateTime.Now,
+                        StatusAktif = true
+                    };
+                    await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    await _unitOfWork.CommitAsync();
+                }
+                else
+                {
+
+                    // Step 1: update into PDO_KlasifikasiPerkhidmatan
+                    var ButiranKemaskiniKlasifikasiPerkhidmatan = MapToEntity(updateRequestDto);
+                    ButiranKemaskiniKlasifikasiPerkhidmatan.StatusAktif = updateRequestDto.StatusAktif;
+                    ButiranKemaskiniKlasifikasiPerkhidmatan.Ulasan = updateRequestDto.Ulasan;
+
+                    klasifikasiPerkhidmatan.ButiranKemaskini = JsonConvert.SerializeObject(ButiranKemaskiniKlasifikasiPerkhidmatan);
+
+
+                    var result = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(klasifikasiPerkhidmatan);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+
+                    // Step 2: Deactivate existing PDO_StatusPermohonanKlasifikasiPerkhidmatan record
+                    var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                            .FirstOrDefaultAsync(x => x.IdKlasifikasiPerkhidmatan == klasifikasiPerkhidmatan.Id && x.StatusAktif);
+
+                    if (existingStatus != null)
+                    {
+                        existingStatus.StatusAktif = false;
+                        existingStatus.TarikhPinda = DateTime.Now;
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+
+                    // Step 3: Insert into PDO_StatusPermohonanKlasifikasiPerkhidmatan
+                    var statusEntity = new PDOStatusPermohonanKlasifikasiPerkhidmatan
+                    {
+                        IdKlasifikasiPerkhidmatan = klasifikasiPerkhidmatan.Id, // use the ID from step 1
+                        KodRujStatusPermohonan = "02",
+                        TarikhKemaskini = DateTime.Now,
+                        StatusAktif = true
+                    };
+                    await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>().AddAsync(statusEntity);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    await _unitOfWork.CommitAsync();
+                }
 
                 return true;
+
+                
             }
             catch (Exception ex)
             {
@@ -489,6 +686,7 @@ namespace HR.Application.Services.PDO
                 FungsiUtama = dto.FungsiUtama,
                 StatusAktif = dto.StatusAktif,
                 IndikatorSkim = dto.IndikatorSkim,
+                ButiranKemaskini = dto.ButiranKemaskini,
                 //IndSkimPerkhidmatan = dto.IndSkimPerkhidmatan
             };
         }
@@ -506,7 +704,82 @@ namespace HR.Application.Services.PDO
             };
         }
 
-       
+        public async Task<bool> DeleteOrUpdateKlasifikasiPerkhidmatanAsync(int id)
+        {
+            _logger.LogInformation("DeleteOrUpdateKlasifikasiPerkhidmatanAsync by ID {Id} using Entity Framework", id);
+            try
+            {
+
+                var result = await (from a in _dbContext.PDOKlasifikasiPerkhidmatan
+                                    join b in _dbContext.PDOStatusPermohonanKlasifikasiPerkhidmatan
+                                        on a.Id equals b.IdKlasifikasiPerkhidmatan
+                                    join b2 in _dbContext.PDORujStatusPermohonan
+                                        on b.KodRujStatusPermohonan equals b2.Kod
+                                    where b.StatusAktif == true && a.Id == id
+                                    select new KumpulanPerkhidmatanStatusDto
+                                    {
+                                        Id = a.Id,
+                                        Kod = a.Kod,
+                                        Nama = a.Nama,
+                                        Keterangan = a.Keterangan,
+                                        StatusAktif = a.StatusAktif,
+                                        KodRujStatusPermohonan = b.KodRujStatusPermohonan,
+                                        StatusPermohonan = b2.Nama,
+                                        TarikhKemaskini = b.TarikhKemaskini
+                                    }).FirstOrDefaultAsync();
+                if (result == null)
+                    return false;
+
+                var kumpulanPerkhidmatan = await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().GetByIdAsync(id);
+                if (kumpulanPerkhidmatan == null)
+                    return false;
+
+                if (!result.StatusAktif && result.KodRujStatusPermohonan == "01")
+                {
+                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    try
+                    {
+                        // Delete children first
+                        var statusList = await _unitOfWork.Repository<PDOStatusPermohonanKlasifikasiPerkhidmatan>()
+                        .FindByFieldAsync("IdKlasifikasiPerkhidmatan", id);
+
+                        _dbContext.PDOStatusPermohonanKlasifikasiPerkhidmatan.RemoveRange(statusList);
+                        await _dbContext.SaveChangesAsync();
+                        // Then delete parent
+                        _dbContext.PDOKlasifikasiPerkhidmatan.Remove(kumpulanPerkhidmatan);
+                        await _dbContext.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "DeleteOrUpdateKumpulanPerkhidmatanAsync failed during transaction");
+                        throw;
+                    }
+                }
+                else
+                {
+                    // Just set to inactive
+                    kumpulanPerkhidmatan.StatusAktif = false;
+                    await _unitOfWork.Repository<PDOKlasifikasiPerkhidmatan>().UpdateAsync(kumpulanPerkhidmatan);
+                    await _unitOfWork.SaveChangesAsync();
+                    return true;
+                }
+
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "DeleteOrUpdateKlasifikasiPerkhidmatanAsync");
+                throw;
+            }
+        }
     }
 }
 

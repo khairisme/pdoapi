@@ -11,8 +11,11 @@ namespace HR.Core.Entities.PDO
         public string? Keterangan { get; set; }
         public string? FungsiUtama { get; set; }
         public string? FungsiUmum { get; set; }
+
+        public string? Ulasan { get; set; }
         public string? ButiranKemaskini { get; set; }
         public bool? IndikatorSkim { get; set; }
+        public string? UlasanPengesah { get; set; }
         //public bool? IndSkimPerkhidmatan { get; set; }
     }
 }

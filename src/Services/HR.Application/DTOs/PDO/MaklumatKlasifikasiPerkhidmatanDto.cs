@@ -14,8 +14,12 @@ namespace HR.Application.DTOs.PDO
         public string Keterangan { get; set; }
         public string FungsiUtama { get; set; }
         public string FungsiUmum { get; set; }
+        public string? Ulasan { get; set; }
+        public string? ButiranKemaskini { get; set; }
         public bool StatusAktif {  get; set; } = true;
         public bool? IndikatorSkim { get; set; }
+        public string? UlasanPengesah { get; set; }
+        public string? KodRujStatusPermohonan {get; set; }
         //public bool? IndSkimPerkhidmatan { get; set; }
     }
 
@@ -44,10 +48,14 @@ namespace HR.Application.DTOs.PDO
         public string Status { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
         public string StatusKlasifikasiPerkhidmatan { get; set; }
+        public string? Ulasan { get; set; }
+        public string? ButiranKemaskini { get; set; }
 
         public bool? IndikatorSkim { get; set; }
         public bool? IndSkimPerkhidmatan { get; set; }
         public bool StatusAktif { get; set; }
+
+        
     }
 
     public class PenapisMaklumatKlasifikasiPerkhidmatanDto
@@ -99,6 +107,26 @@ namespace HR.Application.DTOs.PDO
         public string? Kod { get; set; }
         public string? Nama { get; set; }
         public string? StatusPermohonan { get; set; }
+
+    }
+
+    public class ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string FungsiUtama { get; set; }
+        public string FungsiUmum { get; set; }
+        public string Status { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+        public string StatusKlasifikasiPerkhidmatan { get; set; }
+        public string? Ulasan { get; set; }
+
+        public bool? IndikatorSkim { get; set; }
+        public bool? IndSkimPerkhidmatan { get; set; }
+        public bool StatusAktif { get; set; }
+
 
     }
 }

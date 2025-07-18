@@ -120,6 +120,22 @@ namespace HR.API.Controllers.PDO
 
 
         /// <summary>
+        ///get MaklumatKlasifikasiPerkhidmatan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("getMaklumatBaharuView/{id}")]
+        public async Task<IActionResult> GetMaklumatKlasifikasiPerkhidmatan(int id)
+        {
+            var result = await _maklumatKlasifikasiPerkhidmatanService.GetMaklumatKlasifikasiPerkhidmatanView(id);
+            if (result == null)
+                return NotFound($"No MaklumatKlasifikasiPerkhidmatan found for ID {id}");
+
+            return Ok(result);
+
+        }
+
+        /// <summary>
         ///Update MaklumatKlasifikasiPerkhidmatan
         /// </summary>
         /// <param name="MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto"></param>
@@ -177,7 +193,7 @@ namespace HR.API.Controllers.PDO
                 return BadRequest(ModelState);
 
 
-            var isSuccess = await _maklumatKlasifikasiPerkhidmatanService.SetAsync(updateDto);
+            var isSuccess = await _maklumatKlasifikasiPerkhidmatanService.KemaskiniStatusAsync(updateDto);
 
             return Ok(new
             {
@@ -232,6 +248,31 @@ namespace HR.API.Controllers.PDO
                 return StatusCode(500, "The application has failed to sent.");
 
             return Ok("The application has been sent.");
+        }
+
+
+        /// <summary>
+        /// Delete or Update Kumpulan Perkhidmatan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrUpdate(int id)
+        {
+            try
+            {
+                var result = await _maklumatKlasifikasiPerkhidmatanService.DeleteOrUpdateKlasifikasiPerkhidmatanAsync(id);
+
+                if (!result)
+                    return NotFound(new { message = "Record not found." });
+
+                return Ok(new { message = result == true ? "Deleted success" : "Deleted failed" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during DeleteOrUpdate");
+                return StatusCode(500, ex.InnerException.Message.ToString());
+            }
         }
     }
 }

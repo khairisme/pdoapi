@@ -11,7 +11,8 @@ namespace HR.Application.Interfaces.PDO
 
         Task<bool> CheckDuplicateKodNamaAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto);
 
-        Task<MaklumatKlasifikasiPerkhidmatanResponseDto?> GetMaklumatKlasifikasiPerkhidmatan(int id);
+        Task<MaklumatKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatan(int id);
+        Task<ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatanView(int id);
 
         Task<bool> SetAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateRequestDto);
 
@@ -25,6 +26,9 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> DaftarHanatarMaklumatKlasifikasiPerkhidmatanAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto);
 
         Task<bool> SetHanatarMaklumatKlasifikasiPerkhidmatanAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto updateRequestDto);
+
+        Task<bool> KemaskiniStatusAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto);
+        Task<bool> DeleteOrUpdateKlasifikasiPerkhidmatanAsync(int id);
 
     }
 }
