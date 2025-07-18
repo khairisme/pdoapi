@@ -372,5 +372,59 @@ namespace HR.Application.Services.PDO
         }
         //Amar Code End
 
+        #region AKhilesh Region
+        public async Task<List<SenaraiPermohonanPerjawatanSearchResponseDto>> SenaraiPermohonanPerjawatanSearchData(SenaraiPermohonanPerjawatanSearchRequestDto filter)
+        {
+            _logger.LogInformation("GetSenaraiPermohonanPerjawatan: Getting SenaraiPermohonanPerjawatan with filter: {@Filter}", filter);
+            try
+            {
+                var data = (from ppj in _dbContext.PDOPermohonanJawatan
+                              join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
+                              join prjp in _dbContext.PDORujJenisPermohonan on ppj.KodRujJenisPermohonan equals prjp.Kod
+                              join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
+                              join prspj in _dbContext.PDORujStatusPermohonanJawatan on pspj.KodRujStatusPermohonanJawatan equals prspj.Kod
+                              where prjp.Kod == filter.RujJenisId &&
+                                    prspj.Kod == filter.RujStatusId &&
+                                    ppj.NomborRujukan == filter.NomborRujukan &&
+                                    ppj.TarikhPermohonan == filter.TarikhPermohonan
+                              select new
+                              {
+                                  IdPermohonanJawatan = ppj.Id,
+                                  ppj.IdUnitOrganisasi,
+                                  ppj.IdAgensi,
+                                  ppj.NomborRujukan,
+                                  Agensi = puo.Nama,
+                                  JenisPermohonan = prjp.Nama,
+                                  TajukPermohonan = ppj.Tajuk,
+                                  ppj.TarikhPermohonan,
+                                  Status = prspj.Nama
+                              }).ToList();
+
+                _logger.LogInformation("GetSenaraiPermohonanPerjawatan: Executing query to fetch SenaraiPermohonanPerjawatan data");
+               
+                var result = data.Select((x, index) => new SenaraiPermohonanPerjawatanSearchResponseDto
+                {
+                    IdPermohonanJawatan = x.IdPermohonanJawatan,
+                    IdUnitOrganisasi = x.IdUnitOrganisasi,
+                    IdAgensi = x.IdAgensi,
+                    NomborRujukan = x.NomborRujukan,
+                    Agensi = x.Agensi,
+                    JenisPermohonan = x.JenisPermohonan,
+                    TajukPermohonan = x.TajukPermohonan,
+                    TarikhPermohonan = (DateTime)x.TarikhPermohonan,
+                    Status = x.Status
+                }).ToList();
+
+                _logger.LogInformation("GetSenaraiPermohonanPerjawatan: Successfully processed {Count} SenaraiPermohonanPerjawatan records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSenaraiPermohonanPerjawatan: Failed to retrieve SenaraiPermohonanPerjawatan data with filter: {@Filter}", filter);
+                throw;
+            }
+        }
+        #endregion
+
     }
 }

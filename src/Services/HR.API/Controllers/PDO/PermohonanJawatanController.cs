@@ -313,4 +313,35 @@ public class PermohonanJawatanController : ControllerBase
 
     //Amar Code end
 
+    #region Akhilesh Code
+    /// <summary>
+    /// Get Senarai Permohonan Perjawatan Search Data
+    /// </summary>
+    /// <param name="filter">getSenaraiPermohonanPerjawatanSearchData</param>
+    /// <returns>SenaraiPermohonanPerjawatanSearchResponseDto</returns>
+    [HttpPost("getSenaraiPermohonanPerjawatanSearchData")]
+    public async Task<IActionResult> SenaraiPermohonanPerjawatanSearchData([FromBody] SenaraiPermohonanPerjawatanSearchRequestDto filter)
+    {
+        try
+        {
+            var result = await _permohonanJawatanService.SenaraiPermohonanPerjawatanSearchData(filter);
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in getSenaraiPermohonanPerjawatanSearchData");
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SenaraiPermohonanPerjawatanSearchResponseDto>()
+            });
+        }
+    }
+    #endregion
+
 }
