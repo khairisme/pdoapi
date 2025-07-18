@@ -25,5 +25,9 @@ namespace HR.Application.Interfaces.PDO
         Task<List<SenaraiPermohonanPerjawatanResponseDto>> GetSenaraiPermohonanPerjawatan(SenaraiPermohonanPerjawatanFilterDto filter);
         //Amar Code End
 
+        #region Akhilesh Region
+        Task<List<SenaraiPermohonanPerjawatanSearchResponseDto>> SenaraiPermohonanPerjawatanSearchData(SenaraiPermohonanPerjawatanSearchRequestDto filter);
+        #endregion
+
     }
 }

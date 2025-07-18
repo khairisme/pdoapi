@@ -97,7 +97,7 @@ namespace HR.Application.DTOs.PDO
         public string Tajuk { get; set; }
         public DateTime? TarikhPermohonan { get; set; }
         public string Status { get; set; }
-        
+
     }
 
     public class SalinanBaharuResponseDto
@@ -109,18 +109,18 @@ namespace HR.Application.DTOs.PDO
         public string Tajuk { get; set; }
         public DateTime? TarikhPermohonan { get; set; }
         public string Status { get; set; }
-       
+
 
     }
 
     public class UlasanPasukanPerundingRequestDto
     {
-      
+
         public string KodRujJenisPermohonan { get; set; }
         public string? KodRujJenisPermohonanPP { get; set; }
         public int? AgensiId { get; set; }
         public int IdPermohonanJawatan { get; set; }
-        public int  IdPermohonanJawatanBaharu { get; set; }
+        public int IdPermohonanJawatanBaharu { get; set; }
         public string Ulasan { get; set; }
 
 
@@ -143,9 +143,31 @@ namespace HR.Application.DTOs.PDO
         public string KodRujStatusPermohonan { get; set; }
         public string Status { get; set; }
 
-       
+
     }
     //Amar Code End
 
+    #region //Akhilesh code start
+    public class SenaraiPermohonanPerjawatanSearchRequestDto
+    {
+        public string RujJenisId { get; set; }
+        public string RujStatusId { get; set; }
+        public string NomborRujukan { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
 
+    }
+
+    public class SenaraiPermohonanPerjawatanSearchResponseDto
+    {
+            public int IdPermohonanJawatan { get; set; }
+            public int IdUnitOrganisasi { get; set; }
+            public int IdAgensi { get; set; }
+            public string NomborRujukan { get; set; }
+            public string Agensi { get; set; }
+            public string JenisPermohonan { get; set; }
+            public string TajukPermohonan { get; set; }
+            public DateTime TarikhPermohonan { get; set; }
+            public string Status { get; set; }
+    }
+    #endregion //Akhilesh code end
 }
