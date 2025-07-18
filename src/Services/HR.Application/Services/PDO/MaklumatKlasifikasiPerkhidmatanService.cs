@@ -8,6 +8,7 @@ using HR.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.Application.Services.PDO
 {
@@ -201,25 +202,49 @@ namespace HR.Application.Services.PDO
                                    join b2 in _dbContext.PDORujStatusPermohonan
                                                  on b.KodRujStatusPermohonan equals b2.Kod
                                    where b.StatusAktif == true && a.Id == id
-                                   orderby a.Kod
-                                   select new MaklumatKlasifikasiPerkhidmatanResponseDto
-                                   {
-                                       Id = a.Id,
-                                       Kod = a.Kod,
-                                       Nama = a.Nama,
-                                       Keterangan = a.Keterangan,
-                                       FungsiUtama = a.FungsiUtama ?? "",
-                                       FungsiUmum = a.FungsiUmum ?? "",
-                                       StatusKlasifikasiPerkhidmatan = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
-                                       Status = b2.Nama,
-                                       TarikhKemaskini = b.TarikhKemaskini,
-                                       IndikatorSkim = a.IndikatorSkim,
-                                       StatusAktif = a.StatusAktif
+                                   select new { a, b, b2 }
+                                ).FirstOrDefaultAsync();
+                PDOKlasifikasiPerkhidmatan? jsonObj = null;
+                if (!string.IsNullOrWhiteSpace(query.a.ButiranKemaskini))
+                {
+                    jsonObj = JsonConvert.DeserializeObject<PDOKlasifikasiPerkhidmatan>(query.a.ButiranKemaskini);
+                }
+                var dtoSource = jsonObj ?? query.a;
 
-                                       // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
-                                   }).FirstOrDefaultAsync();
+                var result = new MaklumatKlasifikasiPerkhidmatanResponseDto
+                {
+                    Id = dtoSource.Id,
+                    Kod = dtoSource.Kod,
+                    Nama = dtoSource.Nama,
+                    Keterangan = dtoSource.Keterangan,
+                    FungsiUtama = dtoSource.FungsiUtama ?? "",
+                    FungsiUmum = dtoSource.FungsiUmum ?? "",
+                    StatusKlasifikasiPerkhidmatan = query.b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
+                    Status = query.b2.Nama,
+                    TarikhKemaskini = query.b.TarikhKemaskini,
+                    IndikatorSkim = dtoSource.IndikatorSkim,
+                    StatusAktif = dtoSource.StatusAktif
+                };
+                return result;
+                //orderby a.Kod
+                //select new MaklumatKlasifikasiPerkhidmatanResponseDto
+                //{
+                //    Id = a.Id,
+                //    Kod = a.Kod,
+                //    Nama = a.Nama,
+                //    Keterangan = a.Keterangan,
+                //    FungsiUtama = a.FungsiUtama ?? "",
+                //    FungsiUmum = a.FungsiUmum ?? "",
+                //    StatusKlasifikasiPerkhidmatan = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
+                //    Status = b2.Nama,
+                //    TarikhKemaskini = b.TarikhKemaskini,
+                //    IndikatorSkim = a.IndikatorSkim,
+                //    StatusAktif = a.StatusAktif
 
-                return query;
+                //    // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
+                //}).FirstOrDefaultAsync();
+
+                
             }
             catch (Exception ex)
             {
