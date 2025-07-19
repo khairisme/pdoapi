@@ -532,6 +532,7 @@ namespace HR.Application.Services
                                     where b.StatusAktif == true && a.Id == id
                                     select new PaparMaklumatGredDto
                                     {
+                                        Id=a.Id,
                                         KodRujJenisSaraan = a.KodRujJenisSaraan,
                                         Klasifikasi = d.Nama,
                                         IdKlasifikasiPerkhidmatan = a.IdKlasifikasiPerkhidmatan,

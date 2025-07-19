@@ -42,8 +42,8 @@ namespace HR.Application.Services.PDO
             return new KumpulanPerkhidmatanDto
             {
                 Id = pDOKumpulan.Id,
-                Nama = pDOKumpulan.Nama,
-                Kod = pDOKumpulan.Kod,
+                Nama = pDOKumpulan.Nama.Trim(),
+                Kod = pDOKumpulan.Kod.Trim(),
                 Keterangan = pDOKumpulan.Keterangan,
                 ButiranKemaskini = pDOKumpulan.ButiranKemaskini,
                 Ulasan = pDOKumpulan.Ulasan,
