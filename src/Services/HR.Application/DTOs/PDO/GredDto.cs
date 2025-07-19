@@ -37,9 +37,16 @@ namespace HR.Application.DTOs.PDO
         public string? Keterangan { get; set; }
         public bool? IndikatorGredLantikanTerus { get; set; }
         public bool? IndikatorGredKenaikan { get; set; }
-        public bool StatusAktif { get; set; } = true;
-    }
+        public bool StatusAktif { get; set; }
 
+       public string? ButiranKemaskini { get; set; }
+
+        public string? KodRujStatusPermohonan { get; set; }
+    }
+    public class PaparMaklumatGredButiranKemasDto
+    {
+        public string? ButiranKemaskini { get; set; }
+    }
     public class PaparMaklumatGredDto
     {
         public int Id { get; set; }
@@ -61,4 +68,7 @@ namespace HR.Application.DTOs.PDO
         public string StatusPermohonan { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
     }
+
+
+   
 }

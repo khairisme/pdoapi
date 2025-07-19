@@ -18,5 +18,11 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> UpdateHantarGredJawatanAsync(CreateGredDto dto);
         Task<PaparMaklumatGredDto> GetMaklumatGred(int id);
         Task<bool> CheckDuplicateNamaAsync(CreateGredDto dto);
+        Task<PaparMaklumatGredDto> GetMaklumatGredSediaAda(int id);
+
+        Task<PaparMaklumatGredDto> GetMaklumatGredBaharuAsync(int id);
+
+        Task<bool> KemaskiniStatusAsync(CreateGredDto dto);
+        Task<bool> DeleteOrUpdateGredAsync(int id);
     }
 }

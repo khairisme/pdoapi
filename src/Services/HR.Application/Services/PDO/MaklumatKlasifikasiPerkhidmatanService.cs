@@ -274,7 +274,7 @@ namespace HR.Application.Services.PDO
                                        // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
                                    }).FirstOrDefaultAsync();
 
-                if (String.IsNullOrEmpty(query.ButiranKemaskini))
+                if (System.String.IsNullOrEmpty(query.ButiranKemaskini))
                 {
                     return new ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto
                     {
