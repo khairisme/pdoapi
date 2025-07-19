@@ -62,7 +62,7 @@ namespace HR.Application.DTOs.PDO
         public int NomborGred { get; set; }
         public string? Keterangan { get; set; }
         public bool? IndikatorGredLantikanTerus { get; set; }
-        public bool? IndikatorGredKenaikan { get; set; }
+        public bool? IndikatorGredLantikan { get; set; }
         public bool StatusAktif { get; set; }
         public string KodRujStatusPermohonan { get; set; }
         public string StatusPermohonan { get; set; }
