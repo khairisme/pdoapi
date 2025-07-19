@@ -578,6 +578,8 @@ namespace HR.Application.Services
                                         //Id = a.Id,
                                         //Kod = a.Kod,
                                         ButiranKemaskini = a.ButiranKemaskini,
+                                        Klasifikasi= d.Nama,
+                                        Kumpulan = c.Nama,
                                         //KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                         //StatusPermohonan = b2.Nama,
                                         //TarikhKemaskini = b.TarikhKemaskini
@@ -594,7 +596,8 @@ namespace HR.Application.Services
                 }
                 PaparMaklumatGredDto obj = JsonConvert.DeserializeObject<PaparMaklumatGredDto>(result.ButiranKemaskini);
                 obj.KodRujStatusPermohonan = string.Empty;
-
+                obj.Klasifikasi=result.Klasifikasi;
+                obj.Kumpulan=result.Kumpulan;
 
                 return obj;
             }

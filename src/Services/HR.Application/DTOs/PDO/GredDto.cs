@@ -46,6 +46,8 @@ namespace HR.Application.DTOs.PDO
     public class PaparMaklumatGredButiranKemasDto
     {
         public string? ButiranKemaskini { get; set; }
+        public string? Klasifikasi { get; set; }
+        public string? Kumpulan { get; set; }
     }
     public class PaparMaklumatGredDto
     {
