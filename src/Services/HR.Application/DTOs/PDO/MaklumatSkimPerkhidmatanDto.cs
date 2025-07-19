@@ -21,6 +21,8 @@ namespace HR.Application.DTOs.PDO
         public string? KodRujMatawang { get; set; }
 
         public decimal? Jumlah { get; set; }
+        public int IdKlasifikasiPerkhidmatan { get; set; }
+        public int IdKumpulanPerkhidmatan { get; set; }
     }
     public class MaklumatSkimPerkhidmatanFilterDto
     {
@@ -50,6 +52,8 @@ namespace HR.Application.DTOs.PDO
 
         public decimal? Jumlah { get; set; }
         public int CarianSkimId { get; set; } = 0;
+        public string? ButiranKemaskini { get; set; }
+        public bool StatusAktif { get; set; } = true;
     }
     public class MaklumatSkimPerkhidmatanResponseDto
     {
