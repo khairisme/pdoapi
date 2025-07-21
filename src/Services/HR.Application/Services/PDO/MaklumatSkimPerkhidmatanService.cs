@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HR.Application.Extensions;
 
 namespace HR.Application.Services.PDO
 {
@@ -70,7 +71,7 @@ namespace HR.Application.Services.PDO
                             Kod = dtoSource.Kod,
                             Nama = dtoSource.Nama,
                             Keterangan = dtoSource.Keterangan,
-                            StatusSkimPerkhidmatan = q.a2.Nama,
+                            //StatusSkimPerkhidmatan = q.a2.Nama,
                             StatusPermohonan = q.b2.Nama,
                             TarikhKemaskini = q.b.TarikhKemasKini,
                             IndikatorSkim = dtoSource.IndikatorSkim,
@@ -78,7 +79,12 @@ namespace HR.Application.Services.PDO
                             Jumlah = dtoSource.Jumlah,
                             IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
                             IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
-                            StatusAktif=dtoSource.StatusAktif
+
+                            StatusAktif=dtoSource.StatusAktif,
+                            StatusSkimPerkhidmatan = (dtoSource.StatusAktif
+                            ? StatusKumpulanPerkhidmatanEnum.Aktif
+                            : StatusKumpulanPerkhidmatanEnum.TidakAktif).ToDisplayString(),
+
                         };
                     });
 
