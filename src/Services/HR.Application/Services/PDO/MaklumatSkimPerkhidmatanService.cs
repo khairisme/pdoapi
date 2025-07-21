@@ -77,7 +77,8 @@ namespace HR.Application.Services.PDO
                             KodRujMatawang = dtoSource.KodRujMatawang,
                             Jumlah = dtoSource.Jumlah,
                             IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
-                            IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan
+                            IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
+                            StatusAktif=dtoSource.StatusAktif
                         };
                     });
 

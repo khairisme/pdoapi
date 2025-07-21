@@ -23,6 +23,7 @@ namespace HR.Application.DTOs.PDO
         public decimal? Jumlah { get; set; }
         public int IdKlasifikasiPerkhidmatan { get; set; }
         public int IdKumpulanPerkhidmatan { get; set; }
+        public bool StatusAktif { get; set; } = true;
     }
     public class MaklumatSkimPerkhidmatanFilterDto
     {
