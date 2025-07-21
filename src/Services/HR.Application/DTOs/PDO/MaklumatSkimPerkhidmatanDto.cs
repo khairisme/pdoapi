@@ -125,5 +125,22 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
 
     }
+    public class SkimPerkhidmatanButiranDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string? ButiranKemaskini { get; set; }
+        public string KodRujStatusPermohonan { get; set; }
+        public string Nama { get; set; }
+        public string Keterangan { get; set; }
+        public string StatusPermohonan { get; set; }
+        public bool StatusAktif { get; set; }
+        public DateTime? TarikhKemaskini { get; set; }
+
+    }
+    public class SkimPerkhidmatanRefStatusDto : MaklumatSkimPerkhidmatanCreateRequestDto
+    {
+        public string KodRujStatusSkim { get; set; }
+    }
 
 }

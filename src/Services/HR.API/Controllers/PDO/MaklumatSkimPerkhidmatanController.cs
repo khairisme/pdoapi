@@ -247,6 +247,75 @@ namespace HR.API.Controllers.PDO
 
             });
         }
+        /// <summary>
+        /// Set Kemaskinistatus
+        /// </summary>
+        /// <param name="perkhidmatanDto"></param>
+        /// <returns></returns>
+        [HttpPost("setKemaskinistatus")]
+        public async Task<ActionResult<SkimPerkhidmatanButiranDto>> SetKemaskinistatus([FromBody] SkimPerkhidmatanRefStatusDto perkhidmatanDto)
+        {
+            try
+            {
+                var result = await _maklumatSkimPerkhidmatan.KemaskiniStatusAsync(perkhidmatanDto);
+
+                if (!result)
+                    return StatusCode(500, "Failed to update the record.");
+
+                return Ok("Updated successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during SetKemaskinistatus");
+                return StatusCode(500, ex.InnerException.Message.ToString());
+            }
+        }
+        /// <summary>
+        /// Maklumat Baharu
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("getMaklumatBaharu/{id}")]
+        public async Task<ActionResult<SkimPerkhidmatanRefStatusDto>> GetMaklumatBaharu(int id)
+        {
+            try
+            {
+                var result = await _maklumatSkimPerkhidmatan.GetMaklumatBaharuAsync(id);
+
+                if (result == null)
+                    return NotFound(new { message = "Information not found." });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during GetMaklumatBaharu");
+                return StatusCode(500, ex.InnerException.Message.ToString());
+            }
+        }
+        /// <summary>
+        /// Delete or Update Skim Perkhidmatan
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOrUpdate(int id)
+        {
+            try
+            {
+                var result = await _maklumatSkimPerkhidmatan.DeleteOrUpdateSkimPerkhidmatanAsync(id);
+
+                if (!result)
+                    return NotFound(new { message = "Record not found." });
+
+                return Ok(new { message = result == true ? "Deleted success" : "Deleted failed" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during DeleteOrUpdate");
+                return StatusCode(500, ex.InnerException.Message.ToString());
+            }
+        }
     }
 }
 

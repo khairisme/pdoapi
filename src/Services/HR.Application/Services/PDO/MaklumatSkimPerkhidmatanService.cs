@@ -677,6 +677,181 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+        public async Task<bool> KemaskiniStatusAsync(SkimPerkhidmatanRefStatusDto perkhidmatanDto)
+        {
+            _logger.LogInformation("Service: Updating KemaskiniStatusAsync");
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Step 1: update into PDO_SkimPerkhidmatan
+                var perkhidmatan = MapToEntity(perkhidmatanDto);
+                perkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
+                //perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
+                //if (!string.IsNullOrWhiteSpace(perkhidmatan.ButiranKemaskini))
+                //{
+                //    perkhidmatan.ButiranKemaskini = null;
+                //}
+
+                var result = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(perkhidmatan);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+
+
+                // Step 2: Deactivate existing PDO_StatusPermohonanSkimPerkhidmatan record
+                var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
+                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
+
+                if (existingStatus != null)
+                {
+                    existingStatus.StatusAktif = false;
+                    existingStatus.TarikhPinda = DateTime.Now;
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+
+                // Step 3: Insert into PDO_StatusPermohonanSkimPerkhidmatan
+                var statusEntity = new PDOStatusPermohonanSkimPerkhidmatan
+                {
+                    IdSkimPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
+                    KodRujStatusPermohonan = perkhidmatanDto.KodRujStatusSkim,
+                    TarikhKemasKini = DateTime.Now,
+                    StatusAktif = true
+                };
+                await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>().AddAsync(statusEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitAsync();
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during service CreateAsync");
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+        public async Task<SkimPerkhidmatanRefStatusDto> GetMaklumatBaharuAsync(int id)
+        {
+            _logger.LogInformation("Getting ButiranKemaskini by ID {Id} using Entity Framework", id);
+            try
+            {
+                var result = await (from a in _dbContext.PDOSkimPerkhidmatan
+                                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+                                        on a.Id equals b.IdSkimPerkhidmatan
+                                    join b2 in _dbContext.PDORujStatusSkim
+                                        on b.KodRujStatusPermohonan equals b2.Kod
+                                    where b.StatusAktif == true && a.Id == id
+                                    select new SkimPerkhidmatanButiranDto
+                                    {
+                                        //Id = a.Id,
+                                        //Kod = a.Kod,
+                                        ButiranKemaskini = a.ButiranKemaskini,
+                                        //KodRujStatusPermohonan = b.KodRujStatusPermohonan,
+                                        //StatusPermohonan = b2.Nama,
+                                        //TarikhKemaskini = b.TarikhKemaskini
+                                    }).FirstOrDefaultAsync();
+
+                if (String.IsNullOrEmpty(result.ButiranKemaskini))
+                {
+                    return new SkimPerkhidmatanRefStatusDto
+                    {
+                        Keterangan = "Tiada butiran kemaskini"
+                    };
+                }
+
+                SkimPerkhidmatanRefStatusDto obj = JsonConvert.DeserializeObject<SkimPerkhidmatanRefStatusDto>(result.ButiranKemaskini);
+                obj.KodRujStatusSkim = string.Empty;
+
+
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting ButiranKemaskini");
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteOrUpdateSkimPerkhidmatanAsync(int id)
+        {
+            _logger.LogInformation("DeleteOrUpdateSkimPerkhidmatanAsync by ID {Id} using Entity Framework", id);
+            try
+            {
+
+                var result = await (from a in _dbContext.PDOSkimPerkhidmatan
+                                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+                                        on a.Id equals b.IdSkimPerkhidmatan
+                                    join b2 in _dbContext.PDORujStatusPermohonan
+                                        on b.KodRujStatusPermohonan equals b2.Kod
+                                    where b.StatusAktif == true && a.Id == id
+                                    select new SkimPerkhidmatanRefStatusDto
+                                    {
+                                        Id = a.Id,
+                                        Kod = a.Kod,
+                                        Nama = a.Nama,
+                                        Keterangan = a.Keterangan,
+                                        //StatusAktif = a.StatusAktif,
+                                        KodRujStatusSkim = b.KodRujStatusPermohonan,
+                                        KodRujMatawang = b2.Nama,
+                                        //TarikhKemaskini = b.TarikhKemaskini
+                                    }).FirstOrDefaultAsync();
+                if (result == null)
+                    return false;
+
+                var skimPerkhidmatan = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().GetByIdAsync(id);
+                if (skimPerkhidmatan == null)
+                    return false;
+
+                if (!(result.KodRujStatusSkim == "01"))
+                {
+                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    try
+                    {
+                        // Delete children first
+                        var statusList = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
+                        .FindByFieldAsync("IdSkimPerkhidmatan", id);
+
+                        _dbContext.PDOStatusPermohonanSkimPerkhidmatan.RemoveRange(statusList);
+                        await _dbContext.SaveChangesAsync();
+                        // Then delete parent
+                        _dbContext.PDOSkimPerkhidmatan.Remove(skimPerkhidmatan);
+                        await _dbContext.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "DeleteOrUpdateSkimPerkhidmatanAsync failed during transaction");
+                        throw;
+                    }
+                }
+                else
+                {
+                    // Just set to inactive
+                    skimPerkhidmatan.StatusAktif = false;
+                    await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(skimPerkhidmatan);
+                    await _unitOfWork.SaveChangesAsync();
+                    return true;
+                }
+
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "DeleteOrUpdateSkimPerkhidmatanAsync");
+                throw;
+            }
+        }
 
 
     }
