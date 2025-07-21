@@ -608,7 +608,7 @@ namespace HR.Application.Services.PDO
                 _logger.LogInformation("Getting CarianSkimPerkhidmatanResponseDto using EF Core query");
 
                 var query = (from s in _dbContext.PDOSkimPerkhidmatan
-                             where s.KodRujStatusSkim == "1"
+                             where s.KodRujStatusSkim == "01"
                              orderby s.Kod
                              select new
                              {
