@@ -128,7 +128,12 @@ namespace HR.Application.Services.PDO
                     KodRujMatawang = dto.KodRujMatawang,
                     Jumlah = dto.Jumlah,
                     ButiranKemaskini = dto.ButiranKemaskini,
-                    StatusAktif=false
+
+                    // This one has been added
+                    StatusAktif=false 
+
+
+
 
                 };
 
