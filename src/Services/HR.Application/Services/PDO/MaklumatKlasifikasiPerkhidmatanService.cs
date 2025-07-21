@@ -253,6 +253,45 @@ namespace HR.Application.Services.PDO
             }
         }
 
+        public async Task<MaklumatKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatanOld(int id)
+        {
+            try
+            {
+
+                _logger.LogInformation("Getting all MaklumatKlasifikasiPerkhidmatanDto using EF Core join");
+
+                var query = await (from a in _dbContext.PDOKlasifikasiPerkhidmatan
+                                   join b in _dbContext.PDOStatusPermohonanKlasifikasiPerkhidmatan
+                                                 on a.Id equals b.IdKlasifikasiPerkhidmatan
+                                   join b2 in _dbContext.PDORujStatusPermohonan
+                                                 on b.KodRujStatusPermohonan equals b2.Kod
+                                   where b.StatusAktif == true && a.Id == id
+                                   //orderby a.Kod
+                                   select new MaklumatKlasifikasiPerkhidmatanResponseDto
+                                   {
+                                       Id = a.Id,
+                                       Kod = a.Kod,
+                                       Nama = a.Nama,
+                                       Keterangan = a.Keterangan,
+                                       FungsiUtama = a.FungsiUtama ?? "",
+                                       FungsiUmum = a.FungsiUmum ?? "",
+                                       StatusKlasifikasiPerkhidmatan = b.StatusAktif == true ? "Aktif" : "Tidak Aktif",
+                                       Status = b2.Nama,
+                                       TarikhKemaskini = b.TarikhKemaskini,
+                                       IndikatorSkim = a.IndikatorSkim,
+                                       StatusAktif = a.StatusAktif
+
+                                       // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
+                                   }).FirstOrDefaultAsync();
+
+                return query;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Failed to retrive data");
+            }
+        }
         public async Task<ButiranKemaskiniKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatanView(int id)
         {
             try

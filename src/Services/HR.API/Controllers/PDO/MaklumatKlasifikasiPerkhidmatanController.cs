@@ -118,6 +118,17 @@ namespace HR.API.Controllers.PDO
 
         }
 
+        [HttpGet("getMaklumatSediaAda/{id}")]
+        public async Task<IActionResult> getMaklumatSediaAda(int id)
+        {
+            var result = await _maklumatKlasifikasiPerkhidmatanService.GetMaklumatKlasifikasiPerkhidmatanOld(id);
+            if (result == null)
+                return NotFound($"No MaklumatKlasifikasiPerkhidmatan found for ID {id}");
+
+            return Ok(result);
+
+        }
+
 
         /// <summary>
         ///get MaklumatKlasifikasiPerkhidmatan

@@ -30,5 +30,7 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> KemaskiniStatusAsync(MaklumatKlasifikasiPerkhidmatanCreateUpdateRequestDto dto);
         Task<bool> DeleteOrUpdateKlasifikasiPerkhidmatanAsync(int id);
 
+        Task<MaklumatKlasifikasiPerkhidmatanResponseDto> GetMaklumatKlasifikasiPerkhidmatanOld(int id);
+
     }
 }
