@@ -127,7 +127,8 @@ namespace HR.Application.Services.PDO
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
                     Jumlah = dto.Jumlah,
-                    ButiranKemaskini = dto.ButiranKemaskini
+                    ButiranKemaskini = dto.ButiranKemaskini,
+                    StatusAktif=false
 
                 };
 
