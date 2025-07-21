@@ -198,11 +198,11 @@ namespace HR.Application.Services.PDO
             }
         }
 
-        public async Task<MaklumatSkimPerkhidmatanResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(string Kod)
+        public async Task<MaklumatSkimPerkhidmatanResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(int id)
         {
             try
             {
-                _logger.LogInformation("Getting SenaraiSkimPerkhidmatan by ID {Id} using Entity Framework", Kod);
+                _logger.LogInformation("Getting SenaraiSkimPerkhidmatan by ID {Id} using Entity Framework", id);
 
                 var query = await (
                     from a in _dbContext.PDOSkimPerkhidmatan
@@ -210,7 +210,7 @@ namespace HR.Application.Services.PDO
                         on a.IdKlasifikasiPerkhidmatan equals b.Id
                     join c in _dbContext.PDOKumpulanPerkhidmatan
                         on a.IdKumpulanPerkhidmatan equals c.Id
-                    where a.Kod == Kod && b.StatusAktif && c.StatusAktif
+                    where a.Id == id && b.StatusAktif && c.StatusAktif
                     select new { a, b, c }
                 ).FirstOrDefaultAsync();
 
@@ -237,7 +237,8 @@ namespace HR.Application.Services.PDO
                     KumpulanPerkhidmatan = query.c.Nama,
                     IndikatorSkim = dtoSource.IndikatorSkim,
                     KodRujMatawang = dtoSource.KodRujMatawang,
-                    Jumlah = dtoSource.Jumlah
+                    Jumlah = dtoSource.Jumlah,
+                    KodRujStatusSkim=dtoSource.KodRujStatusSkim
                 };
 
                 return result;

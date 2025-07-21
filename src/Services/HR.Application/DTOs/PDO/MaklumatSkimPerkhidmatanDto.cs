@@ -71,6 +71,8 @@ namespace HR.Application.DTOs.PDO
         public string KodRujMatawang { get; set; }
 
         public decimal? Jumlah { get; set; }
+        public string KodRujStatusSkim { get; set; }
+        
     }
     public class SkimPerkhidmatanFilterDto
     {

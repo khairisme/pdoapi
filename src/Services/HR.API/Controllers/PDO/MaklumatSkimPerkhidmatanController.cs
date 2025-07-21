@@ -96,14 +96,14 @@ namespace HR.API.Controllers.PDO
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("getSenaraiSkimPerkhidmatan/{kod}")]
-        public async Task<IActionResult> GetById(string kod)
+        [HttpGet("getSenaraiSkimPerkhidmatan/{id}")]
+        public async Task<IActionResult> GetById(int id)
         {
             try
             {
-                var result = await _maklumatSkimPerkhidmatan.GetSenaraiSkimPerkhidmatanByIdAsync(kod);
+                var result = await _maklumatSkimPerkhidmatan.GetSenaraiSkimPerkhidmatanByIdAsync(id);
                 if (result == null)
-                    return NotFound($"No Senarai Skim Perkhidmatan found for Kod {kod}");
+                    return NotFound($"No Senarai Skim Perkhidmatan found for Kod {id}");
 
                 return Ok(result);
             }
