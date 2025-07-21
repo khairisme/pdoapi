@@ -13,5 +13,7 @@ namespace HR.Core.Entities.PDO
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string Keterangan { get; set; }
+        [NotMapped]
+        public int Id { get; set; }
     }
 }

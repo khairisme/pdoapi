@@ -90,11 +90,13 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDORujStatusSkim>(entity =>
             {
                 entity.ToTable("PDO_RujStatusSkim");
-                entity.HasKey(e => e.Id); 
+                entity.HasKey(e => e.Kod);
+                entity.Ignore(e => e.Id); 
             });
             modelBuilder.Entity<PDORujJenisPermohonan>(entity =>
             {
                 entity.ToTable("PDO_RujJenisPermohonan");
+
                 entity.HasKey(e => e.Kod); // Don't map base Id
             });
             modelBuilder.Entity<PDOStatusPermohonanSkimPerkhidmatan>().ToTable("PDO_StatusPermohonanSkimPerkhidmatan");
