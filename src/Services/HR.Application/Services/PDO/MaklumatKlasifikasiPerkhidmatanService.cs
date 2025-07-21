@@ -759,8 +759,8 @@ namespace HR.Application.Services.PDO
             return new MaklumatKlasifikasiPerkhidmatanDto
             {
                 Id = entity.Id,
-                Nama = entity.Nama,
-                Kod = entity.Kod,
+                Nama = entity.Nama.Trim(),
+                Kod = entity.Kod.Trim(),
                 Keterangan = entity.Keterangan,
                 FungsiUtama = entity.FungsiUtama,
                 FungsiUmum = entity.FungsiUmum,
