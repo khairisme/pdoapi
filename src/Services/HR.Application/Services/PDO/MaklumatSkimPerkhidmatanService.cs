@@ -80,10 +80,8 @@ namespace HR.Application.Services.PDO
                             IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
                             IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
 
-                            StatusAktif=dtoSource.StatusAktif,
-                            StatusSkimPerkhidmatan = (dtoSource.StatusAktif
-                            ? StatusKumpulanPerkhidmatanEnum.Aktif
-                            : StatusKumpulanPerkhidmatanEnum.TidakAktif).ToDisplayString(),
+                            StatusSkimPerkhidmatan = q.a2.Nama
+                            
 
                         };
                     });
@@ -134,14 +132,7 @@ namespace HR.Application.Services.PDO
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
                     Jumlah = dto.Jumlah,
-                    ButiranKemaskini = dto.ButiranKemaskini,
-
-                    // This one has been added
-                    StatusAktif=false 
-
-
-
-
+                    ButiranKemaskini = dto.ButiranKemaskini
                 };
 
                 perkhidmatan=await _unitOfWork.Repository<PDOSkimPerkhidmatan>().AddAsync(perkhidmatan);
