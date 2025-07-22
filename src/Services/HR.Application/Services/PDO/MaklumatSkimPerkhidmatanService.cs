@@ -685,18 +685,18 @@ namespace HR.Application.Services.PDO
                     return false;
                 }
 
-                if (skimPerkhidmatan.KodRujStatusSkim=="00")
-                {
-                    // Direct update if not active
-                    skimPerkhidmatan = MapToEntity(perkhidmatanDto);
-                    skimPerkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
+                //if (skimPerkhidmatan.KodRujStatusSkim=="00")
+                //{
+                //    // Direct update if not active
+                //    skimPerkhidmatan = MapToEntity(perkhidmatanDto);
+                //    skimPerkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
 
-                    await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(skimPerkhidmatan);
-                    await _unitOfWork.SaveChangesAsync();
-                    await _unitOfWork.CommitAsync();
-                }
-                else
-                {
+                //    await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(skimPerkhidmatan);
+                //    await _unitOfWork.SaveChangesAsync();
+                //    await _unitOfWork.CommitAsync();
+                //}
+                //else
+                //{
                     // Serialize the update details in ButiranKemaskini
                     var detailsForLog = MapToEntity(perkhidmatanDto);
                     detailsForLog.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
@@ -726,7 +726,7 @@ namespace HR.Application.Services.PDO
                     };
                     await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>().AddAsync(statusEntity2);
                     await _unitOfWork.SaveChangesAsync();
-                }
+                //}
 
                 //// Step 2: Deactivate existing status
                 //var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
