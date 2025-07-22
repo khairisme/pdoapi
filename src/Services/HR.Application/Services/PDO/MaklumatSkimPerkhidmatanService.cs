@@ -41,9 +41,18 @@ namespace HR.Application.Services.PDO
                                        on a.KodRujStatusSkim equals a2.Kod
                                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
                                        on a.Id equals b.IdSkimPerkhidmatan
+
+                                   join b2 in _dbContext.PDORujStatusPermohonan
+                                             on b.KodRujStatusPermohonan equals b2.Kod
                                    where b.StatusAktif == true
                                    select new
                                    {
+                                       RujStatusPermohanan=b2,
+
+                                   where b.StatusAktif == true
+                                   select new
+                                   {
+
                                        Skim = a,
                                        RujStatus = a2,
                                        StatusPermohonan = b,
@@ -90,8 +99,10 @@ namespace HR.Application.Services.PDO
                             idGred = string.Join(",", idGredArray),
                             indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                             indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
-                            carianSkimId=dtoSource.IndikatorSkim
-                            //idGredLength = idGredLength
+
+                            carianSkimId=dtoSource.IndikatorSkim,
+                            StatusPermohonan = q.RujStatusPermohanan.Nama
+
                         };
                     });
 

@@ -29,7 +29,7 @@ namespace HR.Application.DTOs.PDO
         public bool? carianSkimId { get; set; }
         public bool indikatorSkimKritikal { get; set; }
         public bool indikatorKenaikanPGT { get; set; }
-           
+
 
 
     }
