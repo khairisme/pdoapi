@@ -26,5 +26,7 @@ namespace HR.Core.Entities.PDO
         public string? KodRujMatawang { get; set; }
 
         public decimal? Jumlah { get; set; }
+        [NotMapped]
+        public bool StatusAktif { get; set; }
     }
 }

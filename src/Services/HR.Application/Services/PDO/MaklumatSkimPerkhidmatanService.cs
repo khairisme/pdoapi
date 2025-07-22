@@ -128,7 +128,7 @@ namespace HR.Application.Services.PDO
                     Keterangan = dto.Keterangan,
                     IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                     IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                    KodRujStatusSkim = "01",
+                    KodRujStatusSkim = "00",
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
                     Jumlah = dto.Jumlah,
