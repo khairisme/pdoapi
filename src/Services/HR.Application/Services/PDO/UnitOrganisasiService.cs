@@ -116,5 +116,35 @@ namespace HR.Application.Services.PDO
             }
         }
         //End
+
+        //code added by amar 220725
+
+        public async Task<List<UnitOrganisasiCarianKetuaPerkhidmatanResponseDto>> GetAgency()
+        {
+            _logger.LogInformation("GetAgency: Fetching agencies with IndikatorAgensiRasmi = 1 and StatusAktif = 1");
+
+            try
+            {
+                var agencies = await _context.PDOUnitOrganisasi
+                    .Where(x => x.IndikatorAgensiRasmi == true && x.StatusAktif == true)
+                    .Select(x => new UnitOrganisasiCarianKetuaPerkhidmatanResponseDto
+                    {
+                        Id = x.Id,
+                        Nama = x.Nama ?? string.Empty,
+                        KodCartaOrganisasi = x.KodCartaOrganisasi ?? string.Empty
+                    })
+                    .ToListAsync();
+
+                _logger.LogInformation("GetAgency: Retrieved {Count} agencies", agencies.Count);
+                return agencies;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetAgency: Error occurred while fetching agency list");
+                throw;
+            }
+        }
+
+        //end
     }
 }

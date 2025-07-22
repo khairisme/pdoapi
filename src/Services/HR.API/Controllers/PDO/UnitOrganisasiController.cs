@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Shared.Contracts.DTOs;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -151,5 +152,37 @@ public class UnitOrganisasiController : ControllerBase
         }
     }
     //End
+
+    // code added by amar 220725
+    [HttpPost("getAgency")]
+    public async Task<IActionResult> GetAgency()
+    {
+        _logger.LogInformation("GetAgency: GetAgency method called from controller");
+        try
+        {
+            var data = await _unitOrganisasiService.GetAgency();
+
+            _logger.LogInformation("GetAgency: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetAgency: Error occurred in controller while processing request");
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<UnitOrganisasiCarianKetuaPerkhidmatanResponseDto>()
+            });
+        }
+    }
+
+
+    //end
 
 }

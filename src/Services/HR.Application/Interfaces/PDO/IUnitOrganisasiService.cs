@@ -18,5 +18,8 @@ namespace HR.Application.Interfaces.PDO
         Task<string> GetNamaUnitOrganisasi(int IdUnitOrganisasi);
         Task<bool> SetPenjenamaanSemula(UnitOrganisasiPenjenamaanSemulaRequestDto penjenamaanSemulaRequestDto);
         //End
+        //code added by amar 220725
+        Task<List<UnitOrganisasiCarianKetuaPerkhidmatanResponseDto>> GetAgency();
+        //end
     }
 }
