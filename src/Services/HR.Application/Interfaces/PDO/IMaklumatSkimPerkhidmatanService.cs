@@ -25,6 +25,7 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> KemaskiniStatusAsync(SkimPerkhidmatanRefStatusDto perkhidmatanDto);
         Task<SkimPerkhidmatanRefStatusDto> GetMaklumatBaharuAsync(int id);
         Task<bool> DeleteOrUpdateSkimPerkhidmatanAsync(int id);
+        Task<MaklumatSkimPerkhidmatanSearchResponseDto?> GetSenaraiSkimPerkhidmatanByKodAsync(string kod);
 
     }
 }

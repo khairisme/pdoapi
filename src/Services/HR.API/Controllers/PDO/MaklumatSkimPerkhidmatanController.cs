@@ -92,7 +92,7 @@ namespace HR.API.Controllers.PDO
             }
         }
         /// <summary>
-        ///get KumpulanPerkhidmatan
+        ///get Skim Perkhidmatan By Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -109,7 +109,7 @@ namespace HR.API.Controllers.PDO
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception during getKumpulanPerkhidmatan");
+                _logger.LogError(ex, "Exception during getSenaraiSkimPerkhidmatan");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -314,6 +314,28 @@ namespace HR.API.Controllers.PDO
             {
                 _logger.LogError(ex, "Exception during DeleteOrUpdate");
                 return StatusCode(500, ex.InnerException.Message.ToString());
+            }
+        }
+        /// <summary>
+        ///get Skim Perkhidmatan By Kod
+        /// </summary>
+        /// <param name="kod"></param>
+        /// <returns></returns>
+        [HttpGet("getSenaraiSkimPerkhidmatanByKod/{kod}")]
+        public async Task<IActionResult> GetByKod(string kod)
+        {
+            try
+            {
+                var result = await _maklumatSkimPerkhidmatan.GetSenaraiSkimPerkhidmatanByKodAsync(kod);
+                if (result == null)
+                    return NotFound($"No Senarai Skim Perkhidmatan found for Kod {kod}");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during getSenaraiSkimPerkhidmatanByKod");
+                return StatusCode(500, "Internal Server Error");
             }
         }
     }

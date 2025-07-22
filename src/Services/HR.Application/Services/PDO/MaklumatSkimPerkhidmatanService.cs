@@ -970,6 +970,73 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+        public async Task<MaklumatSkimPerkhidmatanSearchResponseDto?> GetSenaraiSkimPerkhidmatanByKodAsync(string kod)
+        {
+            try
+            {
+                _logger.LogInformation("Getting SenaraiSkimPerkhidmatan by ID {Id} using Entity Framework", kod);
+
+                var query = await (
+                    from a in _dbContext.PDOSkimPerkhidmatan
+                    join a2 in _dbContext.PDORujStatusSkim
+                        on a.KodRujStatusSkim equals a2.Kod
+                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+                        on a.Id equals b.IdSkimPerkhidmatan
+
+                    join b2 in _dbContext.PDORujStatusPermohonan
+                              on b.KodRujStatusPermohonan equals b2.Kod
+                    where a.Kod == kod && b.StatusAktif == true
+                    select new
+                    {
+                        a,
+                        a2,
+                        b,
+                        b2,
+                        GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
+                                    where g.IdSkimPerkhidmatan == a.Id
+                                    select g.IdGred.ToString()).ToList()
+                    }
+                ).FirstOrDefaultAsync();
+
+                if (query == null)
+                    return null;
+
+                PDOSkimPerkhidmatan? skimObj = null;
+                if (!string.IsNullOrWhiteSpace(query.a.ButiranKemaskini))
+                {
+                    skimObj = JsonConvert.DeserializeObject<PDOSkimPerkhidmatan>(query.a.ButiranKemaskini);
+                }
+
+                var dtoSource = skimObj ?? query.a;
+
+                var result = new MaklumatSkimPerkhidmatanSearchResponseDto
+                {
+                    Id = dtoSource.Id,
+                    Kod = dtoSource.Kod,
+                    Nama = dtoSource.Nama,
+                    Keterangan = dtoSource.Keterangan,
+                    TarikhKemaskini = query.b.TarikhKemasKini,
+                    IndikatorSkim = dtoSource.IndikatorSkim,
+                    KodRujMatawang = dtoSource.KodRujMatawang,
+                    Jumlah = dtoSource.Jumlah,
+                    IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
+                    IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
+                    StatusSkimPerkhidmatan = query.a2.Nama,
+                    idGred = string.Join(",", query.GredList),
+                    indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
+                    indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
+                    carianSkimId = dtoSource.IndikatorSkim,
+                    StatusPermohonan = query.b2.Nama
+                };
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting MaklumatSkimPerkhidmatan");
+                throw;
+            }
+        }
 
 
     }
