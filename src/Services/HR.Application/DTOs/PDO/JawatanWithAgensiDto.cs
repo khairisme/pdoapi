@@ -68,4 +68,13 @@ namespace HR.Application.DTOs.PDO
         public string StatusPengisian { get; set; } = string.Empty;
         public DateTime? TarikhKekosonganJawatan { get; set; }
     }
+
+    // code added by amar 220725
+    public class CarianKetuaPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Nama { get; set; } 
+      
+    }
+    //end
 }

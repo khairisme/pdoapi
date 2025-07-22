@@ -13,5 +13,8 @@ namespace HR.Application.Interfaces.PDO
         Task<List<CarianJawatanResponseDto>> GetCarianJawatanAsync(CarianJawatanFilterDto filter);
         Task<List<CarianJawatanSebenarResponseDto>> GetCarianJawatanSebenar(CarianJawatanSebenarFilterDto filter);
         Task<List<CarianJawatanSebenarRespDto>> SearchCarianawatanSebenarAsync(CarianJawatanSebenarReqDto request);
+        // code added by amar 220725
+        Task<List<CarianKetuaPerkhidmatanResponseDto>> GetNamaJawatan(string KodCarta);
+        //end
     }
 }

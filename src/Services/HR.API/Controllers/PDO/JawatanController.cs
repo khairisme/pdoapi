@@ -170,4 +170,50 @@ public class JawatanController : ControllerBase
         }
     }
 
+    // code added by amar 220725
+
+    /// <summary>
+    /// GetNamaJawatan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+    [HttpGet("GetNamaJawatan")]
+    public async Task<IActionResult> GetNamaJawatan([FromQuery] string KodCarta)
+    {
+        _logger.LogInformation("GetNamaJawatan: Called with KodCarta = {KodCarta}", KodCarta);
+
+        try
+        {
+            var data = await _jawatanService.GetNamaJawatan(KodCarta);
+
+            _logger.LogInformation("GetNamaJawatan: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetNamaJawatan: Error occurred while retrieving data for KodCarta = {KodCarta}", KodCarta);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<CarianKetuaPerkhidmatanResponseDto>()
+            });
+        }
+    }
+
+    //end
+
 }
