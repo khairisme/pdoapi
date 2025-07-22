@@ -103,7 +103,7 @@ namespace HR.API.Controllers.PDO
             {
                 var result = await _maklumatSkimPerkhidmatan.GetSenaraiSkimPerkhidmatanByIdAsync(id);
                 if (result == null)
-                    return NotFound($"No Senarai Skim Perkhidmatan found for Kod {id}");
+                    return NotFound($"No Senarai Skim Perkhidmatan found for Id {id}");
 
                 return Ok(result);
             }

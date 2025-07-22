@@ -371,7 +371,8 @@ namespace HR.Application.Services.PDO
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId = dtoSource.IndikatorSkim,
-                    StatusPermohonan = query.b2.Nama
+                    StatusPermohonan = query.b2.Nama,
+                    KodRujStatusSkim=dtoSource.KodRujStatusSkim
                 };
 
                 return result;

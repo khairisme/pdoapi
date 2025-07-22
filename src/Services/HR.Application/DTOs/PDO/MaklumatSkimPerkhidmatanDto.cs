@@ -31,7 +31,7 @@ namespace HR.Application.DTOs.PDO
         public bool indikatorSkimKritikal { get; set; }
         public bool indikatorKenaikanPGT { get; set; }
 
-
+        public string? KodRujStatusSkim { get; set; }
 
     }
     public class MaklumatSkimPerkhidmatanFilterDto
