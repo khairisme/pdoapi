@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HR.Application.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace HR.Application.Services.PDO
 {
@@ -95,7 +96,6 @@ namespace HR.Application.Services.PDO
                             idGred = string.Join(",", idGredArray),
                             indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                             indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
-
                             carianSkimId=dtoSource.IndikatorSkim,
                             StatusPermohonan = q.RujStatusPermohanan.Nama
 
@@ -232,7 +232,10 @@ namespace HR.Application.Services.PDO
             }
         }
 
-        public async Task<MaklumatSkimPerkhidmatanResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(int id)
+
+        //
+
+        public async Task<MaklumatSkimPerkhidmatanSearchResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(int id)
         {
             try
             {
@@ -240,12 +243,19 @@ namespace HR.Application.Services.PDO
 
                 var query = await (
                     from a in _dbContext.PDOSkimPerkhidmatan
-                    join b in _dbContext.PDOKlasifikasiPerkhidmatan
-                        on a.IdKlasifikasiPerkhidmatan equals b.Id
-                    join c in _dbContext.PDOKumpulanPerkhidmatan
-                        on a.IdKumpulanPerkhidmatan equals c.Id
-                    where a.Id == id && b.StatusAktif && c.StatusAktif
-                    select new { a, b, c }
+                    join a2 in _dbContext.PDORujStatusSkim
+                        on a.KodRujStatusSkim equals a2.Kod
+                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+                        on a.Id equals b.IdSkimPerkhidmatan
+
+                    join b2 in _dbContext.PDORujStatusPermohonan
+                              on b.KodRujStatusPermohonan equals b2.Kod
+                    where a.Id == id && b.StatusAktif == true
+                    select new {a,a2,b,b2 ,
+                        GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
+                                    where g.IdSkimPerkhidmatan == a.Id
+                                    select g.IdGred.ToString()).ToList()
+                    }
                 ).FirstOrDefaultAsync();
 
                 if (query == null)
@@ -259,20 +269,24 @@ namespace HR.Application.Services.PDO
 
                 var dtoSource = skimObj ?? query.a;
 
-                var result = new MaklumatSkimPerkhidmatanResponseDto
+                var result = new MaklumatSkimPerkhidmatanSearchResponseDto
                 {
                     Id = dtoSource.Id,
                     Kod = dtoSource.Kod,
                     Nama = dtoSource.Nama,
                     Keterangan = dtoSource.Keterangan,
-                    KodKlasifikasiPerkhidmatan = query.b.Kod,
-                    KlasifikasiPerkhidmatan = query.b.Nama,
-                    KodKumpulanPerkhidmatan = query.c.Kod,
-                    KumpulanPerkhidmatan = query.c.Nama,
+                    TarikhKemaskini = query.b.TarikhKemasKini,
                     IndikatorSkim = dtoSource.IndikatorSkim,
                     KodRujMatawang = dtoSource.KodRujMatawang,
                     Jumlah = dtoSource.Jumlah,
-                    KodRujStatusSkim = dtoSource.KodRujStatusSkim
+                    IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
+                    IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
+                    StatusSkimPerkhidmatan = query.a2.Nama,
+                    idGred = string.Join(",", query.GredList),
+                    indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
+                    indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
+                    carianSkimId = dtoSource.IndikatorSkim,
+                    StatusPermohonan = query.b2.Nama
                 };
 
                 return result;
@@ -283,6 +297,8 @@ namespace HR.Application.Services.PDO
                 throw;
             }
         }
+
+        //
 
 
         public async Task<bool> UpdateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
