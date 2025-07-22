@@ -64,7 +64,7 @@ namespace HR.Application.DTOs.PDO
         public int CarianSkimId { get; set; } = 0;
         public string? ButiranKemaskini { get; set; }
         public string? KodRujStatusSkim { get; set; }
-        public string KodRujStatusPermohonan { get; set; }
+        public string? KodRujStatusPermohonan { get; set; }
     }
     public class MaklumatSkimPerkhidmatanResponseDto
     {

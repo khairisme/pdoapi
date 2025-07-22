@@ -121,7 +121,7 @@ namespace HR.API.Controllers.PDO
         [HttpPost("setMaklumatSkimPerkhidmatan")]
         public async Task<IActionResult> Update([FromBody] MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
-            _logger.LogInformation("update MaklumatKlasifikasiPerkhidmatan");
+            _logger.LogInformation("update MaklumatSkimPerkhidmatan");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
