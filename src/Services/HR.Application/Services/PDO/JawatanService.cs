@@ -200,6 +200,39 @@ namespace HR.Application.Services.PDO
 
             return result;
         }
+
+        // added by amar 220725
+        public async Task<List<CarianKetuaPerkhidmatanResponseDto>> GetNamaJawatan(string KodCarta)
+        {
+            _logger.LogInformation("GetNamaJawatan: Fetching Ketua Perkhidmatan Jawatan for KodCarta = {KodCarta}", KodCarta);
+
+            try
+            {
+                var query = from jawatan in _context.PDOJawatan
+                            join unit in _context.PDOUnitOrganisasi
+                                on jawatan.IdUnitOrganisasi equals unit.Id
+                            where jawatan.IndikatorKetuaPerkhidmatan == true
+                                  && unit.KodCartaOrganisasi.Contains(KodCarta)
+                            select new CarianKetuaPerkhidmatanResponseDto
+                            {
+                                Id = jawatan.Id,
+                                Nama = jawatan.Nama ?? string.Empty
+                            };
+
+                var result = await query.ToListAsync();
+
+                _logger.LogInformation("GetNamaJawatan: Retrieved {Count} Ketua Perkhidmatan records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetNamaJawatan: Error occurred while fetching Ketua Perkhidmatan for KodCarta = {KodCarta}", KodCarta);
+                throw;
+            }
+        }
+
+
+        //end
     }
 
 

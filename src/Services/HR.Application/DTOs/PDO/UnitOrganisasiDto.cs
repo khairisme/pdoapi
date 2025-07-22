@@ -9,10 +9,10 @@ namespace HR.Application.DTOs.PDO
     public class UnitOrganisasiDto
     {
         public int Id { get; set; }
-       
+
         public string Nama { get; set; } = null!;
         public string? KodCartaOrganisasi { get; set; }
-        
+
 
     }
     public class UnitOrganisasiKementerianDto
@@ -20,7 +20,7 @@ namespace HR.Application.DTOs.PDO
         public string Kod { get; set; }
 
         public string Nama { get; set; } = null!;
-        
+
 
 
     }
@@ -34,6 +34,17 @@ namespace HR.Application.DTOs.PDO
     {
         public int IdUnitOrganisasi { get; set; }
         public string NamaUnitOrganisasiBaharu { get; set; }
+
+    }
+    //End
+
+    // Code by Amar 22/05/25
+    public class UnitOrganisasiCarianKetuaPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Nama { get; set; }
+        public string? KodCartaOrganisasi { get; set; }
+
 
     }
     //End
