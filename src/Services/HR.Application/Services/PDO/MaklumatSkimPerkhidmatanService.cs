@@ -45,14 +45,10 @@ namespace HR.Application.Services.PDO
                                    join b2 in _dbContext.PDORujStatusPermohonan
                                              on b.KodRujStatusPermohonan equals b2.Kod
                                    where b.StatusAktif == true
+                                  
                                    select new
                                    {
                                        RujStatusPermohanan=b2,
-
-                                   where b.StatusAktif == true
-                                   select new
-                                   {
-
                                        Skim = a,
                                        RujStatus = a2,
                                        StatusPermohonan = b,
