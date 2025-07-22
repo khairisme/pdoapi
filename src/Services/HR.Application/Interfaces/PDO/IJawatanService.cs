@@ -15,6 +15,7 @@ namespace HR.Application.Interfaces.PDO
         Task<List<CarianJawatanSebenarRespDto>> SearchCarianawatanSebenarAsync(CarianJawatanSebenarReqDto request);
         // code added by amar 220725
         Task<List<CarianKetuaPerkhidmatanResponseDto>> GetNamaJawatan(string KodCarta);
+        Task<List<SenaraiKetuaPerkhidmatanResponseDto>> GetSenaraiKetuaPerkhidmatan(string NamaJawatan,string KodCartaOrganisasi);
         //end
     }
 }

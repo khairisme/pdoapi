@@ -232,6 +232,40 @@ namespace HR.Application.Services.PDO
         }
 
 
+        public async Task<List<SenaraiKetuaPerkhidmatanResponseDto>> GetSenaraiKetuaPerkhidmatan(string NamaJawatan, string KodCartaOrganisasi)
+        {
+            _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Fetching Ketua Perkhidmatan for NamaJawatan = {NamaJawatan}, KodCartaOrganisasi = {KodCartaOrganisasi}", NamaJawatan, KodCartaOrganisasi);
+
+            try
+            {
+                var query = from a in _context.PDOJawatan
+                            join b in _context.PDOUnitOrganisasi
+                                on a.IdUnitOrganisasi equals b.Id
+                            where a.StatusAktif == true
+                                  && b.StatusAktif == true
+                                  && a.Nama.Contains(NamaJawatan)
+                                  && b.KodCartaOrganisasi.Contains(KodCartaOrganisasi)
+                            select new SenaraiKetuaPerkhidmatanResponseDto
+                            {
+                                Id = a.Id,
+                                Kod = a.Kod ?? string.Empty,
+                                Nama = a.Nama ?? string.Empty,
+                                Agensi = b.Nama ?? string.Empty
+                            };
+
+                var result = await query.ToListAsync();
+
+                _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Retrieved {Count} records", result.Count);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetSenaraiKetuaPerkhidmatan: Error occurred while fetching data for NamaJawatan = {NamaJawatan}, KodCartaOrganisasi = {KodCartaOrganisasi}", NamaJawatan, KodCartaOrganisasi);
+                throw;
+            }
+        }
+
+
         //end
     }
 

@@ -76,5 +76,15 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; } 
       
     }
+
+    public class SenaraiKetuaPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Agensi { get; set; }
+        
+
+    }
     //end
 }

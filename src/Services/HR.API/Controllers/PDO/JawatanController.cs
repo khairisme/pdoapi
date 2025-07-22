@@ -214,6 +214,49 @@ public class JawatanController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// GetNamaJawatan
+    /// </summary>
+    /// <param name="filter">Filter criteria</param>
+    /// <returns>Returns a list of data matching the filter criteria</returns>
+    /// <response code="200">Success</response>
+    /// <response code="500">Internal server error occurred while processing the request</response>
+    /// <remarks>
+    /// This API may change as query is still not finalized.
+    /// 
+    /// All filter parameters are optional - if not provided, they will be ignored in the search.
+    /// 
+    /// </remarks>
+    [HttpGet("getSenaraiKetuaPerkhidmatan")]
+    public async Task<IActionResult> GetSenaraiKetuaPerkhidmatan([FromQuery] string NamaJawatan, [FromQuery] string KodCartaOrganisasi)
+    {
+        _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Called with NamaJawatan = {NamaJawatan}, KodCartaOrganisasi = {KodCartaOrganisasi}", NamaJawatan, KodCartaOrganisasi);
+
+        try
+        {
+            var data = await _jawatanService.GetSenaraiKetuaPerkhidmatan(NamaJawatan, KodCartaOrganisasi);
+
+            _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Successfully retrieved {Count} records", data.Count);
+
+            return Ok(new
+            {
+                status = data.Count > 0 ? "Success" : "Failed",
+                items = data
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "GetSenaraiKetuaPerkhidmatan: Error occurred while retrieving data for NamaJawatan = {NamaJawatan}, KodCartaOrganisasi = {KodCartaOrganisasi}", NamaJawatan, KodCartaOrganisasi);
+
+            return StatusCode(500, new
+            {
+                status = "Error",
+                items = new List<SenaraiKetuaPerkhidmatanResponseDto>()
+            });
+        }
+    }
+
+
     //end
 
 }
