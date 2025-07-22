@@ -114,11 +114,11 @@ namespace HR.API.Controllers.PDO
             }
         }
         /// <summary>
-        ///Update MaklumatKlasifikasiPerkhidmatan
+        ///Update MaklumatSkimPerkhidmatan
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [HttpPost("setMaklumatKlasifikasiPerkhidmatan")]
+        [HttpPost("setMaklumatSkimPerkhidmatan")]
         public async Task<IActionResult> Update([FromBody] MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
             _logger.LogInformation("update MaklumatKlasifikasiPerkhidmatan");

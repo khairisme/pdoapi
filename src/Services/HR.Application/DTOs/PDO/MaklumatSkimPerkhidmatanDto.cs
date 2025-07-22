@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HR.Core.Entities.PDO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,13 @@ namespace HR.Application.DTOs.PDO
         public int IdKlasifikasiPerkhidmatan { get; set; }
         public int IdKumpulanPerkhidmatan { get; set; }
         public bool StatusAktif { get; set; } = true;
+        public string idGred { get; set; }
+        public bool? carianSkimId { get; set; }
+        public bool indikatorSkimKritikal { get; set; }
+        public bool indikatorKenaikanPGT { get; set; }
+           
+
+
     }
     public class MaklumatSkimPerkhidmatanFilterDto
     {
@@ -42,7 +50,7 @@ namespace HR.Application.DTOs.PDO
         public string Keterangan { get; set; }
         public bool IndikatorSkimKritikal { get; set; }
         public bool IndikatorKenaikanPGT { get; set; }
-        public int IdGred { get; set; }
+        public string IdGred { get; set; }
         public int Id { get; set; } = 0;
         public string KlasifikasiKod { get; set; }
         public string KumpulanKod { get; set; }
@@ -54,7 +62,8 @@ namespace HR.Application.DTOs.PDO
         public decimal? Jumlah { get; set; }
         public int CarianSkimId { get; set; } = 0;
         public string? ButiranKemaskini { get; set; }
-        public bool StatusAktif { get; set; } = true;
+        public string? KodRujStatusSkim { get; set; }
+        public string KodRujStatusPermohonan { get; set; }
     }
     public class MaklumatSkimPerkhidmatanResponseDto
     {

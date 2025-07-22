@@ -77,8 +77,7 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDOGredSkimPerkhidmatan>(entity =>
             {
                 entity.ToTable("PDO_GredSkimPerkhidmatan");
-                entity.HasKey(e => e.IdGred); // Set Kod as the PK
-                entity.HasKey(e => e.IdSkimPerkhidmatan);
+                entity.HasKey(e => new { e.IdGred, e.IdSkimPerkhidmatan });
 
             });
             modelBuilder.Entity<PDORujJenisSaraan>(entity =>
