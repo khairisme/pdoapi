@@ -116,7 +116,7 @@ namespace HR.Application.Services.PDO
                     result = result.Where(q => q.Nama.Contains(filter.Nama));
 
                 if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
-                    result = result.Where(q => q.StatusSkimPerkhidmatan == filter.StatusPermohonan);
+                    result = result.Where(q => q.StatusPermohonan == filter.StatusPermohonan);
 
                 return result.ToList();
             }
@@ -127,7 +127,7 @@ namespace HR.Application.Services.PDO
             }
         }
 
-        public async Task<bool> CreateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        public async Task<int> CreateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Creating new MaklumatSkimPerkhidmatan");
             await _unitOfWork.BeginTransactionAsync();
@@ -193,13 +193,13 @@ namespace HR.Application.Services.PDO
 
 
                 await _unitOfWork.CommitAsync();
-                return true;
+                return perkhidmatan.Id;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during service CreateAsync");
                 await _unitOfWork.RollbackAsync();
-                return false;
+                return 0;
             }
         }
         public async Task<bool> CheckDuplicateKodNamaAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)

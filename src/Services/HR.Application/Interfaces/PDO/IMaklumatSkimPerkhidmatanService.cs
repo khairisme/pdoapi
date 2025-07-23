@@ -10,7 +10,7 @@ namespace HR.Application.Interfaces.PDO
     public interface IMaklumatSkimPerkhidmatanService
     {
         Task<IEnumerable<MaklumatSkimPerkhidmatanSearchResponseDto>> GetSenaraiSkimPerkhidmatan(MaklumatSkimPerkhidmatanFilterDto filter);
-        Task<bool> CreateAsync(MaklumatSkimPerkhidmatanCreateRequestDto maklumatSkimPerkhidmatanDto);
+        Task<int> CreateAsync(MaklumatSkimPerkhidmatanCreateRequestDto maklumatSkimPerkhidmatanDto);
         Task<bool> CheckDuplicateKodNamaAsync(MaklumatSkimPerkhidmatanCreateRequestDto maklumatSkimPerkhidmatanDto);
         Task<MaklumatSkimPerkhidmatanSearchResponseDto?> GetSenaraiSkimPerkhidmatanByIdAsync(int id);
         Task<bool> UpdateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto);
