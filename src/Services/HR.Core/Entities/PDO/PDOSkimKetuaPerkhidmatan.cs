@@ -12,5 +12,7 @@ namespace HR.Core.Entities.PDO
     {
         public int IdSkimPerkhidmatan { get; set; }
         public int IdKetuaPerkhidmatan { get; set; }
+        [NotMapped]
+        public int Id { get; set; }
     }
 }

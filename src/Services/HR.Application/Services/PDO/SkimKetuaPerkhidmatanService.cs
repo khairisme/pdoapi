@@ -59,7 +59,7 @@ namespace HR.Application.Services.PDO
 
         public async Task<bool> SoftDeleteSkimKetuaPerkhidmatanAsync(int id)
         {
-            var entity = await _context.PDOSkimKetuaPerkhidmatan.FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _context.PDOSkimKetuaPerkhidmatan.FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == id);
             if (entity == null) return false;
 
             entity.StatusAktif = false;
