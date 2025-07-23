@@ -499,6 +499,7 @@ namespace HR.Application.Services.PDO
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
                 perkhidmatan.UlasanPengesah = perkhidmatanDto.UlasanPengesah;
+                perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
                 //if (!string.IsNullOrWhiteSpace(perkhidmatan.ButiranKemaskini))
                 //{
                 //    perkhidmatan.ButiranKemaskini = null;
