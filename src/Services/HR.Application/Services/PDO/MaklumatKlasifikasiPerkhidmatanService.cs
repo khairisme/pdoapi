@@ -223,7 +223,9 @@ namespace HR.Application.Services.PDO
                     Status = query.b2.Nama,
                     TarikhKemaskini = query.b.TarikhKemaskini,
                     IndikatorSkim = dtoSource.IndikatorSkim,
-                    StatusAktif = dtoSource.StatusAktif
+                    StatusAktif = dtoSource.StatusAktif,
+                    UlasanPengesah = dtoSource.UlasanPengesah,
+                    Ulasan = dtoSource.Ulasan,
                 };
                 return result;
                 //orderby a.Kod
@@ -279,7 +281,9 @@ namespace HR.Application.Services.PDO
                                        Status = b2.Nama,
                                        TarikhKemaskini = b.TarikhKemaskini,
                                        IndikatorSkim = a.IndikatorSkim,
-                                       StatusAktif = a.StatusAktif
+                                       StatusAktif = a.StatusAktif,
+                                       Ulasan = a.Ulasan,
+                                       UlasanPengesah = a.UlasanPengesah
 
                                        // IndSkimPerkhidmatan = a.IndSkimPerkhidmatan
                                    }).FirstOrDefaultAsync();
@@ -506,6 +510,7 @@ namespace HR.Application.Services.PDO
                 var klasifikasiPerkhidmatan = MapToEntity(dto);
                 klasifikasiPerkhidmatan.StatusAktif = dto.StatusAktif;
                 klasifikasiPerkhidmatan.Ulasan = dto.Ulasan;
+                klasifikasiPerkhidmatan.UlasanPengesah = dto.UlasanPengesah;
                 //if (!string.IsNullOrWhiteSpace(perkhidmatan.ButiranKemaskini))
                 //{
                 //    perkhidmatan.ButiranKemaskini = null;
