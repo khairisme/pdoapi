@@ -27,5 +27,8 @@ namespace HR.Application.Interfaces.PDO
         Task<bool> DeleteOrUpdateSkimPerkhidmatanAsync(int id);
         Task<MaklumatSkimPerkhidmatanSearchResponseDto?> GetSenaraiSkimPerkhidmatanByKodAsync(string kod);
 
+        Task<List<SkimPerkhidmatanDetailsDTO>> GetSkimPerkhidmatanByIdAsync(int id);
+
+
     }
 }

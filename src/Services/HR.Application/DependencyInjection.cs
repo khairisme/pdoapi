@@ -57,7 +57,7 @@ public static class DependencyInjection
 
         services.AddScoped<IPermohonanPengisianSkimService, PermohonanPengisianSkimService>();
         services.AddScoped<IJadualGajiService, JadualGajiService>();
-
+        services.AddScoped<ISkimKetuaPerkhidmatanService, SkimKetuaPerkhidmatanService>();
         return services;
     }
 }

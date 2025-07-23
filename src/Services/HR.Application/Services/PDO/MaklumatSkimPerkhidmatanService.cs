@@ -1122,6 +1122,28 @@ namespace HR.Application.Services.PDO
             }
         }
 
+        public async Task<List<SkimPerkhidmatanDetailsDTO>> GetSkimPerkhidmatanByIdAsync(int id)
+        {
+            var result = await (
+                from a in _dbContext.PDOSkimPerkhidmatan
+                join b in _dbContext.PDOSkimKetuaPerkhidmatan on a.Id equals b.IdSkimPerkhidmatan into ab
+                from b in ab.Where(x => x.StatusAktif).DefaultIfEmpty()
+                join c in _dbContext.PDOKetuaPerkhidmatan on b.IdKetuaPerkhidmatan equals c.Id into bc
+                from c in bc.DefaultIfEmpty()
+                join d in _dbContext.PDOJawatan on c.IdJawatan equals d.Id into cd
+                from d in cd.DefaultIfEmpty()
+                where a.Id == id
+                select new SkimPerkhidmatanDetailsDTO
+                {
+                    Id = a.Id,
+                    Kod = a.Kod.Trim(),
+                    Nama = a.Nama.Trim(),
+                    KodJawatan = d.Kod ?? "",
+                    NamaJawatan = d.Nama ?? ""
+                }).ToListAsync();
+
+            return result;
+        }
 
     }
 }
