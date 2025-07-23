@@ -42,6 +42,8 @@ namespace HR.Application.DTOs.PDO
        public string? ButiranKemaskini { get; set; }
 
         public string? KodRujStatusPermohonan { get; set; }
+
+        public string? UlasanPengesah { get; set; }
     }
     public class PaparMaklumatGredButiranKemasDto
     {
