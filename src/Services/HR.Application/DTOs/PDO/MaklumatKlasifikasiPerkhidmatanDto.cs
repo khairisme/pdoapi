@@ -49,6 +49,7 @@ namespace HR.Application.DTOs.PDO
         public DateTime? TarikhKemaskini { get; set; }
         public string StatusKlasifikasiPerkhidmatan { get; set; }
         public string? Ulasan { get; set; }
+        public string? UlasanPengesah { get; set; }
         public string? ButiranKemaskini { get; set; }
 
         public bool? IndikatorSkim { get; set; }
