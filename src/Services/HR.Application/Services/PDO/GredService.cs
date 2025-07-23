@@ -142,7 +142,7 @@ namespace HR.Application.Services
             try
             {
                 // Step 1: Insert into PDO_Gred
-                dto.Kod = $"{dto.KodGred}A{dto.NomborGred}000";
+                dto.Kod = $"{dto.KodGred}A{dto.NomborGred:D2}000";
                 var gred = MapToEntity(dto);
                 gred.StatusAktif = false;
 
@@ -496,7 +496,10 @@ namespace HR.Application.Services
                     return await _context.PDOGred.AnyAsync(x =>
 
                         // x.Kod.Trim() == dto.Kod.Trim() || 
-                        x.Nama.Trim() == dto.Nama.Trim() && x.KodRujJenisSaraan == dto.KodRujJenisSaraan);
+                        x.Nama.Trim() == dto.Nama.Trim() && x.KodRujJenisSaraan == dto.KodRujJenisSaraan
+                        && x.IdKlasifikasiPerkhidmatan==dto.IdKlasifikasiPerkhidmatan &&
+                        x.IdKumpulanPerkhidmatan==dto.IdKumpulanPerkhidmatan
+                        );
                 }
                 else
                 {
@@ -505,7 +508,9 @@ namespace HR.Application.Services
 
                         (
                         //x.Kod.Trim() == dto.Kod.Trim() || 
-                        x.Nama.Trim() == dto.Nama.Trim()) && x.KodRujJenisSaraan == dto.KodRujJenisSaraan &&
+                        x.Nama.Trim() == dto.Nama.Trim()) && x.KodRujJenisSaraan == dto.KodRujJenisSaraan 
+                         && x.IdKlasifikasiPerkhidmatan == dto.IdKlasifikasiPerkhidmatan &&
+                        x.IdKumpulanPerkhidmatan == dto.IdKumpulanPerkhidmatan&&
                         x.Id != dto.Id);
                 }
             }

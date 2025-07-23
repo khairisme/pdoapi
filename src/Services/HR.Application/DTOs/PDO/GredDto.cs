@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HR.Application.DTOs.PDO
@@ -63,6 +65,7 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public int? TurutanGred { get; set; }
         public string KodGred { get; set; }
+        [JsonConverter(typeof(IntToPaddedStringConverter))]
         public int NomborGred { get; set; }
         public string? Keterangan { get; set; }
         public bool? IndikatorGredLantikanTerus { get; set; }
@@ -71,8 +74,23 @@ namespace HR.Application.DTOs.PDO
         public string KodRujStatusPermohonan { get; set; }
         public string StatusPermohonan { get; set; }
         public DateTime? TarikhKemaskini { get; set; }
+
+      
     }
 
+    public class IntToPaddedStringConverter : JsonConverter<int>
+    {
+        public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            // Convert "08" → 8 when reading from JSON
+            return int.Parse(reader.GetString());
+        }
 
-   
+        public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
+        {
+            // Convert 8 → "08" when writing to JSON
+            writer.WriteStringValue(value.ToString("D2"));
+        }
+    }
+
 }
