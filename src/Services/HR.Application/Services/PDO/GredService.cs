@@ -638,6 +638,7 @@ namespace HR.Application.Services
                 // Step 1: update into PDO_Gred
                 var gred = MapToEntity(dto);
                 gred.StatusAktif = dto.StatusAktif;
+                gred.UlasanPengesah = dto.UlasanPengesah;
                 //{
                 //    perkhidmatan.ButiranKemaskini = null;
                 //}
