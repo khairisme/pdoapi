@@ -99,6 +99,8 @@ namespace HR.Application.DTOs.PDO
         public string? KodJana { get; set; }
         public bool? IndikatorSkim { get; set; }
         public bool? IndikatorTanpaSkim { get; set; }
+        public string? Ulasan { get; set; }
+        public string? UlasanPengesah { get; set; }
     }
     public class KumpulanPerkhidmatanRefStatusDto : KumpulanPerkhidmatanDto
     {
