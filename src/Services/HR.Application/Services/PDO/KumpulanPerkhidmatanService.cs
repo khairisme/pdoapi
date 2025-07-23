@@ -428,7 +428,10 @@ namespace HR.Application.Services.PDO
                                         TarikhKemaskini = b.TarikhKemaskini,
                                         KodJana = a.KodJana,
                                         IndikatorSkim = a.IndikatorSkim,
-                                        IndikatorTanpaSkim = a.IndikatorTanpaSkim
+                                        IndikatorTanpaSkim = a.IndikatorTanpaSkim,
+                                        Ulasan=a.Ulasan,
+                                        UlasanPengesah=a.UlasanPengesah
+
 
                                     }).FirstOrDefaultAsync();
 
