@@ -18,5 +18,7 @@ namespace HR.Core.Entities.PDO
         public string? ButiranKemaskini { get; set; }
         public bool? IndikatorSkim { get; set; }
         public bool? IndikatorTanpaSkim { get; set; }
+
+        public string? UlasanPengesah { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace HR.Application.DTOs.PDO
 
         public bool? IndikatorSkim { get; set; }
         public bool? IndikatorTanpaSkim { get; set; }
+        public string? UlasanPengesah { get; set; }
     }
 
     public class CarlKumpulanPerkhidmatanDto
@@ -47,6 +48,7 @@ namespace HR.Application.DTOs.PDO
         public string StatusPermohonan { get; set; }
         public string? KodJana { get; set; }
         public string? Ulasan { get; set; }
+        public string? UlasanPengesah { get; set; }
         public DateTime TarikhKemaskini { get; set; }
 
         public bool? IndikatorSkim { get; set; }

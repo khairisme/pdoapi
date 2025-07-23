@@ -47,7 +47,7 @@ namespace HR.Application.Services.PDO
                 Keterangan = pDOKumpulan.Keterangan,
                 ButiranKemaskini = pDOKumpulan.ButiranKemaskini,
                 Ulasan = pDOKumpulan.Ulasan,
-                IndikatorSkim= pDOKumpulan.IndikatorSkim,
+                IndikatorSkim = pDOKumpulan.IndikatorSkim,
                 IndikatorTanpaSkim = pDOKumpulan.IndikatorTanpaSkim,
                 KodJana = pDOKumpulan.KodJana
             };
@@ -78,7 +78,7 @@ namespace HR.Application.Services.PDO
                 if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
                     query = query.Where(q => q.b2.Kod == filter.StatusPermohonan);
 
-                var data = await query.Where(q=>q.b.StatusAktif  == true).OrderBy(q => q.a.Kod).ToListAsync();
+                var data = await query.Where(q => q.b.StatusAktif == true).OrderBy(q => q.a.Kod).ToListAsync();
 
 
 
@@ -110,13 +110,26 @@ namespace HR.Application.Services.PDO
         private string GenerateNextKODFromDb()
         {
 
-                 int maxId = _dbContext.PDOKumpulanPerkhidmatan
-                .Select(c => c.Id)  // Or use your primary key name
-                 .AsEnumerable()    // <-- Force client-side evaluation
-                 .DefaultIfEmpty(0)
+            //     int maxId = _dbContext.PDOKumpulanPerkhidmatan
+            //    .Select(c => c.Id)  // Or use your primary key name
+            //     .AsEnumerable()    // <-- Force client-side evaluation
+            //     .DefaultIfEmpty(0)
+            //    .Max();
+
+            //return (maxId + 1).ToString("D3"); // Formats to 3-digit KOD like "001"
+
+            // Get the max Kod value as string, parse it to int
+            var kodList = _dbContext.PDOKumpulanPerkhidmatan
+        .Select(c => c.Kod)
+        .ToList();
+
+            int maxKod = kodList
+                .Where(k => !string.IsNullOrEmpty(k) && k.All(char.IsDigit))
+                .Select(k => int.Parse(k))
+                .DefaultIfEmpty(0)
                 .Max();
 
-            return (maxId + 1).ToString("D3"); // Formats to 3-digit KOD like "001"
+            return (maxKod + 1).ToString("D3");
 
         }
         public async Task<bool> CreateAsync(KumpulanPerkhidmatanDto perkhidmatanDto)
@@ -170,7 +183,7 @@ namespace HR.Application.Services.PDO
                   join b2 in _dbContext.PDORujStatusPermohonan
                       on b.KodRujStatusPermohonan equals b2.Kod
                   where b.StatusAktif == true && a.Id == id
-                        select new { a, b, b2 } 
+                  select new { a, b, b2 }
                     ).FirstOrDefaultAsync();
 
                 PDOKumpulanPerkhidmatan? jsonObj = null;
@@ -186,11 +199,12 @@ namespace HR.Application.Services.PDO
                     Keterangan = dtoSource.Keterangan,
                     StatusPermohonan = data.b2.Nama,
                     TarikhKemaskini = data.b.TarikhKemaskini,
+                    UlasanPengesah = dtoSource.UlasanPengesah,
                     Ulasan = dtoSource.Ulasan,
                     IndikatorSkim = dtoSource.IndikatorSkim,
                     IndikatorTanpaSkim = dtoSource.IndikatorTanpaSkim,
                     KodJana = dtoSource.KodJana,
-                    StatusAktif= dtoSource.StatusAktif
+                    StatusAktif = dtoSource.StatusAktif
                 };
                 return result;
             }
@@ -257,7 +271,7 @@ namespace HR.Application.Services.PDO
                     var perkhidmatanupdate = MapToEntity(perkhidmatanDto);
                     perkhidmatanupdate.StatusAktif = perkhidmatanDto.StatusAktif;
                     perkhidmatanupdate.Ulasan = perkhidmatanDto.Ulasan;
-                    
+
 
                     var result = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(perkhidmatanupdate);
                     await _unitOfWork.SaveChangesAsync();
@@ -271,7 +285,7 @@ namespace HR.Application.Services.PDO
                     ButiranKemaskiniperkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
                     ButiranKemaskiniperkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
 
-                    perkhidmatan.ButiranKemaskini= JsonConvert.SerializeObject(ButiranKemaskiniperkhidmatan);
+                    perkhidmatan.ButiranKemaskini = JsonConvert.SerializeObject(ButiranKemaskiniperkhidmatan);
 
 
                     var result = await _unitOfWork.Repository<PDOKumpulanPerkhidmatan>().UpdateAsync(perkhidmatan);
@@ -305,7 +319,7 @@ namespace HR.Application.Services.PDO
                 }
 
 
-                    return true;
+                return true;
             }
             catch (Exception ex)
             {
@@ -377,7 +391,7 @@ namespace HR.Application.Services.PDO
                     Ulasan = x.Ulasan,
                     IndikatorTanpaSkim = x.IndikatorTanpaSkim,
                     IndikatorSkim = x.IndikatorSkim,
-                    KodJana=x.KodJana
+                    KodJana = x.KodJana
 
                 }).ToList();
 
@@ -412,7 +426,7 @@ namespace HR.Application.Services.PDO
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                         StatusPermohonan = b2.Nama,
                                         TarikhKemaskini = b.TarikhKemaskini,
-                                         KodJana = a.KodJana,
+                                        KodJana = a.KodJana,
                                         IndikatorSkim = a.IndikatorSkim,
                                         IndikatorTanpaSkim = a.IndikatorTanpaSkim
 
@@ -460,7 +474,7 @@ namespace HR.Application.Services.PDO
 
                 KumpulanPerkhidmatanRefStatusDto obj = JsonConvert.DeserializeObject<KumpulanPerkhidmatanRefStatusDto>(result.ButiranKemaskini);
                 obj.KodRujStatusPermohonan = string.Empty;
-               
+
 
                 return obj;
             }
@@ -481,7 +495,7 @@ namespace HR.Application.Services.PDO
                 // Step 1: update into PDO_KumpulanPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
-                perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
+                perkhidmatan.UlasanPengesah = perkhidmatanDto.UlasanPengesah;
                 //if (!string.IsNullOrWhiteSpace(perkhidmatan.ButiranKemaskini))
                 //{
                 //    perkhidmatan.ButiranKemaskini = null;
@@ -627,7 +641,7 @@ namespace HR.Application.Services.PDO
                     perkhidmatan = MapToEntity(perkhidmatanDto);
                     perkhidmatan.StatusAktif = perkhidmatanDto.StatusAktif;
                     perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
-                  
+
 
                     //perkhidmatan.ButiranKemaskini = JsonConvert.SerializeObject(ButiranKemaskiniperkhidmatan);
 
@@ -720,10 +734,10 @@ namespace HR.Application.Services.PDO
                 Kod = dto.Kod,
                 Nama = dto.Nama,
                 Keterangan = dto.Keterangan,
-                IndikatorSkim=dto.IndikatorSkim,
+                IndikatorSkim = dto.IndikatorSkim,
                 IndikatorTanpaSkim = dto.IndikatorTanpaSkim,
                 ButiranKemaskini = dto.ButiranKemaskini,
-                KodJana=dto.KodJana
+                KodJana = dto.KodJana
             };
         }
         private PDOKumpulanPerkhidmatan MapToHantarEntity(KumpulanPerkhidmatanHantarDto dto)
@@ -804,11 +818,11 @@ namespace HR.Application.Services.PDO
                     return true;
                 }
 
-               
 
 
 
-                
+
+
             }
             catch (Exception ex)
             {
