@@ -81,7 +81,7 @@ namespace HR.Application.DTOs.PDO
     {
         public int Id { get; set; }
         public string Kod { get; set; }
-        public string Nama { get; set; }
+        public string Jawatan { get; set; }
         public string Agensi { get; set; }
         
 

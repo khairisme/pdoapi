@@ -208,15 +208,17 @@ namespace HR.Application.Services.PDO
 
             try
             {
-                var query = from jawatan in _context.PDOJawatan
-                            join unit in _context.PDOUnitOrganisasi
-                                on jawatan.IdUnitOrganisasi equals unit.Id
-                            where jawatan.IndikatorKetuaPerkhidmatan == true
-                                  && unit.KodCartaOrganisasi.Contains(KodCarta)
+                var query = from a in _context.PDOJawatan
+                            join b in _context.PDOUnitOrganisasi
+                                on a.IdUnitOrganisasi equals b.Id
+                            where a.StatusAktif == true
+                                  && a.IndikatorKetuaPerkhidmatan == true
+                                  && b.StatusAktif == true
+                                  && b.KodCartaOrganisasi.Contains(KodCarta)
                             select new CarianKetuaPerkhidmatanResponseDto
                             {
-                                Id = jawatan.Id,
-                                Nama = jawatan.Nama ?? string.Empty
+                                Id = a.Id,
+                                Nama = a.Nama ?? string.Empty
                             };
 
                 var result = await query.ToListAsync();
@@ -232,9 +234,10 @@ namespace HR.Application.Services.PDO
         }
 
 
+
         public async Task<List<SenaraiKetuaPerkhidmatanResponseDto>> GetSenaraiKetuaPerkhidmatan(string NamaJawatan, string KodCartaOrganisasi)
         {
-            _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Fetching Ketua Perkhidmatan for NamaJawatan = {NamaJawatan}, KodCartaOrganisasi = {KodCartaOrganisasi}", NamaJawatan, KodCartaOrganisasi);
+            _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Fetching Ketua Perkhidmatan for KodCartaOrganisasi = {KodCartaOrganisasi}", KodCartaOrganisasi);
 
             try
             {
@@ -242,14 +245,14 @@ namespace HR.Application.Services.PDO
                             join b in _context.PDOUnitOrganisasi
                                 on a.IdUnitOrganisasi equals b.Id
                             where a.StatusAktif == true
+                                  && a.IndikatorKetuaPerkhidmatan == true
                                   && b.StatusAktif == true
-                                 // && a.Nama.Contains(NamaJawatan)
                                   && b.KodCartaOrganisasi.Contains(KodCartaOrganisasi)
                             select new SenaraiKetuaPerkhidmatanResponseDto
                             {
                                 Id = a.Id,
                                 Kod = a.Kod ?? string.Empty,
-                                Nama = a.Nama ?? string.Empty,
+                                Jawatan = a.Nama ?? string.Empty,
                                 Agensi = b.Nama ?? string.Empty
                             };
 
@@ -260,7 +263,7 @@ namespace HR.Application.Services.PDO
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "GetSenaraiKetuaPerkhidmatan: Error occurred while fetching data for NamaJawatan = {NamaJawatan}, KodCartaOrganisasi = {KodCartaOrganisasi}", NamaJawatan, KodCartaOrganisasi);
+                _logger.LogError(ex, "GetSenaraiKetuaPerkhidmatan: Error occurred while fetching data for KodCartaOrganisasi = {KodCartaOrganisasi}", KodCartaOrganisasi);
                 throw;
             }
         }
