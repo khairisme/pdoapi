@@ -1132,6 +1132,7 @@ namespace HR.Application.Services.PDO
         select new SkimPerkhidmatanDetailsDTO
         {
             Id = a.Id,
+            IdJawatan=d.Id,
             Kod = a.Kod.Trim(),
             Nama = a.Nama.Trim(),
             KodJawatan = d.Kod ?? "",

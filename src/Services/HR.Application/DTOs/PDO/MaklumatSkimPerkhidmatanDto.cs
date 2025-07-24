@@ -166,6 +166,7 @@ namespace HR.Application.DTOs.PDO
     public class SkimPerkhidmatanDetailsDTO
     {
         public int Id { get; set; }
+        public int IdJawatan { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string KodJawatan { get; set; }
