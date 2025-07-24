@@ -40,7 +40,8 @@ namespace HR.Application.Services.PDO
                 var entities = dto.Select(d => new PDOSkimKetuaPerkhidmatan
                 {
                     IdSkimPerkhidmatan = d.IdSkimPerkhidmatan,
-                    IdJawatan = d.IdKetuaPerkhidmatan
+                    IdJawatan = d.IdKetuaPerkhidmatan,
+                    StatusAktif = true
                 }).ToList();
 
                 await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddRangeAsync(entities);
