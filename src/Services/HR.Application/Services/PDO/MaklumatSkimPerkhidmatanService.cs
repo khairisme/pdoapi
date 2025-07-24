@@ -1127,7 +1127,7 @@ namespace HR.Application.Services.PDO
         join b in _dbContext.PDOSkimKetuaPerkhidmatan on a.Id equals b.IdSkimPerkhidmatan into ab
         from b in ab.DefaultIfEmpty()
         join d in _dbContext.PDOJawatan on b.IdJawatan equals d.Id into bd
-        from d in bd.DefaultIfEmpty()==true
+        from d in bd.DefaultIfEmpty()
         where a.Id == id && b.StatusAktif
         select new SkimPerkhidmatanDetailsDTO
         {
