@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Shared.Contracts.DTOs;
 
 namespace HR.API.Controllers.PDO;
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/pdo/[controller]")]
 public class SkimKetuaPerkhidmatanController : ControllerBase

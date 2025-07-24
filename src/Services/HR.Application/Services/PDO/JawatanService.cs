@@ -243,7 +243,7 @@ namespace HR.Application.Services.PDO
                                 on a.IdUnitOrganisasi equals b.Id
                             where a.StatusAktif == true
                                   && b.StatusAktif == true
-                                  && a.Nama.Contains(NamaJawatan)
+                                 // && a.Nama.Contains(NamaJawatan)
                                   && b.KodCartaOrganisasi.Contains(KodCartaOrganisasi)
                             select new SenaraiKetuaPerkhidmatanResponseDto
                             {
