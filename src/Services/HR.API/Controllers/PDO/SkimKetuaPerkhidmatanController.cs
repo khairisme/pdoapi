@@ -61,10 +61,10 @@ public class SkimKetuaPerkhidmatanController : ControllerBase
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpPut("tindakan/{id}")]
-    public async Task<IActionResult> SoftDeleteSkimKetua(int id)
+    [HttpPut("tindakan")]
+    public async Task<IActionResult> SoftDeleteSkimKetua([FromQuery] int IdSkim, [FromQuery] int IdJawatan)
     {
-        var success = await _skimKetuaPerkhidmatanService.SoftDeleteSkimKetuaPerkhidmatanAsync(id);
+        var success = await _skimKetuaPerkhidmatanService.SoftDeleteSkimKetuaPerkhidmatanAsync(IdSkim, IdJawatan);
         if (!success)
             return NotFound(new { message = "Record not found" });
 

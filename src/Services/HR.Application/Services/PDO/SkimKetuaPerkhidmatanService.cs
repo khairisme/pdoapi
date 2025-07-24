@@ -40,7 +40,7 @@ namespace HR.Application.Services.PDO
                 var entities = dto.Select(d => new PDOSkimKetuaPerkhidmatan
                 {
                     IdSkimPerkhidmatan = d.IdSkimPerkhidmatan,
-                    IdKetuaPerkhidmatan = d.IdKetuaPerkhidmatan
+                    IdJawatan = d.IdKetuaPerkhidmatan
                 }).ToList();
 
                 await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddRangeAsync(entities);
@@ -57,9 +57,11 @@ namespace HR.Application.Services.PDO
             }
         }
 
-        public async Task<bool> SoftDeleteSkimKetuaPerkhidmatanAsync(int id)
+        public async Task<bool> SoftDeleteSkimKetuaPerkhidmatanAsync(int IdSkim,int IdJawatan)
         {
-            var entity = await _context.PDOSkimKetuaPerkhidmatan.FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == id);
+            var entity = await _context.PDOSkimKetuaPerkhidmatan.FirstOrDefaultAsync(x => x.IdJawatan== IdJawatan
+             && x.IdSkimPerkhidmatan==IdSkim
+            );
             if (entity == null) return false;
 
             entity.StatusAktif = false;

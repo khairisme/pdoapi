@@ -11,6 +11,6 @@ namespace HR.Application.Interfaces.PDO
     {
         Task<bool> CreateAsync(List<SkimKetuaPerkhidmatanRequestDto> dto);
 
-        Task<bool> SoftDeleteSkimKetuaPerkhidmatanAsync(int id);
+        Task<bool> SoftDeleteSkimKetuaPerkhidmatanAsync(int IdSkim,int IdJawatan);
     }
 }
