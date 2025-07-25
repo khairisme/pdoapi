@@ -785,7 +785,7 @@ namespace HR.Application.Services.PDO
 
                 if (existingSkim == null)
                 {
-                    _logger.LogError("MaklumatSkimPerkhidmatan with ID {Id} not found", dto.Id);
+                    _logger.LogError("MaklumatSkimPerkhidmatan with ID {Id} not found", perkhidmatanDto.Id);
                     return false;
                 }
 
