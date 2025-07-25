@@ -778,83 +778,142 @@ namespace HR.Application.Services.PDO
 
             try
             {
-                var skimPerkhidmatan = await _dbContext.PDOSkimPerkhidmatan
-                    .Where(x => x.Id == perkhidmatanDto.Id && x.Kod == perkhidmatanDto.Kod)
+                // Step 1: Fetch existing record
+                var existingSkim = await _dbContext.PDOSkimPerkhidmatan
+                    .Where(x => x.Id == perkhidmatanDto.Id)
                     .FirstOrDefaultAsync();
 
-                if (skimPerkhidmatan == null)
+                if (existingSkim == null)
                 {
-                    _logger.LogError("SkimPerkhidmatan with ID {Id} not found", perkhidmatanDto.Id);
+                    _logger.LogError("MaklumatSkimPerkhidmatan with ID {Id} not found", dto.Id);
                     return false;
                 }
 
-                //if (skimPerkhidmatan.KodRujStatusSkim=="00")
-                //{
-                //    // Direct update if not active
-                //    skimPerkhidmatan = MapToEntity(perkhidmatanDto);
-                //    skimPerkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
+                if (existingSkim.KodRujStatusSkim == "00")
+                {
+                    // Direct update
+                    var updatedSkim = MapToEntity(perkhidmatanDto);
+                    updatedSkim.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
 
-                //    await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(skimPerkhidmatan);
-                //    await _unitOfWork.SaveChangesAsync();
-                //    await _unitOfWork.CommitAsync();
-                //}
-                //else
-                //{
-                    // Serialize the update details in ButiranKemaskini
-                    var detailsForLog = MapToEntityUpdate(perkhidmatanDto);
-                    detailsForLog.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
-                    skimPerkhidmatan.ButiranKemaskini = JsonConvert.SerializeObject(detailsForLog);
-
-                    await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(skimPerkhidmatan);
+                    await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(updatedSkim);
                     await _unitOfWork.SaveChangesAsync();
 
-                    // Step 2: Deactivate existing status
-                    var existingStatus2 = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == skimPerkhidmatan.Id && x.StatusAktif);
 
-                    if (existingStatus2 != null)
+                    // Step 2: Insert PDO_GredSkimPerkhidmatan for each IdGred in comma-separated list
+                    var gredLinksToDelete = await _dbContext.PDOGredSkimPerkhidmatan
+    .Where(x => x.IdSkimPerkhidmatan == existingSkim.Id)
+    .ToListAsync();
+
+                    _dbContext.PDOGredSkimPerkhidmatan.RemoveRange(gredLinksToDelete);
+                    await _dbContext.SaveChangesAsync();
+                    // Step 2: Insert new entries
+                    var idGredList = perkhidmatanDto.IdGred
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(id => Convert.ToInt32(id.Trim()))
+                            .ToList();
+
+                    foreach (var idGred in idGredList)
                     {
-                        existingStatus2.StatusAktif = false;
-                        existingStatus2.TarikhPinda = DateTime.Now;
+                        var gredLink = new PDOGredSkimPerkhidmatan
+                        {
+                            IdGred = idGred,
+                            IdSkimPerkhidmatan = perkhidmatanDto.Id
+                        };
+
+                        await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>().AddAsync(gredLink);
+                    }
+
+                    await _unitOfWork.SaveChangesAsync(); // Commit inserts 
+
+                    // Step 3: Insert PDOSkimKetuaPerkhidmatan for each IdJawatan in comma-separated list
+                    var ketuLinksToDelete = await _dbContext.PDOSkimKetuaPerkhidmatan
+                    .Where(x => x.IdSkimPerkhidmatan == existingSkim.Id)
+                    .ToListAsync();
+
+                    _dbContext.PDOSkimKetuaPerkhidmatan.RemoveRange(ketuLinksToDelete);
+                    await _dbContext.SaveChangesAsync();
+                    // Step 4: Insert new entries
+                    var idJawtanList = perkhidmatanDto.IdJawatan
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(id => Convert.ToInt32(id.Trim()))
+                            .ToList();
+
+                    foreach (var idJawatn in idJawtanList)
+                    {
+                        var jawatnLink = new PDOSkimKetuaPerkhidmatan
+                        {
+                            IdJawatan = idJawatn,
+                            IdSkimPerkhidmatan = perkhidmatanDto.Id,
+                            StatusAktif = true
+                        };
+
+                        await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddAsync(jawatnLink);
+                    }
+
+                    await _unitOfWork.SaveChangesAsync(); // Commit inserts 
+
+
+                    // Step 2: Deactivate existing status
+                    var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
+                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif);
+
+                    if (existingStatus != null)
+                    {
+                        existingStatus.StatusAktif = false;
+                        existingStatus.TarikhPinda = DateTime.Now;
                         await _unitOfWork.SaveChangesAsync();
                     }
 
                     // Step 3: Insert new status
-                    var statusEntity2 = new PDOStatusPermohonanSkimPerkhidmatan
+                    var statusEntity = new PDOStatusPermohonanSkimPerkhidmatan
                     {
-                        IdSkimPerkhidmatan = skimPerkhidmatan.Id,
+                        IdSkimPerkhidmatan = existingSkim.Id,
                         KodRujStatusPermohonan = "02",
                         TarikhKemasKini = DateTime.Now,
                         StatusAktif = true
                     };
-                    await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>().AddAsync(statusEntity2);
+                    await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>().AddAsync(statusEntity);
                     await _unitOfWork.SaveChangesAsync();
-                //}
 
-                //// Step 2: Deactivate existing status
-                //var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
-                //    .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == skimPerkhidmatan.Id && x.StatusAktif);
+                }
+                else
+                {
+                    // Serialize the update details in ButiranKemaskini
+                    var detailsForLog = MapToEntityUpdate(perkhidmatanDto);
+                    detailsForLog.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
 
-                //if (existingStatus != null)
-                //{
-                //    existingStatus.StatusAktif = false;
-                //    existingStatus.TarikhPinda = DateTime.Now;
-                //    await _unitOfWork.SaveChangesAsync();
-                //}
+                    existingSkim.ButiranKemaskini = JsonConvert.SerializeObject(detailsForLog);
 
-                //// Step 3: Insert new status
-                //var statusEntity = new PDOStatusPermohonanSkimPerkhidmatan
-                //{
-                //    IdSkimPerkhidmatan = skimPerkhidmatan.Id,
-                //    KodRujStatusPermohonan = "02",
-                //    TarikhKemasKini = DateTime.Now,
-                //    StatusAktif = true
-                //};
+                    await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(existingSkim);
+                    await _unitOfWork.SaveChangesAsync();
 
-                //await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>().AddAsync(statusEntity);
-                //await _unitOfWork.SaveChangesAsync();
+                    // Step 2: Deactivate existing status
+                    var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
+                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif);
+
+                    if (existingStatus != null)
+                    {
+                        existingStatus.StatusAktif = false;
+                        existingStatus.TarikhPinda = DateTime.Now;
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+                    // Step 3: Insert new status
+                    var statusEntity = new PDOStatusPermohonanSkimPerkhidmatan
+                    {
+                        IdSkimPerkhidmatan = existingSkim.Id,
+                        KodRujStatusPermohonan = "02",
+                        TarikhKemasKini = DateTime.Now,
+                        StatusAktif = true
+                    };
+                    await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>().AddAsync(statusEntity);
+                    await _unitOfWork.SaveChangesAsync();
+
+                }
+
+
+
                 await _unitOfWork.CommitAsync();
-
                 return true;
             }
             catch (Exception ex)
