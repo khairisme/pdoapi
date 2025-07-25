@@ -1,6 +1,7 @@
 ﻿using HR.Core.Entities.PDO;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,6 +70,10 @@ namespace HR.Application.DTOs.PDO
         public string? ButiranKemaskini { get; set; }
         public string? KodRujStatusSkim { get; set; }
         public string? KodRujStatusPermohonan { get; set; }
+
+        public List<GredResponseDTO> gredResponseDTOs { get; set; }
+
+        public List<SkimKetuaPerkhidmatanResponseDTO> skimKetuaPerkhidmatanResponseDTOs { get; set; }
     }
     public class MaklumatSkimPerkhidmatanResponseDto
     {
@@ -158,6 +163,32 @@ namespace HR.Application.DTOs.PDO
     public class SkimPerkhidmatanRefStatusDto : MaklumatSkimPerkhidmatanCreateRequestDto
     {
         public string KodRujStatusSkim { get; set; }
+    }
+
+    public class PDOUpdateSkimPerkhidmatan 
+    {
+        public int Id { get;set; }
+        public int IdKlasifikasiPerkhidmatan { get; set; }
+        public int IdKumpulanPerkhidmatan { get; set; }
+        public int? IdKetuaPerkhidmatan { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string? Keterangan { get; set; }
+        public bool IndikatorSkimKritikal { get; set; }
+        public bool IndikatorKenaikanPGT { get; set; }
+        public string? ButiranKemaskini { get; set; }
+        public string? KodRujStatusSkim { get; set; }
+
+        public bool? IndikatorSkim { get; set; }
+
+        public string? KodRujMatawang { get; set; }
+        public string? IdGred { get; set; }
+        public string? IdJawatan { get; set; }
+        public decimal ? Jumlah { get; set; }
+
+        public List<GredResponseDTO> gredResponseDTOs { get; set; }
+
+        public List<SkimKetuaPerkhidmatanResponseDTO> skimKetuaPerkhidmatanResponseDTOs { get; set; }
     }
     public class GredResponseDTO
     {

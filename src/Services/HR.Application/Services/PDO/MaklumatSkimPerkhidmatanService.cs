@@ -497,8 +497,9 @@ namespace HR.Application.Services.PDO
                 else
                 {
                     // Serialize the update details in ButiranKemaskini
-                    var detailsForLog = MapToEntity(dto);
+                    var detailsForLog = MapToEntityUpdate(dto);
                     detailsForLog.KodRujStatusSkim = dto.KodRujStatusSkim;
+                    
                     existingSkim.ButiranKemaskini = JsonConvert.SerializeObject(detailsForLog);
 
                     await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(existingSkim);
@@ -555,6 +556,29 @@ namespace HR.Application.Services.PDO
                 KodRujMatawang = dto.KodRujMatawang,
                 Jumlah = dto.Jumlah,
                 ButiranKemaskini = dto.ButiranKemaskini
+
+            };
+        }
+
+
+        private PDOUpdateSkimPerkhidmatan MapToEntityUpdate(MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        {
+            return new PDOUpdateSkimPerkhidmatan
+            {
+                Id = dto.Id,
+                Kod = dto.Kod,
+                Nama = dto.Nama,
+                Keterangan = dto.Keterangan,
+                IdKlasifikasiPerkhidmatan = dto.IdKlasifikasiPerkhidmatan,
+                IdKumpulanPerkhidmatan = dto.IdKumpulanPerkhidmatan,
+                IndikatorSkim = dto.IndikatorSkim,
+                KodRujMatawang = dto.KodRujMatawang,
+                Jumlah = dto.Jumlah,
+                ButiranKemaskini = dto.ButiranKemaskini,
+                IdGred=dto.IdGred,
+                IdJawatan=dto.IdJawatan,
+                gredResponseDTOs=dto.gredResponseDTOs,
+                skimKetuaPerkhidmatanResponseDTOs=dto.skimKetuaPerkhidmatanResponseDTOs
 
             };
         }
@@ -777,7 +801,7 @@ namespace HR.Application.Services.PDO
                 //else
                 //{
                     // Serialize the update details in ButiranKemaskini
-                    var detailsForLog = MapToEntity(perkhidmatanDto);
+                    var detailsForLog = MapToEntityUpdate(perkhidmatanDto);
                     detailsForLog.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
                     skimPerkhidmatan.ButiranKemaskini = JsonConvert.SerializeObject(detailsForLog);
 
