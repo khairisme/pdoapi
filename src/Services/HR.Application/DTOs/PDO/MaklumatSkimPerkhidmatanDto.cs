@@ -26,7 +26,10 @@ namespace HR.Application.DTOs.PDO
         public int IdKumpulanPerkhidmatan { get; set; }
         public bool StatusAktif { get; set; } = true;
         public List<GredResponseDTO> gredResponseDTOs { get; set; }
+
+        public List<SkimKetuaPerkhidmatanResponseDTO> skimKetuaPerkhidmatanResponseDTOs { get; set; }
         public string idGred { get; set; }
+        public string idJawatan { get; set; }
         public bool? carianSkimId { get; set; }
         public bool indikatorSkimKritikal { get; set; }
         public bool indikatorKenaikanPGT { get; set; }
@@ -52,6 +55,7 @@ namespace HR.Application.DTOs.PDO
         public bool IndikatorSkimKritikal { get; set; }
         public bool IndikatorKenaikanPGT { get; set; }
         public string IdGred { get; set; }
+        public string IdJawatan { get; set; }
         public int Id { get; set; } = 0;
         public string KlasifikasiKod { get; set; }
         public string KumpulanKod { get; set; }
@@ -163,8 +167,20 @@ namespace HR.Application.DTOs.PDO
         public string Nama { get; set; }
         public string Keterangan { get; set; }
     }
+
+
     public class SkimPerkhidmatanDetailsDTO
     {
+        public int Id { get; set; }
+        public int IdJawatan { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string KodJawatan { get; set; }
+        public string NamaJawatan { get; set; }
+    }
+    public class SkimKetuaPerkhidmatanResponseDTO
+    {
+        public int Bil { get; set; }
         public int Id { get; set; }
         public int IdJawatan { get; set; }
         public string Kod { get; set; }

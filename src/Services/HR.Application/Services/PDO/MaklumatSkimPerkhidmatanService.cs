@@ -55,7 +55,10 @@ namespace HR.Application.Services.PDO
                                        StatusPermohonan = b,
                                        GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
                                                    where g.IdSkimPerkhidmatan == a.Id
-                                                   select g.IdGred.ToString()).ToList()
+                                                   select g.IdGred.ToString()).ToList(),
+                                       ketuList = (from g in _dbContext.PDOSkimKetuaPerkhidmatan
+                                                   where g.IdSkimPerkhidmatan == a.Id
+                                                   select g.IdJawatan.ToString()).ToList()
                                    }).ToListAsync();
 
                 var result = query
@@ -331,8 +334,23 @@ namespace HR.Application.Services.PDO
                                         Kod = gred.Kod,
                                         Nama = gred.Nama,
                                         Keterangan = gred.Keterangan
-                                    }).ToList()
-                    }
+                                    }).ToList(),
+
+                        SkimJawatnList = (
+                                          from f in _dbContext.PDOSkimKetuaPerkhidmatan 
+                                          join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
+                                          where a.Id == b.IdSkimPerkhidmatan && f.StatusAktif
+                                                     && jawatan.StatusAktif
+                                          select new SkimKetuaPerkhidmatanResponseDTO
+                                          {
+                                              Id = a.Id,
+                                              IdJawatan = f.Id,
+                                              Kod = a.Kod.Trim(),
+                                              Nama = a.Nama.Trim(),
+                                              KodJawatan = jawatan.Kod ?? "",
+                                              NamaJawatan = jawatan.Nama ?? ""
+                                          }).ToList()
+            }
                 ).FirstOrDefaultAsync();
 
                 if (query == null)
@@ -353,6 +371,14 @@ namespace HR.Application.Services.PDO
                     return g;
                 }).ToList();
 
+
+                // Add Bil number to each SkimKetua  item
+                var SkimKetuaListWithBil = query.SkimJawatnList.Select((g, index) =>
+                {
+                    g.Bil = index + 1;
+                    return g;
+                }).ToList();
+
                 var result = new MaklumatSkimPerkhidmatanSearchResponseDto
                 {
                     Id = dtoSource.Id,
@@ -367,7 +393,9 @@ namespace HR.Application.Services.PDO
                     IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
                     StatusSkimPerkhidmatan = query.a2.Nama,
                     gredResponseDTOs = gredListWithBil,
+                    skimKetuaPerkhidmatanResponseDTOs = SkimKetuaListWithBil,
                     idGred = string.Join(",", gredListWithBil.Select(g => g.Id.ToString())),
+                    idJawatan = string.Join(",", SkimKetuaListWithBil.Select(g => g.Id.ToString())),
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId = dtoSource.IndikatorSkim,
@@ -435,6 +463,32 @@ namespace HR.Application.Services.PDO
                         };
 
                         await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>().AddAsync(gredLink);
+                    }
+
+                    await _unitOfWork.SaveChangesAsync(); // Commit inserts 
+
+                    // Step 3: Insert PDOSkimKetuaPerkhidmatan for each IdJawatan in comma-separated list
+                    var ketuLinksToDelete = await _dbContext.PDOSkimKetuaPerkhidmatan
+                    .Where(x => x.IdSkimPerkhidmatan == existingSkim.Id)
+                    .ToListAsync();
+
+                    _dbContext.PDOSkimKetuaPerkhidmatan.RemoveRange(ketuLinksToDelete);
+                    await _dbContext.SaveChangesAsync();
+                    // Step 4: Insert new entries
+                    var idJawtanList = dto.IdJawatan
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(id => Convert.ToInt32(id.Trim()))
+                            .ToList();
+
+                    foreach (var idJawatn in idJawtanList)
+                    {
+                        var jawatnLink = new PDOSkimKetuaPerkhidmatan
+                        {
+                            IdJawatan = idJawatn,
+                            IdSkimPerkhidmatan = dto.Id
+                        };
+
+                        await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddAsync(jawatnLink);
                     }
 
                     await _unitOfWork.SaveChangesAsync(); // Commit inserts 
@@ -619,6 +673,29 @@ namespace HR.Application.Services.PDO
                             };
 
                             await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>().AddAsync(gredLink);
+                        }
+
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+
+                    // Step 4: Insert PDO_SkimKetuaPerkhidmatan
+                    if (!string.IsNullOrEmpty(dto.IdJawatan))
+                    {
+                        var idJawatanList = dto.IdJawatan
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(id => Convert.ToInt32(id.Trim()))
+                            .ToList();
+
+                        foreach (var idJawatan in idJawatanList)
+                        {
+                            var jawatanLink = new PDOSkimKetuaPerkhidmatan
+                            {
+                                IdJawatan = idJawatan,
+                                IdSkimPerkhidmatan = perkhidmatan.Id
+                            };
+
+                            await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddAsync(jawatanLink);
                         }
 
                         await _unitOfWork.SaveChangesAsync();
@@ -887,11 +964,7 @@ namespace HR.Application.Services.PDO
                 // Step 1: update into PDO_SkimPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
-                //perkhidmatan.Ulasan = perkhidmatanDto.Ulasan;
-                //if (!string.IsNullOrWhiteSpace(perkhidmatan.ButiranKemaskini))
-                //{
-                //    perkhidmatan.ButiranKemaskini = null;
-                //}
+               
 
                 var result = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(perkhidmatan);
                 await _unitOfWork.SaveChangesAsync();
@@ -899,7 +972,61 @@ namespace HR.Application.Services.PDO
 
 
 
-                // Step 2: Deactivate existing PDO_StatusPermohonanSkimPerkhidmatan record
+                // Step 2: Insert PDO_GredSkimPerkhidmatan for each IdGred in comma-separated list
+                var gredLinksToDelete = await _dbContext.PDOGredSkimPerkhidmatan
+.Where(x => x.IdSkimPerkhidmatan == perkhidmatanDto.Id)
+.ToListAsync();
+
+                _dbContext.PDOGredSkimPerkhidmatan.RemoveRange(gredLinksToDelete);
+                await _dbContext.SaveChangesAsync();
+                // Step 2: Insert new entries
+                var idGredList = perkhidmatanDto.IdGred
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => Convert.ToInt32(id.Trim()))
+                        .ToList();
+
+                foreach (var idGred in idGredList)
+                {
+                    var gredLink = new PDOGredSkimPerkhidmatan
+                    {
+                        IdGred = idGred,
+                        IdSkimPerkhidmatan = perkhidmatanDto.Id
+                    };
+
+                    await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>().AddAsync(gredLink);
+                }
+
+                await _unitOfWork.SaveChangesAsync(); // Commit inserts 
+
+
+                // Step 3: Insert PDOSkimKetuaPerkhidmatan for each IdJawatan in comma-separated list
+                var ketuLinksToDelete = await _dbContext.PDOSkimKetuaPerkhidmatan
+                .Where(x => x.IdSkimPerkhidmatan == perkhidmatanDto.Id)
+                .ToListAsync();
+
+                _dbContext.PDOSkimKetuaPerkhidmatan.RemoveRange(ketuLinksToDelete);
+                await _dbContext.SaveChangesAsync();
+                // Step 2: Insert new entries
+                var idJawtanList = perkhidmatanDto.IdJawatan
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(id => Convert.ToInt32(id.Trim()))
+                        .ToList();
+
+                foreach (var idJawatn in idJawtanList)
+                {
+                    var jawatnLink = new PDOSkimKetuaPerkhidmatan
+                    {
+                        IdJawatan = idJawatn,
+                        IdSkimPerkhidmatan = perkhidmatanDto.Id
+                    };
+
+                    await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddAsync(jawatnLink);
+                }
+
+                await _unitOfWork.SaveChangesAsync(); // Commit inserts 
+
+
+                // Step 4: Deactivate existing PDO_StatusPermohonanSkimPerkhidmatan record
                 var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
                         .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
 
@@ -911,7 +1038,7 @@ namespace HR.Application.Services.PDO
                 }
 
 
-                // Step 3: Insert into PDO_StatusPermohonanSkimPerkhidmatan
+                // Step 5: Insert into PDO_StatusPermohonanSkimPerkhidmatan
                 var statusEntity = new PDOStatusPermohonanSkimPerkhidmatan
                 {
                     IdSkimPerkhidmatan = perkhidmatan.Id, // use the ID from step 1
@@ -1076,7 +1203,10 @@ namespace HR.Application.Services.PDO
                         b2,
                         GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
                                     where g.IdSkimPerkhidmatan == a.Id
-                                    select g.IdGred.ToString()).ToList()
+                                    select g.IdGred.ToString()).ToList(),
+                        JawatanList = (from g in _dbContext.PDOSkimKetuaPerkhidmatan
+                                    where g.IdSkimPerkhidmatan == a.Id
+                                    select g.IdJawatan.ToString()).ToList()
                     }
                 ).FirstOrDefaultAsync();
 
@@ -1105,6 +1235,7 @@ namespace HR.Application.Services.PDO
                     IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
                     StatusSkimPerkhidmatan = query.a2.Nama,
                     idGred = string.Join(",", query.GredList),
+                    idJawatan = string.Join(",", query.JawatanList),
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId = dtoSource.IndikatorSkim,
