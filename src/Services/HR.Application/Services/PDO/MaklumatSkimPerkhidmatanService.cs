@@ -661,7 +661,9 @@ namespace HR.Application.Services.PDO
                 IndikatorSkim = dto.IndikatorSkim,
                 KodRujMatawang = dto.KodRujMatawang,
                 Jumlah = dto.Jumlah,
-                ButiranKemaskini = dto.ButiranKemaskini
+                ButiranKemaskini = dto.ButiranKemaskini,
+                IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
+                IndikatorKenaikanPGT=dto.IndikatorKenaikanPGT
 
             };
         }
@@ -684,7 +686,9 @@ namespace HR.Application.Services.PDO
                 IdGred=dto.IdGred,
                 IdJawatan=dto.IdJawatan,
                 gredResponseDTOs=dto.gredResponseDTOs,
-                skimKetuaPerkhidmatanResponseDTOs=dto.skimKetuaPerkhidmatanResponseDTOs
+                skimKetuaPerkhidmatanResponseDTOs=dto.skimKetuaPerkhidmatanResponseDTOs,
+                IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
+                IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT
 
             };
         }
@@ -1283,7 +1287,7 @@ namespace HR.Application.Services.PDO
                 }
 
                 SkimPerkhidmatanRefStatusDto obj = JsonConvert.DeserializeObject<SkimPerkhidmatanRefStatusDto>(result.ButiranKemaskini);
-                obj.KodRujStatusSkim = string.Empty;
+              
 
 
                 return obj;
