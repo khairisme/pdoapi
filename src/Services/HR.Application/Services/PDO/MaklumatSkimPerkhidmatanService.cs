@@ -395,7 +395,7 @@ namespace HR.Application.Services.PDO
                     gredResponseDTOs = gredListWithBil,
                     skimKetuaPerkhidmatanResponseDTOs = SkimKetuaListWithBil,
                     idGred = string.Join(",", gredListWithBil.Select(g => g.Id.ToString())),
-                    idJawatan = string.Join(",", SkimKetuaListWithBil.Select(g => g.Id.ToString())),
+                    idJawatan = string.Join(",", SkimKetuaListWithBil.Select(g => g.IdJawatan.ToString())),
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId = dtoSource.IndikatorSkim,
