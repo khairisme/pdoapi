@@ -28,5 +28,7 @@ namespace HR.Core.Entities.PDO
         public decimal? Jumlah { get; set; }
         [NotMapped]
         public bool StatusAktif { get; set; }
+
+        public string? UlasanPengesah { get; set; }
     }
 }

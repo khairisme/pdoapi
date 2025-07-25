@@ -99,7 +99,8 @@ namespace HR.Application.Services.PDO
                             idGred = string.Join(",", idGredArray),
                             indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                             indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
-                            carianSkimId=dtoSource.IndikatorSkim,
+                            // carianSkimId=dtoSource.IndikatorSkim,
+                            carianSkimId=0,
                             StatusPermohonan = q.RujStatusPermohanan.Nama
 
                         };
@@ -398,7 +399,7 @@ namespace HR.Application.Services.PDO
                     idJawatan = string.Join(",", SkimKetuaListWithBil.Select(g => g.IdJawatan.ToString())),
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
-                    carianSkimId = dtoSource.IndikatorSkim,
+                    carianSkimId =0,// dtoSource.IndikatorSkim,
                     StatusPermohonan = query.b2.Nama,
                     KodRujStatusSkim = dtoSource.KodRujStatusSkim
                 };
@@ -413,6 +414,111 @@ namespace HR.Application.Services.PDO
         }
 
 
+        public async Task<MaklumatSkimPerkhidmatanSearchResponseDto?> GetSenaraiSkimPerkhidmatanByIdOldAsync(int id)
+        {
+            try
+            {
+                _logger.LogInformation("Getting SenaraiSkimPerkhidmatan by ID {Id} using Entity Framework", id);
+
+                var query = await (
+                    from a in _dbContext.PDOSkimPerkhidmatan
+                    join a2 in _dbContext.PDORujStatusSkim
+                        on a.KodRujStatusSkim equals a2.Kod
+                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+                        on a.Id equals b.IdSkimPerkhidmatan
+                    join b2 in _dbContext.PDORujStatusPermohonan
+                        on b.KodRujStatusPermohonan equals b2.Kod
+                    where a.Id == id && b.StatusAktif == true
+                    select new
+                    {
+                        a,
+                        a2,
+                        b,
+                        b2,
+                        GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
+                                    join gred in _dbContext.PDOGred on g.IdGred equals gred.Id
+                                    where g.IdSkimPerkhidmatan == a.Id
+                                    select new GredResponseDTO
+                                    {
+                                        Bil = 0, // will update below
+                                        Id = gred.Id,
+                                        Kod = gred.Kod,
+                                        Nama = gred.Nama,
+                                        Keterangan = gred.Keterangan
+                                    }).ToList(),
+
+                        SkimJawatnList = (
+                                          from f in _dbContext.PDOSkimKetuaPerkhidmatan
+                                          join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
+                                          where a.Id == b.IdSkimPerkhidmatan && f.StatusAktif
+                                                     && jawatan.StatusAktif
+                                          select new SkimKetuaPerkhidmatanResponseDTO
+                                          {
+                                              Id = a.Id,
+                                              IdJawatan = f.IdJawatan,
+                                              Kod = a.Kod.Trim(),
+                                              Nama = a.Nama.Trim(),
+                                              KodJawatan = jawatan.Kod ?? "",
+                                              NamaJawatan = jawatan.Nama ?? ""
+                                          }).ToList()
+                    }
+                ).FirstOrDefaultAsync();
+
+                if (query == null)
+                    return null;
+
+                PDOSkimPerkhidmatan? skimObj = null;
+                
+
+                var dtoSource = skimObj ?? query.a;
+
+                // Add Bil number to each Gred item
+                var gredListWithBil = query.GredList.Select((g, index) =>
+                {
+                    g.Bil = index + 1;
+                    return g;
+                }).ToList();
+
+
+                // Add Bil number to each SkimKetua  item
+                var SkimKetuaListWithBil = query.SkimJawatnList.Select((g, index) =>
+                {
+                    g.Bil = index + 1;
+                    return g;
+                }).ToList();
+
+                var result = new MaklumatSkimPerkhidmatanSearchResponseDto
+                {
+                    Id = dtoSource.Id,
+                    Kod = dtoSource.Kod,
+                    Nama = dtoSource.Nama,
+                    Keterangan = dtoSource.Keterangan,
+                    TarikhKemaskini = query.b.TarikhKemasKini,
+                    IndikatorSkim = dtoSource.IndikatorSkim,
+                    KodRujMatawang = dtoSource.KodRujMatawang,
+                    Jumlah = dtoSource.Jumlah,
+                    IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
+                    IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
+                    StatusSkimPerkhidmatan = query.a2.Nama,
+                    gredResponseDTOs = gredListWithBil,
+                    skimKetuaPerkhidmatanResponseDTOs = SkimKetuaListWithBil,
+                    idGred = string.Join(",", gredListWithBil.Select(g => g.Id.ToString())),
+                    idJawatan = string.Join(",", SkimKetuaListWithBil.Select(g => g.IdJawatan.ToString())),
+                    indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
+                    indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
+                    carianSkimId =0,// dtoSource.IndikatorSkim,
+                    StatusPermohonan = query.b2.Nama,
+                    KodRujStatusSkim = dtoSource.KodRujStatusSkim
+                };
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting MaklumatSkimPerkhidmatan");
+                throw;
+            }
+        }
         public async Task<bool> UpdateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Updating MaklumatSkimPerkhidmatan");
@@ -1049,9 +1155,9 @@ namespace HR.Application.Services.PDO
                 // Step 1: update into PDO_SkimPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
-               
+                perkhidmatan.UlasanPengesah = perkhidmatanDto.UlasanPengesah;
 
-                var result = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(perkhidmatan);
+                 var result = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(perkhidmatan);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
 
@@ -1324,7 +1430,7 @@ namespace HR.Application.Services.PDO
                     idJawatan = string.Join(",", query.JawatanList),
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
-                    carianSkimId = dtoSource.IndikatorSkim,
+                    carianSkimId =0,// dtoSource.IndikatorSkim,
                     StatusPermohonan = query.b2.Nama
                 };
 

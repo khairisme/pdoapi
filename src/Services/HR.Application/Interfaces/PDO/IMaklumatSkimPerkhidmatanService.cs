@@ -29,6 +29,8 @@ namespace HR.Application.Interfaces.PDO
 
         Task<List<SkimPerkhidmatanDetailsDTO>> GetSkimPerkhidmatanByIdAsync(int id);
 
+        Task<MaklumatSkimPerkhidmatanSearchResponseDto?> GetSenaraiSkimPerkhidmatanByIdOldAsync(int id);
+
 
     }
 }

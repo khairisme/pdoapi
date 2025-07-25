@@ -113,6 +113,30 @@ namespace HR.API.Controllers.PDO
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
+
+        /// <summary>
+        ///get Skim Perkhidmatan By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("getSenaraiSkimPerkhidmatanOld/{id}")]
+        public async Task<IActionResult> GetSenaraiSkimPerkhidmatanOld(int id)
+        {
+            try
+            {
+                var result = await _maklumatSkimPerkhidmatan.GetSenaraiSkimPerkhidmatanByIdOldAsync(id);
+                if (result == null)
+                    return NotFound($"No Senarai Skim Perkhidmatan found for Id {id}");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception during getSenaraiSkimPerkhidmatanOld");
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
         /// <summary>
         ///Update MaklumatSkimPerkhidmatan
         /// </summary>

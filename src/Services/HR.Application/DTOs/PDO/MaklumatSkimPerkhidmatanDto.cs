@@ -31,7 +31,7 @@ namespace HR.Application.DTOs.PDO
         public List<SkimKetuaPerkhidmatanResponseDTO> skimKetuaPerkhidmatanResponseDTOs { get; set; }
         public string idGred { get; set; }
         public string idJawatan { get; set; }
-        public bool? carianSkimId { get; set; }
+        public int carianSkimId { get; set; }
         public bool indikatorSkimKritikal { get; set; }
         public bool indikatorKenaikanPGT { get; set; }
 
@@ -163,6 +163,8 @@ namespace HR.Application.DTOs.PDO
     public class SkimPerkhidmatanRefStatusDto : MaklumatSkimPerkhidmatanCreateRequestDto
     {
         public string KodRujStatusSkim { get; set; }
+
+        public string? UlasanPengesah { get; set; }
     }
 
     public class PDOUpdateSkimPerkhidmatan 
