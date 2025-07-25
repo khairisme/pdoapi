@@ -186,9 +186,9 @@ namespace HR.Application.DTOs.PDO
         public string? IdJawatan { get; set; }
         public decimal ? Jumlah { get; set; }
 
-        public List<GredResponseDTO> gredResponseDTOs { get; set; }
+        public List<GredResponseDTO>? gredResponseDTOs { get; set; }
 
-        public List<SkimKetuaPerkhidmatanResponseDTO> skimKetuaPerkhidmatanResponseDTOs { get; set; }
+        public List<SkimKetuaPerkhidmatanResponseDTO>? skimKetuaPerkhidmatanResponseDTOs { get; set; }
     }
     public class GredResponseDTO
     {

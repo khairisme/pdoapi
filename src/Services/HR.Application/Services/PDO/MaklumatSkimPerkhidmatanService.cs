@@ -989,7 +989,7 @@ namespace HR.Application.Services.PDO
             {
                 // Step 1: update into PDO_SkimPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
-                perkhidmatan.KodRujStatusSkim = "01";
+                perkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
                
 
                 var result = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().UpdateAsync(perkhidmatan);
