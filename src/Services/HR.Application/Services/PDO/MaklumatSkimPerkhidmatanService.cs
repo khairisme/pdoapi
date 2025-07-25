@@ -310,16 +310,16 @@ namespace HR.Application.Services.PDO
                 _logger.LogInformation("Getting SenaraiSkimPerkhidmatan by ID {Id} using Entity Framework", id);
 
                 var query = await (
-     from a in _dbContext.PDOSkimPerkhidmatan
-     join a2 in _dbContext.PDORujStatusSkim
-         on a.KodRujStatusSkim equals a2.Kod
-     join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
-         on a.Id equals b.IdSkimPerkhidmatan
-     join b2 in _dbContext.PDORujStatusPermohonan
-         on b.KodRujStatusPermohonan equals b2.Kod
-     where a.Id == id && b.StatusAktif
-     select new
-     {
+             from a in _dbContext.PDOSkimPerkhidmatan
+             join a2 in _dbContext.PDORujStatusSkim
+                 on a.KodRujStatusSkim equals a2.Kod
+             join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+                 on a.Id equals b.IdSkimPerkhidmatan
+             join b2 in _dbContext.PDORujStatusPermohonan
+                 on b.KodRujStatusPermohonan equals b2.Kod
+             where a.Id == id && b.StatusAktif
+             select new
+             {
          a,
          b,
          StatusSkimPerkhidmatan = a2.Nama,
@@ -396,7 +396,7 @@ namespace HR.Application.Services.PDO
                     gredResponseDTOs = gredListWithBil,
                     skimKetuaPerkhidmatanResponseDTOs = skimKetuaListWithBil,
                     idGred = string.Join(",", gredListWithBil.Select(g => g.Id)),
-                    idJawatan = string.Join(",", skimKetuaListWithBil.Select(j => j.Id.ToString())),
+                    idJawatan = string.Join(",", skimKetuaListWithBil.Select(j => j.IdJawatan.ToString())),
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId = dtoSource.IndikatorSkim,
