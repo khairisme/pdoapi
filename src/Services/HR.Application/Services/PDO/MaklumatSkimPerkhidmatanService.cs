@@ -360,7 +360,7 @@ namespace HR.Application.Services.PDO
                     orderby f.Id
                     select new SkimKetuaPerkhidmatanResponseDTO
                     {
-                        Id = f.Id,
+                        Id = baseData.a.Id,
                         IdJawatan = f.IdJawatan,
                         Kod = baseData.a.Kod.Trim(),
                         Nama = baseData.a.Nama.Trim(),
