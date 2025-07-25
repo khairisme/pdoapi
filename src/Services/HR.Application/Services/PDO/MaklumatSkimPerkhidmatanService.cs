@@ -309,101 +309,100 @@ namespace HR.Application.Services.PDO
             {
                 _logger.LogInformation("Getting SenaraiSkimPerkhidmatan by ID {Id} using Entity Framework", id);
 
-                var query = await (
-             from a in _dbContext.PDOSkimPerkhidmatan
-             join a2 in _dbContext.PDORujStatusSkim
-                 on a.KodRujStatusSkim equals a2.Kod
-             join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
-                 on a.Id equals b.IdSkimPerkhidmatan
-             join b2 in _dbContext.PDORujStatusPermohonan
-                 on b.KodRujStatusPermohonan equals b2.Kod
-             where a.Id == id && b.StatusAktif
-             select new
-             {
-         a,
-         b,
-         StatusSkimPerkhidmatan = a2.Nama,
-         StatusPermohonan = b2.Nama,
-         GredList = (
-             from g in _dbContext.PDOGredSkimPerkhidmatan
-             join gred in _dbContext.PDOGred on g.IdGred equals gred.Id
-             where g.IdSkimPerkhidmatan == a.Id
-             orderby gred.Id
-             select new GredResponseDTO
-             {
-                 Id = gred.Id,
-                 Kod = gred.Kod,
-                 Nama = gred.Nama,
-                 Keterangan = gred.Keterangan
-             }
-         ).ToList(),
+                // First materialize the base data (one record expected)
+                var baseData = await (
+                    from a in _dbContext.PDOSkimPerkhidmatan
+                    join a2 in _dbContext.PDORujStatusSkim on a.KodRujStatusSkim equals a2.Kod
+                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan on a.Id equals b.IdSkimPerkhidmatan
+                    join b2 in _dbContext.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals b2.Kod
+                    where a.Id == id && b.StatusAktif
+                    select new
+                    {
+                        a,
+                        b,
+                        StatusSkimPerkhidmatan = a2.Nama,
+                        StatusPermohonan = b2.Nama
+                    }
+                ).FirstOrDefaultAsync();
 
-         SkimKetuaList = (
-             from f in _dbContext.PDOSkimKetuaPerkhidmatan
-             join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
-             where f.IdSkimPerkhidmatan == a.Id &&
-                   f.StatusAktif &&
-                   jawatan.StatusAktif
-             orderby f.Id
-             select new SkimKetuaPerkhidmatanResponseDTO
-             {
-                 Id = f.Id,
-                 IdJawatan = f.IdJawatan,
-                 Kod = a.Kod.Trim(),
-                 Nama = a.Nama.Trim(),
-                 KodJawatan = jawatan.Kod ?? "",
-                 NamaJawatan = jawatan.Nama ?? ""
-             }
-         ).ToList()
-     }
- ).FirstOrDefaultAsync();
-
-
-                if (query == null)
+                if (baseData == null)
                     return null;
 
-                var dtoSource = query.a;
-
-                // Add Bil numbers
-                var gredListWithBil = query.GredList
-                    .Select((g, index) =>
+                // Now fetch GredList separately
+                var gredList = await (
+                    from g in _dbContext.PDOGredSkimPerkhidmatan
+                    join gred in _dbContext.PDOGred on g.IdGred equals gred.Id
+                    where g.IdSkimPerkhidmatan == baseData.a.Id
+                    orderby gred.Id
+                    select new GredResponseDTO
                     {
-                        g.Bil = index + 1;
-                        return g;
-                    }).ToList();
+                        Id = gred.Id,
+                        Kod = gred.Kod,
+                        Nama = gred.Nama,
+                        Keterangan = gred.Keterangan
+                    }
+                ).ToListAsync();
 
-                var skimKetuaListWithBil = query.SkimKetuaList
-                    .Select((g, index) =>
+                // Add Bil
+                var gredListWithBil = gredList.Select((g, index) =>
+                {
+                    g.Bil = index + 1;
+                    return g;
+                }).ToList();
+
+                // Now fetch SkimKetuaList separately
+                var skimKetuaList = await (
+                    from f in _dbContext.PDOSkimKetuaPerkhidmatan
+                    join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
+                    where f.IdSkimPerkhidmatan == baseData.a.Id &&
+                          f.StatusAktif &&
+                          jawatan.StatusAktif
+                    orderby f.Id
+                    select new SkimKetuaPerkhidmatanResponseDTO
                     {
-                        g.Bil = index + 1;
-                        return g;
-                    }).ToList();
+                        Id = f.Id,
+                        IdJawatan = f.IdJawatan,
+                        Kod = baseData.a.Kod.Trim(),
+                        Nama = baseData.a.Nama.Trim(),
+                        KodJawatan = jawatan.Kod ?? "",
+                        NamaJawatan = jawatan.Nama ?? ""
+                    }
+                ).ToListAsync();
 
+                // Add Bil
+                var skimKetuaListWithBil = skimKetuaList.Select((g, index) =>
+                {
+                    g.Bil = index + 1;
+                    return g;
+                }).ToList();
+
+                // Final DTO
                 var result = new MaklumatSkimPerkhidmatanSearchResponseDto
                 {
-                    Id = dtoSource.Id,
-                    Kod = dtoSource.Kod,
-                    Nama = dtoSource.Nama,
-                    Keterangan = dtoSource.Keterangan,
-                    TarikhKemaskini = query.b.TarikhKemasKini,
-                    IndikatorSkim = dtoSource.IndikatorSkim,
-                    KodRujMatawang = dtoSource.KodRujMatawang,
-                    Jumlah = dtoSource.Jumlah,
-                    IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
-                    IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
-                    StatusSkimPerkhidmatan = query.StatusSkimPerkhidmatan,
-                    StatusPermohonan = query.StatusPermohonan,
+                    Id = baseData.a.Id,
+                    Kod = baseData.a.Kod,
+                    Nama = baseData.a.Nama,
+                    Keterangan = baseData.a.Keterangan,
+                    TarikhKemaskini = baseData.b.TarikhKemasKini,
+                    IndikatorSkim = baseData.a.IndikatorSkim,
+                    KodRujMatawang = baseData.a.KodRujMatawang,
+                    Jumlah = baseData.a.Jumlah,
+                    IdKlasifikasiPerkhidmatan = baseData.a.IdKlasifikasiPerkhidmatan,
+                    IdKumpulanPerkhidmatan = baseData.a.IdKumpulanPerkhidmatan,
+                    StatusSkimPerkhidmatan = baseData.StatusSkimPerkhidmatan,
+                    StatusPermohonan = baseData.StatusPermohonan,
                     gredResponseDTOs = gredListWithBil,
                     skimKetuaPerkhidmatanResponseDTOs = skimKetuaListWithBil,
                     idGred = string.Join(",", gredListWithBil.Select(g => g.Id)),
-                    idJawatan = string.Join(",", skimKetuaListWithBil.Select(j => j.IdJawatan.ToString())),
-                    indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
-                    indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
-                    carianSkimId = dtoSource.IndikatorSkim,
-                    KodRujStatusSkim = dtoSource.KodRujStatusSkim
+                    idJawatan = string.Join(",", skimKetuaListWithBil.Select(j => j.IdJawatan)),
+                    indikatorSkimKritikal = baseData.a.IndikatorSkimKritikal,
+                    indikatorKenaikanPGT = baseData.a.IndikatorKenaikanPGT,
+                    carianSkimId = baseData.a.IndikatorSkim,
+                    KodRujStatusSkim = baseData.a.KodRujStatusSkim
                 };
 
                 return result;
+
 
             }
             catch (Exception ex)
