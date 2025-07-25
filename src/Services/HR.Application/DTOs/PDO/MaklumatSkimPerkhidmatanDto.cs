@@ -196,9 +196,9 @@ namespace HR.Application.DTOs.PDO
     {
         public int Bil { get; set; }
         public int Id { get; set; }
-        public string Kod { get; set; }
-        public string Nama { get; set; }
-        public string Keterangan { get; set; }
+        public string? Kod { get; set; }
+        public string? Nama { get; set; }
+        public string? Keterangan { get; set; }
     }
 
 
@@ -206,10 +206,10 @@ namespace HR.Application.DTOs.PDO
     {
         public int Id { get; set; }
         public int IdJawatan { get; set; }
-        public string Kod { get; set; }
-        public string Nama { get; set; }
-        public string KodJawatan { get; set; }
-        public string NamaJawatan { get; set; }
+        public string? Kod { get; set; }
+        public string? Nama { get; set; }
+        public string? KodJawatan { get; set; }
+        public string? NamaJawatan { get; set; }
     }
     public class SkimKetuaPerkhidmatanResponseDTO
     {
