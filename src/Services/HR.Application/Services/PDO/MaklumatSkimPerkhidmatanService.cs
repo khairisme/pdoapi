@@ -459,7 +459,8 @@ namespace HR.Application.Services.PDO
                         var gredLink = new PDOGredSkimPerkhidmatan
                         {
                             IdGred = idGred,
-                            IdSkimPerkhidmatan = dto.Id
+                            IdSkimPerkhidmatan = dto.Id,
+                            StatusAktif=true
                         };
 
                         await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>().AddAsync(gredLink);
@@ -485,7 +486,8 @@ namespace HR.Application.Services.PDO
                         var jawatnLink = new PDOSkimKetuaPerkhidmatan
                         {
                             IdJawatan = idJawatn,
-                            IdSkimPerkhidmatan = dto.Id
+                            IdSkimPerkhidmatan = dto.Id,
+                            StatusAktif = true
                         };
 
                         await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddAsync(jawatnLink);
@@ -669,7 +671,8 @@ namespace HR.Application.Services.PDO
                             var gredLink = new PDOGredSkimPerkhidmatan
                             {
                                 IdGred = idGred,
-                                IdSkimPerkhidmatan = perkhidmatan.Id
+                                IdSkimPerkhidmatan = perkhidmatan.Id,
+                                StatusAktif=true
                             };
 
                             await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>().AddAsync(gredLink);
@@ -692,7 +695,8 @@ namespace HR.Application.Services.PDO
                             var jawatanLink = new PDOSkimKetuaPerkhidmatan
                             {
                                 IdJawatan = idJawatan,
-                                IdSkimPerkhidmatan = perkhidmatan.Id
+                                IdSkimPerkhidmatan = perkhidmatan.Id,
+                                StatusAktif = true
                             };
 
                             await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddAsync(jawatanLink);
@@ -990,7 +994,8 @@ namespace HR.Application.Services.PDO
                     var gredLink = new PDOGredSkimPerkhidmatan
                     {
                         IdGred = idGred,
-                        IdSkimPerkhidmatan = perkhidmatanDto.Id
+                        IdSkimPerkhidmatan = perkhidmatanDto.Id,
+                        StatusAktif=true
                     };
 
                     await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>().AddAsync(gredLink);
@@ -1017,7 +1022,8 @@ namespace HR.Application.Services.PDO
                     var jawatnLink = new PDOSkimKetuaPerkhidmatan
                     {
                         IdJawatan = idJawatn,
-                        IdSkimPerkhidmatan = perkhidmatanDto.Id
+                        IdSkimPerkhidmatan = perkhidmatanDto.Id,
+                        StatusAktif = true
                     };
 
                     await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>().AddAsync(jawatnLink);
