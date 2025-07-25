@@ -344,7 +344,7 @@ namespace HR.Application.Services.PDO
                                           select new SkimKetuaPerkhidmatanResponseDTO
                                           {
                                               Id = a.Id,
-                                              IdJawatan = f.Id,
+                                              IdJawatan = f.IdJawatan,
                                               Kod = a.Kod.Trim(),
                                               Nama = a.Nama.Trim(),
                                               KodJawatan = jawatan.Kod ?? "",
