@@ -197,4 +197,22 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         
         return await conn.QueryAsync<T>(query, parameters);
     }
+
+    public async Task<IEnumerable<T>> FindByFieldWithoutStatusAktifAsync(string fieldName, object fieldValue)
+    {
+        using var conn = _connection.CreateConnection();
+
+        // Validate that the field exists on the entity
+        var property = typeof(T).GetProperty(fieldName);
+        if (property == null)
+        {
+            throw new ArgumentException($"Field '{fieldName}' does not exist on entity {typeof(T).Name}");
+        }
+
+        var query = $"SELECT * FROM {_tableName} WHERE IsDeleted = 0 AND {fieldName} = @FieldValue";
+        var parameters = new DynamicParameters();
+        parameters.Add("FieldValue", fieldValue);
+
+        return await conn.QueryAsync<T>(query, parameters);
+    }
 }

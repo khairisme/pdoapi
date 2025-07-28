@@ -96,4 +96,6 @@ public interface IRepository<T> where T : class
     Task<IEnumerable<T>> FindByFieldAsync(string fieldName, object fieldValue);
 
     Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+
+    Task<IEnumerable<T>> FindByFieldWithoutStatusAktifAsync(string fieldName, object fieldValue);
 }

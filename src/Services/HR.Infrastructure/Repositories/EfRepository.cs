@@ -222,6 +222,22 @@ public class EfRepository<T> : IRepository<T> where T : BaseEntity
         var combinedPredicate = PredicateBuilder.And(lambda, e => !e.IsDeleted);
         return await _dbSet.Where(combinedPredicate).ToListAsync();
     }
+    public async Task<IEnumerable<T>> FindByFieldWithoutStatusAktifAsync(string fieldName, object fieldValue)
+    {
+        var property = typeof(T).GetProperty(fieldName);
+        if (property == null)
+        {
+            throw new ArgumentException($"Field '{fieldName}' does not exist on entity {typeof(T).Name}");
+        }
+
+        var parameter = Expression.Parameter(typeof(T), "e");
+        var propertyAccess = Expression.Property(parameter, property);
+        var valueConstant = Expression.Constant(fieldValue, property.PropertyType);
+        var equalityComparison = Expression.Equal(propertyAccess, valueConstant);
+        var lambda = Expression.Lambda<Func<T, bool>>(equalityComparison, parameter);
+
+        return await _dbSet.Where(lambda).ToListAsync();
+    }
 }
 
 /// <summary>
@@ -260,4 +276,7 @@ public static class PredicateBuilder
             return base.Visit(node);
         }
     }
+
+
+
 }

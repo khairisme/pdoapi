@@ -776,7 +776,7 @@ namespace HR.Application.Services.PDO
 
                     perkhidmatan = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().AddAsync(perkhidmatan);
                     await _unitOfWork.SaveChangesAsync();
-                    await _unitOfWork.CommitAsync();
+                  
 
                     // Step 2: Insert PDO_StatusPermohonanSkimPerkhidmatan
                     var statusPermohonan = new PDOStatusPermohonanSkimPerkhidmatan
@@ -790,7 +790,7 @@ namespace HR.Application.Services.PDO
                     await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>().AddAsync(statusPermohonan);
                     await _unitOfWork.SaveChangesAsync();
 
-                    await _unitOfWork.CommitAsync();
+                  
                     // Step 3: Insert PDO_GredSkimPerkhidmatan
                     if (!string.IsNullOrEmpty(dto.IdGred))
                     {
@@ -1318,7 +1318,7 @@ namespace HR.Application.Services.PDO
                                         Nama = a.Nama,
                                         Keterangan = a.Keterangan,
                                         //StatusAktif = a.StatusAktif,
-                                        KodRujStatusSkim = b.KodRujStatusPermohonan,
+                                        KodRujStatusSkim = a.KodRujStatusSkim,
                                         KodRujMatawang = b2.Nama,
                                         //TarikhKemaskini = b.TarikhKemaskini
                                     }).FirstOrDefaultAsync();
@@ -1329,16 +1329,32 @@ namespace HR.Application.Services.PDO
                 if (skimPerkhidmatan == null)
                     return false;
 
-                if (!(result.KodRujStatusSkim == "01"))
+                if (result.KodRujStatusSkim != "01")
                 {
                     using var transaction = await _dbContext.Database.BeginTransactionAsync();
                     try
                     {
                         // Delete children first
+                        // Deletwe first from status table
                         var statusList = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
                         .FindByFieldAsync("IdSkimPerkhidmatan", id);
 
                         _dbContext.PDOStatusPermohonanSkimPerkhidmatan.RemoveRange(statusList);
+
+                        // Dekete from ketua table
+                        var ketuaList = await _unitOfWork.Repository<PDOSkimKetuaPerkhidmatan>()
+                       .FindByFieldAsync("IdSkimPerkhidmatan", id);
+
+                        _dbContext.PDOSkimKetuaPerkhidmatan.RemoveRange(ketuaList);
+
+                        // Dekete from gred table
+                        var gredList = await _unitOfWork.Repository<PDOGredSkimPerkhidmatan>()
+                       .FindByFieldWithoutStatusAktifAsync("IdSkimPerkhidmatan", id);
+
+                        _dbContext.PDOGredSkimPerkhidmatan.RemoveRange(gredList);
+
+
+
                         await _dbContext.SaveChangesAsync();
                         // Then delete parent
                         _dbContext.PDOSkimPerkhidmatan.Remove(skimPerkhidmatan);

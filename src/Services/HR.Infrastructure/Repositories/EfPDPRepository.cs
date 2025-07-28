@@ -230,5 +230,21 @@ public class EfPDPRepository<T> : IRepository<T> where T : PDPBaseEntity
         var combinedPredicate = PredicateBuilder.And(lambda, e => Convert.ToBoolean(e.StatusAktif));
         return await _dbSet.Where(combinedPredicate).ToListAsync();
     }
+    public async Task<IEnumerable<T>> FindByFieldWithoutStatusAktifAsync(string fieldName, object fieldValue)
+    {
+        var property = typeof(T).GetProperty(fieldName);
+        if (property == null)
+        {
+            throw new ArgumentException($"Field '{fieldName}' does not exist on entity {typeof(T).Name}");
+        }
+
+        var parameter = Expression.Parameter(typeof(T), "e");
+        var propertyAccess = Expression.Property(parameter, property);
+        var valueConstant = Expression.Constant(fieldValue, property.PropertyType);
+        var equalityComparison = Expression.Equal(propertyAccess, valueConstant);
+        var lambda = Expression.Lambda<Func<T, bool>>(equalityComparison, parameter);
+
+        return await _dbSet.Where(lambda).ToListAsync();
+    }
 }
 
