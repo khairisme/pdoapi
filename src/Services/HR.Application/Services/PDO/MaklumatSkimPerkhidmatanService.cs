@@ -750,7 +750,7 @@ namespace HR.Application.Services.PDO
             try
             {
                 var idPerkhidmatan = await _dbContext.PDOSkimPerkhidmatan
-                .Where(x => x.Kod == dto.Kod)
+                .Where(x => x.Id == dto.Id)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
