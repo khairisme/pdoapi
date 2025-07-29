@@ -1035,23 +1035,59 @@ namespace HR.Application.Services.PDO
         }
 
 
+        //public async Task<string> GenerateKodAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        //{
+        //    // Get max Id from the table
+        //    var maxId = await _dbContext.PDOSkimPerkhidmatan
+        //                              .MaxAsync(x => (int?)x.Id) ?? 0;
+
+        //    // Increment ID
+        //    int newId = maxId + 1;
+
+        //    // Pad the number (e.g., 2 becomes "02")
+        //    string formattedId = newId.ToString("D2");
+
+        //    // Combine all to return final code
+        //    string finalCode = $"{dto.JenisKod}{dto.KumpulanKod}{dto.KlasifikasiKod}{formattedId}";
+
+        //    return finalCode;
+        //}
+
         public async Task<string> GenerateKodAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
-            // Get max Id from the table
-            var maxId = await _dbContext.PDOSkimPerkhidmatan
-                                      .MaxAsync(x => (int?)x.Id) ?? 0;
+            // Build the prefix from input parts
+            string kodPrefix = $"{dto.JenisKod}{dto.KumpulanKod}{dto.KlasifikasiKod}";
 
-            // Increment ID
-            int newId = maxId + 1;
+            // Get all existing Kod values that start with this prefix
+            var existingKods = await _dbContext.PDOSkimPerkhidmatan
+                .Where(x => x.Kod.StartsWith(kodPrefix))
+                .Select(x => x.Kod)
+                .ToListAsync();
 
-            // Pad the number (e.g., 2 becomes "02")
-            string formattedId = newId.ToString("D2");
+            // Extract the last 2 digits from each matching code, after trimming spaces
+            var lastNumbers = existingKods
+                .Select(kod =>
+                {
+                    string trimmedKod = kod?.Trim() ?? ""; 
+                    string suffix = trimmedKod.Length >= 2
+                        ? trimmedKod.Substring(trimmedKod.Length - 2)
+                        : "00";
+                    return int.TryParse(suffix, out int num) ? num : 0;
+                })
+                .ToList();
 
-            // Combine all to return final code
-            string finalCode = $"{dto.JenisKod}{dto.KumpulanKod}{dto.KlasifikasiKod}{formattedId}";
+            // Get max number and increment
+            int newNumber = (lastNumbers.Count > 0 ? lastNumbers.Max() : 0) + 1;
+
+            // Format as 2-digit string
+            string formattedId = newNumber.ToString("D2");
+
+            // Combine with prefix to get final code
+            string finalCode = $"{kodPrefix}{formattedId}";
 
             return finalCode;
         }
+
 
         public async Task<List<SkimWithJawatanDto>> GetSkimWithJawatanAsync(int idSkim)
         {

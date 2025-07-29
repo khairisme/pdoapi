@@ -143,7 +143,16 @@ namespace HR.Application.Services
             try
             {
                 // Step 1: Insert into PDO_Gred
-                dto.Kod = $"{dto.KodGred}A{dto.NomborGred:D2}000";
+               
+                if(dto.KodGred=="VU" || dto.KodGred == "VK")
+                {
+                    dto.Kod = $"{dto.KodGred}{dto.NomborGred:D2}000";
+                }
+                else
+                {
+                    dto.Kod = $"{dto.KodGred}A{dto.NomborGred:D2}000";
+                }
+                   
                 var gred = MapToEntity(dto);
                 gred.StatusAktif = false;
 
