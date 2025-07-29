@@ -45,6 +45,7 @@ namespace HR.Application.Services
                                   && a.IdKumpulanPerkhidmatan == filter.IdKumpulanPerkhidmatan
                                   && b.StatusAktif
                                   && c.StatusAktif
+                                  && a.StatusAktif
                             orderby a.Kod
                             select new
                             {
