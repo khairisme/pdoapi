@@ -1454,7 +1454,34 @@ namespace HR.Application.Services.PDO
                                     select g.IdGred.ToString()).ToList(),
                         JawatanList = (from g in _dbContext.PDOSkimKetuaPerkhidmatan
                                     where g.IdSkimPerkhidmatan == a.Id
-                                    select g.IdJawatan.ToString()).ToList()
+                                    select g.IdJawatan.ToString()).ToList(),
+                        SkimGredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
+                                    join gred in _dbContext.PDOGred on g.IdGred equals gred.Id
+                                    where g.IdSkimPerkhidmatan == a.Id
+                                    select new GredResponseDTO
+                                    {
+                                        Bil = 0, // will update below
+                                        Id = gred.Id,
+                                        Kod = gred.Kod,
+                                        Nama = gred.Nama,
+                                        Keterangan = gred.Keterangan
+                                    }).ToList(),
+
+                        SkimJawatnList = (
+                    from f in _dbContext.PDOSkimKetuaPerkhidmatan
+                    join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
+                    where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif
+                               && jawatan.StatusAktif
+                    select new SkimKetuaPerkhidmatanResponseDTO
+                    {
+                        Id = a.Id,
+                        IdJawatan = f.IdJawatan,
+                        Kod = a.Kod.Trim(),
+                        Nama = a.Nama.Trim(),
+                        KodJawatan = jawatan.Kod ?? "",
+                        NamaJawatan = jawatan.Nama ?? ""
+                    }).ToList()
+
                     }
                 ).FirstOrDefaultAsync();
 
@@ -1468,6 +1495,21 @@ namespace HR.Application.Services.PDO
                 }
 
                 var dtoSource = skimObj ?? query.a;
+
+                // Add Bil number to each Gred item
+                var gredListWithBil = query.SkimGredList.Select((g, index) =>
+                {
+                    g.Bil = index + 1;
+                    return g;
+                }).ToList();
+
+
+                // Add Bil number to each SkimKetua  item
+                var SkimKetuaListWithBil = query.SkimJawatnList.Select((g, index) =>
+                {
+                    g.Bil = index + 1;
+                    return g;
+                }).ToList();
 
                 var result = new MaklumatSkimPerkhidmatanSearchResponseDto
                 {
@@ -1487,7 +1529,11 @@ namespace HR.Application.Services.PDO
                     indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId =0,// dtoSource.IndikatorSkim,
-                    StatusPermohonan = query.b2.Nama
+                    StatusPermohonan = query.b2.Nama,
+                    gredResponseDTOs=gredListWithBil,
+                    skimKetuaPerkhidmatanResponseDTOs=SkimKetuaListWithBil
+
+
                 };
 
                 return result;
