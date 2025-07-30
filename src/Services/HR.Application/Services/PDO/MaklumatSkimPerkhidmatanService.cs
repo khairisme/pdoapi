@@ -1462,7 +1462,7 @@ namespace HR.Application.Services.PDO
                                     {
                                         Bil = 0, // will update below
                                         Id = gred.Id,
-                                        Kod = gred.Kod,
+                                        Kod = gred.Kod.Trim(),
                                         Nama = gred.Nama,
                                         Keterangan = gred.Keterangan
                                     }).ToList(),
@@ -1514,7 +1514,7 @@ namespace HR.Application.Services.PDO
                 var result = new MaklumatSkimPerkhidmatanSearchResponseDto
                 {
                     Id = dtoSource.Id,
-                    Kod = dtoSource.Kod,
+                    Kod = dtoSource.Kod.Trim(),
                     Nama = dtoSource.Nama,
                     Keterangan = dtoSource.Keterangan,
                     TarikhKemaskini = query.b.TarikhKemasKini,
