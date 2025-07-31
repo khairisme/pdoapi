@@ -14,6 +14,7 @@ namespace HR.Application.DTOs.PDO
         public int? IdKlasifikasiPerkhidmatan { get; set; }
         public string? KodRujStatusPermohonan { get; set; }
         public string? Nama { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
     }
     public class GredResultDto
     {
@@ -24,6 +25,7 @@ namespace HR.Application.DTOs.PDO
         public string Keterangan { get; set; }
         public string StatusPermohonan { get; set; }
         public string StatusGred { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
     }
     public class CreateGredDto
     {

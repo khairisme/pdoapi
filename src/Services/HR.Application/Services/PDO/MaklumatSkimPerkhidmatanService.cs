@@ -45,11 +45,14 @@ namespace HR.Application.Services.PDO
 
                                    join b2 in _dbContext.PDORujStatusPermohonan
                                              on b.KodRujStatusPermohonan equals b2.Kod
+
+
                                    where b.StatusAktif == true
                                   
                                    select new
                                    {
-                                       RujStatusPermohanan=b2,
+                                      
+                                       RujStatusPermohanan =b2,
                                        Skim = a,
                                        RujStatus = a2,
                                        StatusPermohonan = b,
@@ -58,7 +61,8 @@ namespace HR.Application.Services.PDO
                                                    select g.IdGred.ToString()).ToList(),
                                        ketuList = (from g in _dbContext.PDOSkimKetuaPerkhidmatan
                                                    where g.IdSkimPerkhidmatan == a.Id
-                                                   select g.IdJawatan.ToString()).ToList()
+                                                   select g.IdKetuaPerkhidmatan.ToString()).ToList(),
+                                       KodRujJenisSaraan = a.KodRujJenisSaraan,
                                    }).ToListAsync();
 
                 var result = query
@@ -101,7 +105,8 @@ namespace HR.Application.Services.PDO
                             indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                             // carianSkimId=dtoSource.IndikatorSkim,
                             carianSkimId=0,
-                            StatusPermohonan = q.RujStatusPermohanan.Nama
+                            StatusPermohonan = q.RujStatusPermohanan.Nama,
+                            KodRujJenisSaraan = q.KodRujJenisSaraan,
 
                         };
                     });
@@ -121,6 +126,8 @@ namespace HR.Application.Services.PDO
 
                 if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
                     result = result.Where(q => q.StatusPermohonan == filter.StatusPermohonan);
+                if (!string.IsNullOrWhiteSpace(filter.KodRujJenisSaraan))
+                    result = result.Where(q => q.KodRujJenisSaraan == filter.KodRujJenisSaraan);
 
                 return result.ToList();
             }
@@ -152,7 +159,8 @@ namespace HR.Application.Services.PDO
                     IndikatorSkim = dto.IndikatorSkim,
                     KodRujMatawang = dto.KodRujMatawang,
                     Jumlah = dto.Jumlah,
-                    ButiranKemaskini = dto.ButiranKemaskini
+                    ButiranKemaskini = dto.ButiranKemaskini,
+                    KodRujJenisSaraan=dto.KodRujJenisSaraan
                 };
 
                 perkhidmatan = await _unitOfWork.Repository<PDOSkimPerkhidmatan>().AddAsync(perkhidmatan);
@@ -318,6 +326,7 @@ namespace HR.Application.Services.PDO
                         on a.Id equals b.IdSkimPerkhidmatan
                     join b2 in _dbContext.PDORujStatusPermohonan
                         on b.KodRujStatusPermohonan equals b2.Kod
+                    join c in _dbContext.PDORujJenisSaraan on  a.KodRujJenisSaraan equals c.Kod 
                     where a.Id == id && b.StatusAktif == true
                     select new
                     {
@@ -325,6 +334,7 @@ namespace HR.Application.Services.PDO
                         a2,
                         b,
                         b2,
+                     c,
                         GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
                                     join gred in _dbContext.PDOGred on g.IdGred equals gred.Id
                                     where g.IdSkimPerkhidmatan == a.Id
@@ -339,13 +349,13 @@ namespace HR.Application.Services.PDO
 
                         SkimJawatnList = (
                                           from f in _dbContext.PDOSkimKetuaPerkhidmatan
-                                          join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
-                                          where a.Id == b.IdSkimPerkhidmatan && f.StatusAktif
+                                          join jawatan in _dbContext.PDOJawatan on f.IdKetuaPerkhidmatan equals jawatan.Id
+                                          where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif
                                                      && jawatan.StatusAktif
                                           select new SkimKetuaPerkhidmatanResponseDTO
                                           {
                                               Id = a.Id,
-                                              IdJawatan = f.IdJawatan,
+                                              IdJawatan = f.IdKetuaPerkhidmatan,
                                               Kod = a.Kod.Trim(),
                                               Nama = a.Nama.Trim(),
                                               KodJawatan = jawatan.Kod ?? "",
@@ -401,7 +411,10 @@ namespace HR.Application.Services.PDO
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId =0,// dtoSource.IndikatorSkim,
                     StatusPermohonan = query.b2.Nama,
-                    KodRujStatusSkim = dtoSource.KodRujStatusSkim
+                    KodRujStatusSkim = dtoSource.KodRujStatusSkim,
+                    KodRujJenisSaraan=query.a.KodRujJenisSaraan.Trim(),
+                   KodRujJenisSaraanNama = query.c.Nama.Trim(),
+
                 };
 
                 return result;
@@ -428,6 +441,7 @@ namespace HR.Application.Services.PDO
                         on a.Id equals b.IdSkimPerkhidmatan
                     join b2 in _dbContext.PDORujStatusPermohonan
                         on b.KodRujStatusPermohonan equals b2.Kod
+                    join c in _dbContext.PDORujJenisSaraan on a.KodRujJenisSaraan equals c.Kod
                     where a.Id == id && b.StatusAktif == true
                     select new
                     {
@@ -435,6 +449,7 @@ namespace HR.Application.Services.PDO
                         a2,
                         b,
                         b2,
+                        c,
                         GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
                                     join gred in _dbContext.PDOGred on g.IdGred equals gred.Id
                                     where g.IdSkimPerkhidmatan == a.Id
@@ -449,13 +464,13 @@ namespace HR.Application.Services.PDO
 
                         SkimJawatnList = (
                                           from f in _dbContext.PDOSkimKetuaPerkhidmatan
-                                          join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
-                                          where a.Id == b.IdSkimPerkhidmatan && f.StatusAktif
+                                          join jawatan in _dbContext.PDOJawatan on f.IdKetuaPerkhidmatan equals jawatan.Id
+                                          where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif
                                                      && jawatan.StatusAktif
                                           select new SkimKetuaPerkhidmatanResponseDTO
                                           {
                                               Id = a.Id,
-                                              IdJawatan = f.IdJawatan,
+                                              IdJawatan = f.IdKetuaPerkhidmatan,
                                               Kod = a.Kod.Trim(),
                                               Nama = a.Nama.Trim(),
                                               KodJawatan = jawatan.Kod ?? "",
@@ -508,7 +523,9 @@ namespace HR.Application.Services.PDO
                     indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
                     carianSkimId =0,// dtoSource.IndikatorSkim,
                     StatusPermohonan = query.b2.Nama,
-                    KodRujStatusSkim = dtoSource.KodRujStatusSkim
+                    KodRujStatusSkim = dtoSource.KodRujStatusSkim,
+                    KodRujJenisSaraan=query.a.KodRujJenisSaraan.Trim(),
+                    KodRujJenisSaraanNama = query.c.Nama.Trim(),
                 };
 
                 return result;
@@ -590,7 +607,7 @@ namespace HR.Application.Services.PDO
                     {
                         var jawatnLink = new PDOSkimKetuaPerkhidmatan
                         {
-                            IdJawatan = idJawatn,
+                            IdKetuaPerkhidmatan = idJawatn,
                             IdSkimPerkhidmatan = dto.Id,
                             StatusAktif = true
                         };
@@ -663,7 +680,8 @@ namespace HR.Application.Services.PDO
                 Jumlah = dto.Jumlah,
                 ButiranKemaskini = dto.ButiranKemaskini,
                 IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
-                IndikatorKenaikanPGT=dto.IndikatorKenaikanPGT
+                IndikatorKenaikanPGT=dto.IndikatorKenaikanPGT,
+                KodRujJenisSaraan=dto.KodRujJenisSaraan
 
             };
         }
@@ -766,11 +784,13 @@ namespace HR.Application.Services.PDO
                         Keterangan = dto.Keterangan,
                         IndikatorSkimKritikal = dto.IndikatorSkimKritikal,
                         IndikatorKenaikanPGT = dto.IndikatorKenaikanPGT,
-                        KodRujStatusSkim = "01",
+                        //KodRujStatusSkim = "01",
+                        KodRujStatusSkim = dto.KodRujStatusSkim,
                         IndikatorSkim = dto.IndikatorSkim,
                         KodRujMatawang = dto.KodRujMatawang,
                         Jumlah = dto.Jumlah,
-                        ButiranKemaskini = dto.ButiranKemaskini
+                        ButiranKemaskini = dto.ButiranKemaskini,
+                        KodRujJenisSaraan=dto.KodRujJenisSaraan
 
                     };
 
@@ -826,7 +846,7 @@ namespace HR.Application.Services.PDO
                         {
                             var jawatanLink = new PDOSkimKetuaPerkhidmatan
                             {
-                                IdJawatan = idJawatan,
+                                IdKetuaPerkhidmatan = idJawatan,
                                 IdSkimPerkhidmatan = perkhidmatan.Id,
                                 StatusAktif = true
                             };
@@ -952,7 +972,7 @@ namespace HR.Application.Services.PDO
                     {
                         var jawatnLink = new PDOSkimKetuaPerkhidmatan
                         {
-                            IdJawatan = idJawatn,
+                            IdKetuaPerkhidmatan = idJawatn,
                             IdSkimPerkhidmatan = perkhidmatanDto.Id,
                             StatusAktif = true
                         };
@@ -1094,7 +1114,7 @@ namespace HR.Application.Services.PDO
             var query = from a in _dbContext.PDOSkimPerkhidmatan
                         join b in _dbContext.PDOSkimKetuaPerkhidmatan on a.Id equals b.IdSkimPerkhidmatan into ab
                         from b in ab.DefaultIfEmpty()
-                        join d in _dbContext.PDOJawatan on b.IdJawatan equals d.Id into bd
+                        join d in _dbContext.PDOJawatan on b.IdKetuaPerkhidmatan equals d.Id into bd
                         from d in bd.DefaultIfEmpty()
                         where a.Id == idSkim
                         select new SkimWithJawatanDto
@@ -1454,7 +1474,7 @@ namespace HR.Application.Services.PDO
                                     select g.IdGred.ToString()).ToList(),
                         JawatanList = (from g in _dbContext.PDOSkimKetuaPerkhidmatan
                                     where g.IdSkimPerkhidmatan == a.Id
-                                    select g.IdJawatan.ToString()).ToList(),
+                                    select g.IdKetuaPerkhidmatan.ToString()).ToList(),
                         SkimGredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
                                     join gred in _dbContext.PDOGred on g.IdGred equals gred.Id
                                     where g.IdSkimPerkhidmatan == a.Id
@@ -1469,13 +1489,13 @@ namespace HR.Application.Services.PDO
 
                         SkimJawatnList = (
                     from f in _dbContext.PDOSkimKetuaPerkhidmatan
-                    join jawatan in _dbContext.PDOJawatan on f.IdJawatan equals jawatan.Id
+                    join jawatan in _dbContext.PDOJawatan on f.IdKetuaPerkhidmatan equals jawatan.Id
                     where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif
                                && jawatan.StatusAktif
                     select new SkimKetuaPerkhidmatanResponseDTO
                     {
                         Id = a.Id,
-                        IdJawatan = f.IdJawatan,
+                        IdJawatan = f.IdKetuaPerkhidmatan,
                         Kod = a.Kod.Trim(),
                         Nama = a.Nama.Trim(),
                         KodJawatan = jawatan.Kod ?? "",
@@ -1550,7 +1570,7 @@ namespace HR.Application.Services.PDO
             var result = await (
        from a in _dbContext.PDOSkimPerkhidmatan
        join b in _dbContext.PDOSkimKetuaPerkhidmatan on a.Id equals b.IdSkimPerkhidmatan
-       join d in _dbContext.PDOJawatan on b.IdJawatan equals d.Id
+       join d in _dbContext.PDOJawatan on b.IdKetuaPerkhidmatan equals d.Id
        where a.Id == id && b.StatusAktif
                   && d.StatusAktif
        select new SkimPerkhidmatanDetailsDTO

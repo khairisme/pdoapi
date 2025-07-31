@@ -36,6 +36,10 @@ namespace HR.Application.DTOs.PDO
         public bool indikatorKenaikanPGT { get; set; }
 
         public string? KodRujStatusSkim { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
+        public string? KodRujJenisSaraanNama { get; set; }
+        
+
 
     }
     public class MaklumatSkimPerkhidmatanFilterDto
@@ -44,7 +48,8 @@ namespace HR.Application.DTOs.PDO
         public string? Nama { get; set; }
         public int? MaklumatKlasifikasiPerkhidmatanId { get; set; }
         public int? MaklumatKumpulanPerkhidmatanId { get; set; } 
-        public string? StatusPermohonan { get; set; } // e.g., "Draf", "Disahkan", etc.
+        public string? StatusPermohonan { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
     }
     public class MaklumatSkimPerkhidmatanCreateRequestDto
     {
@@ -74,6 +79,8 @@ namespace HR.Application.DTOs.PDO
         public List<GredResponseDTO> gredResponseDTOs { get; set; }
 
         public List<SkimKetuaPerkhidmatanResponseDTO> skimKetuaPerkhidmatanResponseDTOs { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
+        
     }
     public class MaklumatSkimPerkhidmatanResponseDto
     {
@@ -191,6 +198,8 @@ namespace HR.Application.DTOs.PDO
         public List<GredResponseDTO>? gredResponseDTOs { get; set; }
 
         public List<SkimKetuaPerkhidmatanResponseDTO>? skimKetuaPerkhidmatanResponseDTOs { get; set; }
+
+
     }
     public class GredResponseDTO
     {
