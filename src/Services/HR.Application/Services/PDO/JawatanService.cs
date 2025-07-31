@@ -235,7 +235,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task<List<SenaraiKetuaPerkhidmatanResponseDto>> GetSenaraiKetuaPerkhidmatan(string NamaJawatan, string KodCartaOrganisasi)
+        public async Task<List<SenaraiKetuaPerkhidmatanResponseDto>> GetSenaraiKetuaPerkhidmatan(string? NamaJawatan, string KodCartaOrganisasi)
         {
             _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Fetching Ketua Perkhidmatan for KodCartaOrganisasi = {KodCartaOrganisasi}", KodCartaOrganisasi);
 
@@ -248,6 +248,7 @@ namespace HR.Application.Services.PDO
                                   && a.IndikatorKetuaPerkhidmatan == true
                                   && b.StatusAktif == true
                                   && b.KodCartaOrganisasi.Contains(KodCartaOrganisasi)
+                                  && (string.IsNullOrEmpty(NamaJawatan) || a.Nama.Contains(NamaJawatan))
                             select new SenaraiKetuaPerkhidmatanResponseDto
                             {
                                 Id = a.Id,

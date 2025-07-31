@@ -52,11 +52,15 @@ namespace HR.Application.Services
                                 a.Id,
                                 a.Kod,
                                 a.Nama,
-                                a.Keterangan
+                                a.Keterangan,
+                                a.KodRujJenisSaraan
                             };
 
                 if (!string.IsNullOrEmpty(filter.Nama))
                     query = query.Where(x => x.Nama.Contains(filter.Nama));
+
+                if (!string.IsNullOrWhiteSpace(filter.KodRujJenisSaraan))
+                    query = query.Where(q => q.KodRujJenisSaraan == filter.KodRujJenisSaraan);
                 var result = await query.ToListAsync();
 
                 return result.Select((x, index) => new PDOGredDto
@@ -65,7 +69,9 @@ namespace HR.Application.Services
                     Id = x.Id,
                     Kod = x.Kod,
                     Nama = x.Nama,
-                    Keterangan = x.Keterangan
+                    Keterangan = x.Keterangan,
+                    KodRujJenisSaraan=x.KodRujJenisSaraan.Trim()
+
                 }).ToList();
             }
             catch (Exception ex)
@@ -97,7 +103,9 @@ namespace HR.Application.Services
                                 StatusGred = a.StatusAktif == true ? "Aktif" : "Tidak Aktif",
                                 a.IdKumpulanPerkhidmatan,
                                 a.IdKlasifikasiPerkhidmatan,
-                                b.KodRujStatusPermohonan
+                                b.KodRujStatusPermohonan,
+                                a.KodRujJenisSaraan
+                                
                             };
 
                 if (filter.IdKumpulanPerkhidmatan.HasValue)
@@ -111,6 +119,8 @@ namespace HR.Application.Services
 
                 if (!string.IsNullOrEmpty(filter.Nama))
                     query = query.Where(x => x.Nama.Contains(filter.Nama));
+                if (!string.IsNullOrEmpty(filter.KodRujJenisSaraan))
+                    query = query.Where(x => x.KodRujJenisSaraan == filter.KodRujJenisSaraan);
 
                 var data = await query.ToListAsync();
 
@@ -123,7 +133,8 @@ namespace HR.Application.Services
                     Nama = x.Nama,
                     Keterangan = x.Keterangan,
                     StatusPermohonan = x.StatusPermohonan,
-                    StatusGred = x.StatusGred
+                    StatusGred = x.StatusGred,
+                    KodRujJenisSaraan=x.KodRujJenisSaraan.Trim()
                 }).ToList();
 
                 return result;

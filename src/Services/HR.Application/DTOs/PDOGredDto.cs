@@ -13,6 +13,7 @@ namespace HR.Application.DTOs
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string? Keterangan { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
 
     }
     public class GredSearchResultDTO

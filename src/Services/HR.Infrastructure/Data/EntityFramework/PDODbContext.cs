@@ -105,7 +105,7 @@ namespace HR.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDOStatusPermohonanGred>().ToTable("PDO_StatusPermohonanGred");
 
             modelBuilder.Entity<PDOSkimKetuaPerkhidmatan>().ToTable("PDO_SkimKetuaPerkhidmatan")
-             .HasKey(p => new { p.IdSkimPerkhidmatan, p.IdJawatan });
+             .HasKey(p => new { p.IdSkimPerkhidmatan, p.IdKetuaPerkhidmatan });
 
             modelBuilder.Entity<PDOKetuaPerkhidmatan>().ToTable("PDO_KetuaPerkhidmatan");
 

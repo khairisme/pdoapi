@@ -228,7 +228,7 @@ public class JawatanController : ControllerBase
     /// 
     /// </remarks>
     [HttpGet("getSenaraiKetuaPerkhidmatan")]
-    public async Task<IActionResult> GetSenaraiKetuaPerkhidmatan([FromQuery] string NamaJawatan, [FromQuery] string KodCartaOrganisasi)
+    public async Task<IActionResult> GetSenaraiKetuaPerkhidmatan([FromQuery] string? NamaJawatan, [FromQuery] string KodCartaOrganisasi)
     {
         _logger.LogInformation("GetSenaraiKetuaPerkhidmatan: Called with NamaJawatan = {NamaJawatan}, KodCartaOrganisasi = {KodCartaOrganisasi}", NamaJawatan, KodCartaOrganisasi);
 

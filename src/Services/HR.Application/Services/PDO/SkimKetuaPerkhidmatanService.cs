@@ -40,7 +40,7 @@ namespace HR.Application.Services.PDO
                 var entities = dto.Select(d => new PDOSkimKetuaPerkhidmatan
                 {
                     IdSkimPerkhidmatan = d.IdSkimPerkhidmatan,
-                    IdJawatan = d.IdKetuaPerkhidmatan,
+                    IdKetuaPerkhidmatan = d.IdKetuaPerkhidmatan,
                     StatusAktif = true
                 }).ToList();
 
@@ -60,7 +60,7 @@ namespace HR.Application.Services.PDO
 
         public async Task<bool> SoftDeleteSkimKetuaPerkhidmatanAsync(int IdSkim,int IdJawatan)
         {
-            var entity = await _context.PDOSkimKetuaPerkhidmatan.FirstOrDefaultAsync(x => x.IdJawatan== IdJawatan
+            var entity = await _context.PDOSkimKetuaPerkhidmatan.FirstOrDefaultAsync(x => x.IdKetuaPerkhidmatan == IdJawatan
              && x.IdSkimPerkhidmatan==IdSkim
             );
             if (entity == null) return false;

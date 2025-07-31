@@ -12,7 +12,7 @@ namespace HR.Core.Entities.PDO
     {
         public int IdKlasifikasiPerkhidmatan { get; set; }
         public int IdKumpulanPerkhidmatan { get; set; }
-        public int? IdKetuaPerkhidmatan { get; set; } 
+        public int? IdKetuaPerkhidmatan { get; set; }
         public string Kod { get; set; }
         public string Nama { get; set; }
         public string? Keterangan { get; set; }
@@ -20,7 +20,7 @@ namespace HR.Core.Entities.PDO
         public bool IndikatorKenaikanPGT { get; set; }
         public string? ButiranKemaskini { get; set; }
         public string? KodRujStatusSkim { get; set; }
-        
+
         public bool? IndikatorSkim { get; set; }
 
         public string? KodRujMatawang { get; set; }
@@ -30,5 +30,6 @@ namespace HR.Core.Entities.PDO
         public bool StatusAktif { get; set; }
 
         public string? UlasanPengesah { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
     }
 }
