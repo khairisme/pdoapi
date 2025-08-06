@@ -31,6 +31,113 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
+        //public async Task<IEnumerable<MaklumatSkimPerkhidmatanSearchResponseDto>> GetSenaraiSkimPerkhidmatan(MaklumatSkimPerkhidmatanFilterDto filter)
+        //{
+        //    try
+        //    {
+        //        _logger.LogInformation("Getting all MaklumatSkimPerkhidmatanDto using EF Core join");
+
+        //        var query = await (from a in _dbContext.PDOSkimPerkhidmatan
+        //                           join a2 in _dbContext.PDORujStatusSkim
+        //                               on a.KodRujStatusSkim equals a2.Kod
+        //                           join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
+        //                               on a.Id equals b.IdSkimPerkhidmatan
+
+        //                           join b2 in _dbContext.PDORujStatusPermohonan
+        //                                     on b.KodRujStatusPermohonan equals b2.Kod
+
+
+        //                           where b.StatusAktif == true
+
+        //                           select new
+        //                           {
+
+        //                               RujStatusPermohanan =b2,
+        //                               Skim = a,
+        //                               RujStatus = a2,
+        //                               StatusPermohonan = b,
+        //                               GredList = (from g in _dbContext.PDOGredSkimPerkhidmatan
+        //                                           where g.IdSkimPerkhidmatan == a.Id
+        //                                           select g.IdGred.ToString()).ToList(),
+        //                               ketuList = (from g in _dbContext.PDOSkimKetuaPerkhidmatan
+        //                                           where g.IdSkimPerkhidmatan == a.Id
+        //                                           select g.IdKetuaPerkhidmatan.ToString()).ToList(),
+        //                               KodRujJenisSaraan = a.KodRujJenisSaraan,
+        //                           }).ToListAsync();
+
+        //        var result = query
+        //            .Select((q, index) =>
+        //            {
+        //                PDOSkimPerkhidmatan? jsonObj = null;
+        //                if (!string.IsNullOrWhiteSpace(q.Skim.ButiranKemaskini))
+        //                {
+        //                    try
+        //                    {
+        //                        jsonObj = JsonConvert.DeserializeObject<PDOSkimPerkhidmatan>(q.Skim.ButiranKemaskini);
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        _logger.LogWarning($"JSON Deserialization failed for SkimPerkhidmatan Id {q.Skim.Id}: {ex.Message}");
+        //                    }
+        //                }
+
+        //                var dtoSource = jsonObj ?? q.Skim;
+
+        //                var idGredArray = q.GredList.Distinct().ToArray();
+        //                var idGredLength = idGredArray.Length;
+
+        //                return new MaklumatSkimPerkhidmatanSearchResponseDto
+        //                {
+        //                    Bil = index + 1,
+        //                    Id = dtoSource.Id,
+        //                    Kod = dtoSource.Kod,
+        //                    Nama = dtoSource.Nama,
+        //                    Keterangan = dtoSource.Keterangan,
+        //                    TarikhKemaskini = q.StatusPermohonan.TarikhKemasKini,
+        //                    IndikatorSkim = dtoSource.IndikatorSkim,
+        //                    KodRujMatawang = dtoSource.KodRujMatawang,
+        //                    Jumlah = dtoSource.Jumlah,
+        //                    IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
+        //                    IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
+        //                    StatusSkimPerkhidmatan = q.RujStatus.Nama,
+        //                    idGred = string.Join(",", idGredArray),
+        //                    indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
+        //                    indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
+        //                    // carianSkimId=dtoSource.IndikatorSkim,
+        //                    carianSkimId=0,
+        //                    StatusPermohonan = q.RujStatusPermohanan.Nama,
+        //                    KodRujJenisSaraan = q.KodRujJenisSaraan,
+
+        //                };
+        //            });
+
+        //        // Apply filters
+        //        if (filter.MaklumatKlasifikasiPerkhidmatanId.HasValue)
+        //            result = result.Where(q => q.IdKlasifikasiPerkhidmatan == filter.MaklumatKlasifikasiPerkhidmatanId);
+
+        //        if (filter.MaklumatKumpulanPerkhidmatanId.HasValue)
+        //            result = result.Where(x => x.IdKumpulanPerkhidmatan == filter.MaklumatKumpulanPerkhidmatanId);
+
+        //        if (!string.IsNullOrWhiteSpace(filter.Kod))
+        //            result = result.Where(q => q.Kod.Contains(filter.Kod));
+
+        //        if (!string.IsNullOrWhiteSpace(filter.Nama))
+        //            result = result.Where(q => q.Nama.Contains(filter.Nama));
+
+        //        if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
+        //            result = result.Where(q => q.StatusPermohonan == filter.StatusPermohonan);
+        //        if (!string.IsNullOrWhiteSpace(filter.KodRujJenisSaraan))
+        //            result = result.Where(q => q.KodRujJenisSaraan == filter.KodRujJenisSaraan);
+
+        //        return result.ToList();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Failed to retrieve MaklumatSkimPerkhidmatan list.");
+        //        throw new Exception("Failed to retrieve data");
+        //    }
+        //}
+
         public async Task<IEnumerable<MaklumatSkimPerkhidmatanSearchResponseDto>> GetSenaraiSkimPerkhidmatan(MaklumatSkimPerkhidmatanFilterDto filter)
         {
             try
@@ -42,17 +149,12 @@ namespace HR.Application.Services.PDO
                                        on a.KodRujStatusSkim equals a2.Kod
                                    join b in _dbContext.PDOStatusPermohonanSkimPerkhidmatan
                                        on a.Id equals b.IdSkimPerkhidmatan
-
                                    join b2 in _dbContext.PDORujStatusPermohonan
                                              on b.KodRujStatusPermohonan equals b2.Kod
-
-
                                    where b.StatusAktif == true
-                                  
                                    select new
                                    {
-                                      
-                                       RujStatusPermohanan =b2,
+                                       RujStatusPermohanan = b2,
                                        Skim = a,
                                        RujStatus = a2,
                                        StatusPermohonan = b,
@@ -63,9 +165,33 @@ namespace HR.Application.Services.PDO
                                                    where g.IdSkimPerkhidmatan == a.Id
                                                    select g.IdKetuaPerkhidmatan.ToString()).ToList(),
                                        KodRujJenisSaraan = a.KodRujJenisSaraan,
+                                       RujStatusPermohonanKod = b2.Kod
                                    }).ToListAsync();
 
-                var result = query
+                // Apply filters on the original query data FIRST
+                var filteredQuery = query.AsQueryable();
+
+                if (filter.MaklumatKlasifikasiPerkhidmatanId.HasValue)
+                    filteredQuery = filteredQuery.Where(q => q.Skim.IdKlasifikasiPerkhidmatan == filter.MaklumatKlasifikasiPerkhidmatanId);
+
+                if (filter.MaklumatKumpulanPerkhidmatanId.HasValue)
+                    filteredQuery = filteredQuery.Where(x => x.Skim.IdKumpulanPerkhidmatan == filter.MaklumatKumpulanPerkhidmatanId);
+
+                if (!string.IsNullOrWhiteSpace(filter.Kod))
+                    filteredQuery = filteredQuery.Where(q => q.Skim.Kod.Contains(filter.Kod));
+
+                if (!string.IsNullOrWhiteSpace(filter.Nama))
+                    filteredQuery = filteredQuery.Where(q => q.Skim.Nama.Contains(filter.Nama));
+
+                if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
+                    filteredQuery = filteredQuery.Where(q => q.RujStatusPermohonanKod == filter.StatusPermohonan);
+
+                if (!string.IsNullOrWhiteSpace(filter.KodRujJenisSaraan))
+                    filteredQuery = filteredQuery.Where(q => q.KodRujJenisSaraan == filter.KodRujJenisSaraan);
+
+                // NOW transform the filtered data to DTOs
+                var filteredList = filteredQuery.ToList();
+                var result = filteredList
                     .Select((q, index) =>
                     {
                         PDOSkimPerkhidmatan? jsonObj = null;
@@ -103,31 +229,11 @@ namespace HR.Application.Services.PDO
                             idGred = string.Join(",", idGredArray),
                             indikatorSkimKritikal = dtoSource.IndikatorSkimKritikal,
                             indikatorKenaikanPGT = dtoSource.IndikatorKenaikanPGT,
-                            // carianSkimId=dtoSource.IndikatorSkim,
-                            carianSkimId=0,
+                            carianSkimId = 0,
                             StatusPermohonan = q.RujStatusPermohanan.Nama,
                             KodRujJenisSaraan = q.KodRujJenisSaraan,
-
                         };
                     });
-
-                // Apply filters
-                if (filter.MaklumatKlasifikasiPerkhidmatanId.HasValue)
-                    result = result.Where(q => q.IdKlasifikasiPerkhidmatan == filter.MaklumatKlasifikasiPerkhidmatanId);
-
-                if (filter.MaklumatKumpulanPerkhidmatanId.HasValue)
-                    result = result.Where(x => x.IdKumpulanPerkhidmatan == filter.MaklumatKumpulanPerkhidmatanId);
-
-                if (!string.IsNullOrWhiteSpace(filter.Kod))
-                    result = result.Where(q => q.Kod.Contains(filter.Kod));
-
-                if (!string.IsNullOrWhiteSpace(filter.Nama))
-                    result = result.Where(q => q.Nama.Contains(filter.Nama));
-
-                if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
-                    result = result.Where(q => q.StatusPermohonan == filter.StatusPermohonan);
-                if (!string.IsNullOrWhiteSpace(filter.KodRujJenisSaraan))
-                    result = result.Where(q => q.KodRujJenisSaraan == filter.KodRujJenisSaraan);
 
                 return result.ToList();
             }

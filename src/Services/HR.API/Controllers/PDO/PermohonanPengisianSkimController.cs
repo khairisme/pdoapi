@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HR.API.Controllers.PDO
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/pdo/[controller]")]
     public class PermohonanPengisianSkimController : ControllerBase

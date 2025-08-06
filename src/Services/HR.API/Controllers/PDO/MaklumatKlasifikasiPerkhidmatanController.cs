@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HR.API.Controllers.PDO
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/pdo/[controller]")]
     public class MaklumatKlasifikasiPerkhidmatanController : ControllerBase

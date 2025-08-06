@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace HR.API.Controllers
 {
@@ -27,12 +28,23 @@ namespace HR.API.Controllers
         public async Task<IActionResult> Login([FromBody] TokenRequest request)
         {
             string keyCloakUrl = _keycloakSettings.BaseUrl + "realms/" + _keycloakSettings.Realm + "/protocol/openid-connect/token";
-            var tokenResponse = await _keycloakService.GetTokenAsync(request.UserName, request.Password, 
+            var tokenResponse = await _keycloakService.GetTokenAsync(request.UserName, request.Password,
                 keyCloakUrl, _keycloakSettings.ClientId, _keycloakSettings.ClientSecret);
-            
+
             var extractedToken = _tokenGeneratorService.ExtractToken(tokenResponse);
             var token = _tokenGeneratorService.GenerateNewToken(extractedToken);
+
             return Ok(token);
+
+            //var blankTokenResponse = new HR.API.Models.KeycloakTokenResponse
+            //{
+            //    AccessToken = "",
+            //    RefreshToken = "",
+            //    ExpiresIn = 0,
+            //    TokenType = "",
+            //    Scope = ""
+            //};
+            //return Ok(blankTokenResponse);
         }
     }
 }
