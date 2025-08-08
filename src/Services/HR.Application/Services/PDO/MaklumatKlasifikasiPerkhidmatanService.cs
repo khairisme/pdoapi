@@ -49,7 +49,8 @@ namespace HR.Application.Services.PDO
                                  a.StatusAktif,
                                  a.FungsiUmum,
                                  a.FungsiUtama,
-                                 StatusPermohonan = b2.Nama
+                                 StatusPermohonan = b2.Nama,
+                                 RujStatusPermohonanKod=b2.Kod
                              })
                   .AsEnumerable()
                  .Select((x, index) => new
@@ -62,7 +63,8 @@ namespace HR.Application.Services.PDO
                      x.StatusAktif,
                      x.FungsiUmum,
                      x.FungsiUtama,
-                     x.StatusPermohonan
+                     x.StatusPermohonan,
+                     x.RujStatusPermohonanKod
                  });
 
 
@@ -76,8 +78,11 @@ namespace HR.Application.Services.PDO
                 if (filter.StatusKumpulan.HasValue)
                     query = query.Where(q => Convert.ToInt16(q.StatusAktif) == filter.StatusKumpulan.Value);
 
+                //if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
+                //    query = query.Where(q => q.Kod == filter.StatusPermohonan);
+
                 if (!string.IsNullOrWhiteSpace(filter.StatusPermohonan))
-                    query = query.Where(q => q.Kod == filter.StatusPermohonan);
+                    query = query.Where(q => q.RujStatusPermohonanKod == filter.StatusPermohonan);
 
                 var data = query.ToList();
 
