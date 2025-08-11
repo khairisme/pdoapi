@@ -520,6 +520,8 @@ namespace HR.Application.Services.PDO
                     KodRujStatusSkim = dtoSource.KodRujStatusSkim,
                     KodRujJenisSaraan=query.a.KodRujJenisSaraan.Trim(),
                    KodRujJenisSaraanNama = query.c.Nama.Trim(),
+                   UlasanPengesah=query.a.UlasanPengesah
+                   
 
                 };
 
