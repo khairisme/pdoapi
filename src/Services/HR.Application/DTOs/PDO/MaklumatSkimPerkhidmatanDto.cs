@@ -38,7 +38,8 @@ namespace HR.Application.DTOs.PDO
         public string? KodRujStatusSkim { get; set; }
         public string? KodRujJenisSaraan { get; set; }
         public string? KodRujJenisSaraanNama { get; set; }
-        
+        public string? UlasanPengesah { get; set; }
+
 
 
     }
