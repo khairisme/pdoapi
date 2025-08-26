@@ -6,15 +6,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{984BB9B3-3FA3-BE33-9484-CAC21695A33C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.Core", "src\Services\HR.Core\HR.Core.csproj", "{CE23043B-A329-45B2-9E8D-E88453F7B0FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.Core", "src\Services\HR.PDO.Core\HR.PDO.Core.csproj", "{CE23043B-A329-45B2-9E8D-E88453F7B0FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.Application", "src\Services\HR.Application\HR.Application.csproj", "{00A7E7B5-DB96-4294-B072-974B21C7AB93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.Application", "src\Services\HR.PDO.Application\HR.PDO.Application.csproj", "{00A7E7B5-DB96-4294-B072-974B21C7AB93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.Infrastructure", "src\Services\HR.Infrastructure\HR.Infrastructure.csproj", "{21E1A332-BB35-42E7-8824-CAD6E132CF7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.Infrastructure", "src\Services\HR.PDO.Infrastructure\HR.PDO.Infrastructure.csproj", "{21E1A332-BB35-42E7-8824-CAD6E132CF7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.API", "src\Services\HR.API\HR.API.csproj", "{0F3149D4-34C4-44DC-95A5-18C7A51A3928}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.API", "src\Services\HR.PDO.API\HR.PDO.API.csproj", "{0F3149D4-34C4-44DC-95A5-18C7A51A3928}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.Grpc", "src\Services\HR.Grpc\HR.Grpc.csproj", "{41A15F6B-1452-4F28-9DF0-84FFEDE0EBCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.Grpc", "src\Services\HR.PDO.Grpc\HR.PDO.Grpc.csproj", "{41A15F6B-1452-4F28-9DF0-84FFEDE0EBCA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Common", "src\Shared\Shared.Common\Shared.Common.csproj", "{38AB5783-BBAE-455C-9676-C4197618ED99}"
 EndProject
@@ -22,15 +22,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Messaging", "src\Sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Contracts", "src\Shared\Shared.Contracts\Shared.Contracts.csproj", "{0A4D3F6F-B406-48C1-BC6C-AEC3B63112D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.UnitTests", "tests\HR.UnitTests\HR.UnitTests.csproj", "{B13C1264-8B47-4684-9D19-50CF1C530715}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.UnitTests", "tests\HR.PDO.UnitTests\HR.PDO.UnitTests.csproj", "{B13C1264-8B47-4684-9D19-50CF1C530715}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.IntegrationTests", "tests\HR.IntegrationTests\HR.IntegrationTests.csproj", "{66278860-9A3D-441B-A294-21B31CFEB0D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.IntegrationTests", "tests\HR.PDO.IntegrationTests\HR.PDO.IntegrationTests.csproj", "{66278860-9A3D-441B-A294-21B31CFEB0D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.ExternalAPI", "src\Services\HR.ExternalAPI\HR.ExternalAPI.csproj", "{A7F529F5-F3F8-4D95-A1B7-68834C0DE2DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HR.PDO.ExternalAPI", "src\Services\HR.PDO.ExternalAPI\HR.PDO.ExternalAPI.csproj", "{A7F529F5-F3F8-4D95-A1B7-68834C0DE2DC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{39D9F185-366F-4092-A0EC-542DD9B48B67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HR.Shared", "src\Services\HR.Shared\HR.Shared.csproj", "{B3023C16-F2E7-ED85-749E-AEEBD5191215}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HR.PDO.Shared", "src\Services\HR.PDO.Shared\HR.PDO.Shared.csproj", "{B3023C16-F2E7-ED85-749E-AEEBD5191215}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

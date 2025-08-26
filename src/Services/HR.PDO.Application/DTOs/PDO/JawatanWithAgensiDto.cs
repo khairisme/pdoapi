@@ -1,0 +1,90 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HR.PDO.Application.DTOs.PDO
+{
+    public class JawatanWithAgensiDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Nama { get; set; }
+        public string Agensi { get; set; }
+    }
+    public class CarianJawatanFilterDto
+    {
+        public int? SkimPerkhidmatanId { get; set; }
+        public string? NamaJawatan { get; set; }
+        public string? UnitOrganisasi { get; set; }
+    }
+    public class CarianJawatanResponseDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string NamaJawatan { get; set; }
+        public string UnitOrganisasi { get; set; }
+        public string StatusPengisian { get; set; }
+        public DateTime? TarikhStatusKekosongan { get; set; }
+        public bool TickCheckBox { get; set; }
+    }
+    public class CarianJawatanSebenarFilterDto
+    {
+        public int? SkimPerkhidmatanId { get; set; }
+        public string? KodJawatanSebenar { get; set; }
+        public string? NamaJawatanSebenar { get; set; }
+        public string? StatusKekosonganJawatan { get; set; }
+        public int? UnitOrganisasiId { get; set; }
+        
+    }
+    public class CarianJawatanSebenarResponseDto
+    {
+        public int Bil { get; set; }
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string NamaJawatan { get; set; }
+        public string UnitOrganisasi { get; set; }
+        public string StatusPengisian { get; set; }
+        public DateTime? TarikhStatusKekosongan { get; set; }
+        public bool TickCheckBox { get; set; }
+    }
+
+    public class CarianJawatanSebenarReqDto
+    {
+        public int IdSkimPerkhidmatan { get; set; }
+        public string KodCarta { get; set; } = string.Empty;
+        public string? KodJawatanSebenar { get; set; }
+        public string? StatusKekosonganJawatan { get; set; }
+        public int? UnitOrganisasi { get; set; }
+    }
+    public class CarianJawatanSebenarRespDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; } = string.Empty;
+        public string NamaJawatan { get; set; } = string.Empty;
+        public string UnitOrganisasi { get; set; } = string.Empty;
+        public string StatusPengisian { get; set; } = string.Empty;
+        public DateTime? TarikhKekosonganJawatan { get; set; }
+    }
+
+    // code added by amar 220725
+    public class CarianKetuaPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Nama { get; set; } 
+      
+    }
+
+    public class SenaraiKetuaPerkhidmatanResponseDto
+    {
+        public int Id { get; set; }
+        public string Kod { get; set; }
+        public string Jawatan { get; set; }
+        public string Agensi { get; set; }
+        
+
+    }
+    //end
+}
