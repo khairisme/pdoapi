@@ -25,7 +25,7 @@ public class HRDbContext : DbContext
 
         // Configure entity relationships and constraints
         modelBuilder.Entity<Department>(entity =>
-        {
+        { //test
             entity.ToTable("Department");
             entity.HasKey(d => d.Id);
             entity.Property(d => d.Name).IsRequired().HasMaxLength(100);
