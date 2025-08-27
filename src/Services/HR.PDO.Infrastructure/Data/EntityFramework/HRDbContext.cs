@@ -67,7 +67,7 @@ public class HRDbContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        // Set audit properties before saving changes
+        // Set audit properties before saving changes - Text
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
             switch (entry.State)
