@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace HR.PDO.Core.Entities.PDO
 {
     [Table("PDO_ButiranPermohonan")]
-    public class PDOButiranPermohonan: BaseEntity
+    public class PDOButiranPermohonan: PDOBaseEntity
     {
         public int? IdPermohonanJawatan { get; set; }
         public int? IdAktivitiOrganisasi { get; set; }

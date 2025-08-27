@@ -353,7 +353,7 @@ namespace HR.PDO.Application.Services.PDO
                         join b in _context.PDOStatusPermohonanPengisian on a.Id equals b.IdPermohonanPengisian
                         join c in _context.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals c.Kod
                         join puo in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals puo.Id
-                        where puo.StatusAktif && puo.Kod == "0001"
+                        where puo.StatusAktif==true && puo.Kod == "0001"
                               && (filter.Kementerian == null || puo.Id == filter.Kementerian)
                               && (filter.StatusPermohonan == null || c.Kod == filter.StatusPermohonan)
                         orderby a.Id
@@ -1329,7 +1329,7 @@ namespace HR.PDO.Application.Services.PDO
                                 join pbp in _context.PDOButiranPermohonan on ppj.Id equals pbp.IdPermohonanJawatan
                                 join pspj in _context.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
                                 join puo in _context.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
-                                join prsp in _context.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                                join prsp in _context.PDORujStatusPermohonan on pspj.KodRujStatusPermohonanJawatan equals prsp.Kod
                                 where puo.StatusAktif == true &&
                                       puo.Kod == "0001" &&
                                       puo.Id == filter.Kementerian &&

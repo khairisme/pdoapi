@@ -14,7 +14,6 @@ public class HRDbContext : DbContext
     }
 
     // DbSet properties for each entity
-    public DbSet<Employee> Employees { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<Position> Positions { get; set; }
     public DbSet<Leave> Leaves { get; set; }
@@ -25,36 +24,6 @@ public class HRDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Configure entity relationships and constraints
-        modelBuilder.Entity<Employee>(entity =>
-        {
-            entity.ToTable("Employee");
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.EmployeeId).IsRequired().HasMaxLength(20);
-            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.LastName).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.MiddleName).HasMaxLength(50);
-            entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Phone).IsRequired().HasMaxLength(20);
-            entity.Property(e => e.Address).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
-
-            // Configure relationships
-            entity.HasOne<Department>()
-                .WithMany()
-                .HasForeignKey(e => e.DepartmentId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne<Position>()
-                .WithMany()
-                .HasForeignKey(e => e.PositionId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne<Employee>()
-                .WithMany()
-                .HasForeignKey(e => e.ManagerId)
-                .OnDelete(DeleteBehavior.Restrict);
-        });
-
         modelBuilder.Entity<Department>(entity =>
         {
             entity.ToTable("Department");
@@ -85,10 +54,6 @@ public class HRDbContext : DbContext
             entity.Property(l => l.Reason).HasMaxLength(500);
             entity.Property(l => l.IsDeleted).HasDefaultValue(false);
 
-            entity.HasOne<Employee>()
-                .WithMany()
-                .HasForeignKey(l => l.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Attendance>(entity =>
@@ -97,10 +62,6 @@ public class HRDbContext : DbContext
             entity.HasKey(a => a.Id);
             entity.Property(a => a.IsDeleted).HasDefaultValue(false);
 
-            entity.HasOne<Employee>()
-                .WithMany()
-                .HasForeignKey(a => a.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

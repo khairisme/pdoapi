@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HR.PDO.Application.DTOs;
 
 namespace HR.PDO.Application.Interfaces.PDO
 {

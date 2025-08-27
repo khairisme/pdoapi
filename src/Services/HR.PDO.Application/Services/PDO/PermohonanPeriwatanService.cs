@@ -51,7 +51,7 @@ namespace HR.PDO.Application.Services.PDO
                 var statusPeriwatan = new PDOStatusPermohonanJawatan
                 {
                     IdPermohonanJawatan = Periwatan.Id,
-                    KodRujStatusPermohonan = "01",
+                    KodRujStatusPermohonanJawatan = "01",
                     TarikhStatusPermohonan = DateTime.Now,
                     StatusAktif = true
                 };
@@ -111,7 +111,7 @@ namespace HR.PDO.Application.Services.PDO
         {
             return await _dbContext.PDOStatusPermohonanJawatan
                 .Where(p => p.IdPermohonanJawatan == idPermohonanJawatan && p.StatusAktif == true)
-                .Select(p => p.UlasanStatusPermohonan)
+                .Select(p => p.Ulasan)
                 .FirstOrDefaultAsync();
         }
 
@@ -144,9 +144,9 @@ namespace HR.PDO.Application.Services.PDO
                 {
 
                     IdPermohonanJawatan = dto.IdPermohonanJawatan,
-                    KodRujStatusPermohonan = "02", // Hardcoded as per requirement
+                    KodRujStatusPermohonanJawatan = "02", // Hardcoded as per requirement
 
-                    UlasanStatusPermohonan = dto.Ulasan,
+                    Ulasan = dto.Ulasan,
                     StatusAktif = true
                 };
 

@@ -31,7 +31,7 @@ namespace HR.PDO.Application.Services.PDO
         {
             var query = from a in _context.PDOJawatan
                         join b in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals b.Id
-                        where a.StatusAktif && b.StatusAktif &&
+                        where a.StatusAktif == true && b.StatusAktif == true &&
                               a.Nama.Contains(namaJwtn) &&
                               b.KodCartaOrganisasi.Contains(kodCartaOrganisasi)
                         select new JawatanWithAgensiDto

@@ -1,4 +1,5 @@
 ﻿using HR.PDO.Core.Entities.PDO;
+using HR.PDO.Core.Entities.PDP;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -14,32 +15,23 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
         public DbSet<PDOStatusPermohonanKumpulanPerkhidmatan> PDOStatusPermohonanKumpulanPerkhidmatan { get; set; }
         public DbSet<PDOStatusPermohonanKlasifikasiPerkhidmatan> PDOStatusPermohonanKlasifikasiPerkhidmatan { get; set; }
         public DbSet<PDOKlasifikasiPerkhidmatan> PDOKlasifikasiPerkhidmatan { get; set; }
-
         public DbSet<PDOSkimPerkhidmatan> PDOSkimPerkhidmatan { get; set; }
         public DbSet<PDOGredSkimPerkhidmatan> PDOGredSkimPerkhidmatan { get; set; }
         public DbSet<PDOStatusPermohonanSkimPerkhidmatan> PDOStatusPermohonanSkimPerkhidmatan { get; set; }
         public DbSet<PDORujJenisSaraan> PDORujJenisSaraan { get; set; }
-
-
         public DbSet<PDOGred> PDOGred { get; set; }
         public DbSet<PDOStatusPermohonanGred> PDOStatusPermohonanGred { get; set; }
         public DbSet<PDORujStatusSkim> PDORujStatusSkim { get; set; }
-
         public DbSet<PDOSkimKetuaPerkhidmatan> PDOSkimKetuaPerkhidmatan { get; set; }
         public DbSet<PDOKetuaPerkhidmatan> PDOKetuaPerkhidmatan { get; set; }
-
         public DbSet<PDOJawatan> PDOJawatan { get; set; }
-
         public DbSet<PDOUnitOrganisasi> PDOUnitOrganisasi { get; set; }
-
         public DbSet<PDOPermohonanJawatan> PDOPermohonanJawatan { get; set; }
-
         public DbSet<PDOStatusPermohonanJawatan> PDOStatusPermohonanJawatan { get; set; }
-
         public DbSet<PDOAktivitiOrganisasi> PDOAktivitiOrganisasi { get; set; }
         public DbSet<PDORujKategoriAktivitiOrganisasi> PDORujKategoriAktivitiOrganisasi { get; set; }
         public DbSet<PDORujJenisPermohonan> PDORujJenisPermohonan { get; set; }
-       public DbSet<PDOPermohonanPengisian> PDOPermohonanPengisian { get; set; }
+        public DbSet<PDOPermohonanPengisian> PDOPermohonanPengisian { get; set; }
         public DbSet<PDOStatusPermohonanPengisian> PDOStatusPermohonanPengisian { get; set; }
         public DbSet<PDORujJenisAgensi> PDORujJenisAgensi { get; set; }
         public DbSet<PDORujKategoriUnitOrganisasi> PDORujKategoriUnitOrganisasi { get; set; }
@@ -51,12 +43,29 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
         public DbSet<PDOKekosonganJawatan> PDOKekosonganJawatan { get; set; }
         public DbSet<PDORujStatusKekosonganJawatan> PDORujStatusKekosonganJawatan { get; set; }
         public DbSet<PDOButiranPermohonan> PDOButiranPermohonan { get; set; }
-
-
-
         public DbSet<PDORujStatusPermohonanJawatan> PDORujStatusPermohonanJawatan { get; set; }
-
         public DbSet<PDORujPasukanPerunding> PDORujPasukanPerunding { get; set; }
+        public DbSet<PDOButiranPermohonanJawatan> PDOButiranPermohonanJawatan { get; set; }
+        public DbSet<PDOButiranPermohonanSkimGred> PDOButiranPermohonanSkimGred { get; set; }
+        public DbSet<PDOPenetapanImplikasiKewangan> PDOPenetapanImplikasiKewangan { get; set; }
+        public DbSet<PDOButiranPermohonanSkimGredTBK> PDOButiranPermohonanSkimGredTBK { get; set; }
+        public DbSet<PDODokumenPermohonan> PDODokumenPermohonan { get; set; }
+        public DbSet<PDORujJenisDokumen> PDORujJenisDokumen { get; set; }
+        public DbSet<PDOButiranPermohonanSkimGredKUJ> PDOButiranPermohonanSkimGredKUJ { get; set; }
+        public DbSet<PDPJadualGaji> PDPJadualGaji { get; set; }
+        public DbSet<PPARujPangkatBadanBeruniform> PPARujPangkatBadanBeruniform { get; set; }
+        public DbSet<PDORujGelaranJawatan> PDORujGelaranJawatan { get; set; }
+        public DbSet<PDORujKluster> PDORujKluster { get; set; }
+        public DbSet<PDORujUrusanPerkhidmatan> PDORujUrusanPerkhidmatan { get; set; }
+        public DbSet<PDORujJenisMesyuarat> PDORujJenisMesyuarat { get; set; }
+        public DbSet<PDORujJenisJawatan> PDORujJenisJawatan { get; set; }
+        
+
+
+
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

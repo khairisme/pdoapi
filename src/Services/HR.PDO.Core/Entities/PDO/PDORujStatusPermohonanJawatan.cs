@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,13 +7,19 @@ using System.Threading.Tasks;
 
 namespace HR.PDO.Core.Entities.PDO
 {
-    [Table("PDO_RujStatusPermohonanJawatan")] // This is the key
+    [Table("PDO_RujStatusPermohonanJawatan")]
     public class PDORujStatusPermohonanJawatan : PDOBaseEntity
     {
-        [NotMapped]
-        public new int Id { get; set; }
-        public string Kod { get; set; }
-        public string Nama { get; set; } 
-        public string? Keterangan { get; set; } 
+        public string? Kod { get; set; }
+        public string? Nama { get; set; }
+        public string? Keterangan { get; set; }
+        public string? KodRujPeranan { get; set; }
+        public bool? StatusAktif { get; set; }
+        public Guid? IdCipta { get; set; }
+        public DateTime? TarikhCipta { get; set; }
+        public Guid? IdPinda { get; set; }
+        public DateTime? TarikhPinda { get; set; }
+        public Guid? IdHapus { get; set; }
+        public DateTime? TarikhHapus { get; set; }
     }
 }

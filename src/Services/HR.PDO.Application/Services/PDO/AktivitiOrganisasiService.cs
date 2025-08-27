@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HR.PDO.Application.DTOs;
 
 namespace HR.PDO.Application.Services.PDO
 {
@@ -189,7 +190,7 @@ namespace HR.PDO.Application.Services.PDO
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
                     Nama = x.Nama ?? String.Empty,
-                    Level = x.Level,
+                    Tahap = x.Tahap,
                     FullPath = x.FullPath ?? String.Empty
                 }).ToList();
 
@@ -300,7 +301,7 @@ namespace HR.PDO.Application.Services.PDO
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
                     Nama = x.Nama ?? String.Empty,
-                    Level = x.Level,
+                    Tahap = x.Tahap,
                     FullPath = x.FullPath ?? String.Empty
                 }).ToList();
 
@@ -430,7 +431,7 @@ namespace HR.PDO.Application.Services.PDO
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
                     Nama = x.Nama ?? String.Empty,
-                    Level = x.Level,
+                    Tahap = x.Tahap,
                     FullPath = x.FullPath ?? String.Empty
                 }).ToList();
 

@@ -19,12 +19,6 @@ public static class DependencyInjection
     /// </summary>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        // Register default service implementation
-        services.AddScoped<IEmployeeService, EmployeeService>();
-        
-        // Register specialized service implementations
-        services.AddScoped<EfEmployeeService>();
-
         services.AddScoped<IPenggunaService, PenggunaService>();
 
         services.AddScoped<IKumpulanPerkhidmatanService, KumpulanPerkhidmatanService>();

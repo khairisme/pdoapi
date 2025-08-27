@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HR.PDO.Application.DTOs;
 
 namespace HR.PDO.Application.Services.PDO
 {
@@ -29,7 +30,7 @@ namespace HR.PDO.Application.Services.PDO
         {
             _logger.LogInformation("Getting all UnitOrganisasiDto using Entity Framework");
             var result = await _unitOfWork.Repository<PDOUnitOrganisasi>().GetAllAsync();
-            result = result.ToList().Where(e => e.StatusAktif);
+            result = result.ToList().Where(e => e.StatusAktif == true);
             return result.Select(MapToDto);
         }
 
@@ -49,7 +50,7 @@ namespace HR.PDO.Application.Services.PDO
                                     on puo.KodRujKategoriUnitOrganisasi equals prkuo.Kod
                                 join prja in _context.PDORujJenisAgensi
                                     on puo.KodRujJenisAgensi equals prja.Kod
-                                where puo.StatusAktif && prkuo.Kod == "0001"
+                                where puo.StatusAktif==true && prkuo.Kod == "0001"
                                 select new UnitOrganisasiKementerianDto
                                 {
                                     Kod = puo.Kod,

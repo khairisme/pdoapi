@@ -31,7 +31,7 @@ namespace HR.PDO.Application.Services.PDO
                 _logger.LogInformation("Getting all PermohonanJawatanSearch using EF Core join");
                 var query = from a in _dbContext.PDOPermohonanJawatan
                             join b in _dbContext.PDOStatusPermohonanJawatan on a.Id equals b.IdPermohonanJawatan
-                            join c in _dbContext.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals c.Kod
+                            join c in _dbContext.PDORujStatusPermohonan on b.KodRujStatusPermohonanJawatan equals c.Kod
                             where b.StatusAktif == true
                             select new PermohonanJawatanSearchResponseDto
                             {
@@ -39,7 +39,7 @@ namespace HR.PDO.Application.Services.PDO
                                 NomborRujukan = a.NomborRujukan,
                                 Tajuk = a.Tajuk,
                                 TarikhPermohonan = a.TarikhPermohonan,
-                                KodRujStatusPermohonan = b.KodRujStatusPermohonan,
+                                KodRujStatusPermohonan = b.KodRujStatusPermohonanJawatan,
                                 Status = c.Nama
                             };
 
@@ -64,7 +64,7 @@ namespace HR.PDO.Application.Services.PDO
         {
             var query = from ppj in _dbContext.PDOPermohonanJawatan
                         join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
-                        join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                        join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonanJawatan equals prsp.Kod
                         where
                             (string.IsNullOrEmpty(filter.NomborRujukan) || ppj.NomborRujukan == filter.NomborRujukan)
                             && (string.IsNullOrEmpty(filter.TajukPermohonan) || ppj.Tajuk.Contains(filter.TajukPermohonan))
@@ -84,7 +84,7 @@ namespace HR.PDO.Application.Services.PDO
         {
             var query = from ppj in _dbContext.PDOPermohonanJawatan
                         join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
-                        join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                        join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonanJawatan equals prsp.Kod
                         where (string.IsNullOrEmpty(filter.NomborRujukan) || ppj.NomborRujukan.Contains(filter.NomborRujukan))
                               && (string.IsNullOrEmpty(filter.TajukPermohonan) || ppj.Tajuk.Contains(filter.TajukPermohonan))
                               && (string.IsNullOrEmpty(filter.KodStatusPermohonan) || prsp.Kod == filter.KodStatusPermohonan)
@@ -106,7 +106,7 @@ namespace HR.PDO.Application.Services.PDO
             var result = await (from ppj in _dbContext.PDOPermohonanJawatan
                                 join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
                                 join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
-                                join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                                join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonanJawatan equals prsp.Kod
                                 where ppj.IdUnitOrganisasi == agensiId
                                    && (string.IsNullOrEmpty(noRujukan) || ppj.NomborRujukan.Contains(noRujukan))
                                    && (string.IsNullOrEmpty(tajuk) || ppj.Tajuk.Contains(tajuk))
@@ -128,7 +128,7 @@ namespace HR.PDO.Application.Services.PDO
             var result = await (from ppj in _dbContext.PDOPermohonanJawatan
                                 join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
                                 join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
-                                join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                                join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonanJawatan equals prsp.Kod
                                 where ppj.Id == idPermohonanJawatan
                                 select new PermohonanJawatanDto
                                 {
@@ -148,7 +148,7 @@ namespace HR.PDO.Application.Services.PDO
                         join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
                         join prjp in _dbContext.PDORujJenisPermohonan on ppj.KodRujJenisPermohonan equals prjp.Kod
                         join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
-                        join prspj in _dbContext.PDORujStatusPermohonanJawatan on pspj.KodRujStatusPermohonan equals prspj.Kod
+                        join prspj in _dbContext.PDORujStatusPermohonanJawatan on pspj.KodRujStatusPermohonanJawatan equals prspj.Kod
                         where ppj.IdAgensi == agensiId
                             && (string.IsNullOrEmpty(noRujukan) || ppj.NomborRujukan.Contains(noRujukan))
                             && (string.IsNullOrEmpty(tajuk) || ppj.Tajuk.Contains(tajuk))
@@ -180,7 +180,7 @@ namespace HR.PDO.Application.Services.PDO
                 var query = from ppj in _dbContext.PDOPermohonanJawatan
                             join puo in _dbContext.PDOUnitOrganisasi on ppj.IdUnitOrganisasi equals puo.Id
                             join pspj in _dbContext.PDOStatusPermohonanJawatan on ppj.Id equals pspj.IdPermohonanJawatan
-                            join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonan equals prsp.Kod
+                            join prsp in _dbContext.PDORujStatusPermohonan on pspj.KodRujStatusPermohonanJawatan equals prsp.Kod
                             where ppj.IdUnitOrganisasi == filter.AgensiId
                                 && (string.IsNullOrEmpty(filter.NoRujukan) || ppj.NomborRujukan.Contains(filter.NoRujukan))
                                 && (string.IsNullOrEmpty(filter.TajukPermohonan) || ppj.Tajuk.Contains(filter.TajukPermohonan))
@@ -306,7 +306,7 @@ namespace HR.PDO.Application.Services.PDO
                     IdPermohonanJawatan = ulasanPasukanPerundingRequestDto.IdPermohonanJawatan,
                     KodRujStatusPermohonanJawatan = "02",
                     TarikhStatusPermohonan = DateTime.Now,
-                    UlasanStatusPermohonan = ulasanPasukanPerundingRequestDto.Ulasan,
+                    Ulasan = ulasanPasukanPerundingRequestDto.Ulasan,
                     StatusAktif = true,
                 };
 
@@ -331,7 +331,7 @@ namespace HR.PDO.Application.Services.PDO
             {
                 var query = from a in _dbContext.PDOPermohonanJawatan
                             join b in _dbContext.PDOStatusPermohonanJawatan on a.Id equals b.IdPermohonanJawatan
-                            join c in _dbContext.PDORujStatusPermohonan on b.KodRujStatusPermohonan equals c.Kod
+                            join c in _dbContext.PDORujStatusPermohonan on b.KodRujStatusPermohonanJawatan equals c.Kod
                             where (string.IsNullOrEmpty(filter.NomborRujukan) || a.NomborRujukan.Contains(filter.NomborRujukan))
                                 && (string.IsNullOrEmpty(filter.TajukPermohonan) || a.Tajuk.Contains(filter.TajukPermohonan))
                                 && (string.IsNullOrEmpty(filter.StatusPermohonan) || c.Kod == filter.StatusPermohonan)
@@ -342,7 +342,7 @@ namespace HR.PDO.Application.Services.PDO
                                 a.NomborRujukan,
                                 a.Tajuk,
                                 a.TarikhPermohonan,
-                                b.KodRujStatusPermohonan,
+                                b.KodRujStatusPermohonanJawatan,
                                 Status = c.Nama
                             };
 
@@ -357,7 +357,7 @@ namespace HR.PDO.Application.Services.PDO
                     NomborRujukan = x.NomborRujukan ?? String.Empty,
                     Tajuk = x.Tajuk ?? String.Empty,
                     TarikhPermohonan = x.TarikhPermohonan,
-                    KodRujStatusPermohonan = x.KodRujStatusPermohonan ?? String.Empty,
+                    KodRujStatusPermohonan = x.KodRujStatusPermohonanJawatan ?? String.Empty,
                     Status = x.Status ?? String.Empty
                 }).ToList();
 
@@ -418,7 +418,7 @@ namespace HR.PDO.Application.Services.PDO
                     IdPermohonanJawatan = request.IdPermohonanJawatan,
                     KodRujStatusPermohonanJawatan = "02", // status code for new state
                     TarikhStatusPermohonan = DateTime.Now,
-                    UlasanStatusPermohonan = request.Ulasan,
+                    Ulasan = request.Ulasan,
                     StatusAktif = true,
                     IdCipta = Guid.Empty,
                     TarikhCipta = DateTime.Now

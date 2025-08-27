@@ -27,9 +27,6 @@ builder.Services.AddHttpClient<IPermohonanPengisianService, PermohonanPengisianS
 
 builder.Services.AddSharedApplication();
 
-// Register the default implementation (used by regular EmployeesController)
-builder.Services.AddInfrastructure(builder.Configuration);
-
 // Register the Entity Framework implementation
 builder.Services.AddEntityFrameworkInfrastructure(builder.Configuration);
 
