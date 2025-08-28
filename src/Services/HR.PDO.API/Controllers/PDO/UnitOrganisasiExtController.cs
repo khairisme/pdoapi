@@ -23,7 +23,7 @@ namespace HR.PDO.API.Controllers.PDO {
             _logger.LogInformation("Calling StrukturUnitOrganisasi");
             try
             {
-                var data = await _unitorganisasiext.StrukturUnitOrganisasi(KodCartaOrganisasi,parentId = 0,page = 1,pageSize = 50,Keyword = null,sortBy = "UnitOrganisasi",desc = false);
+                var data = await _unitorganisasiext.StrukturUnitOrganisasi(KodCartaOrganisasi,parentId,page,pageSize,Keyword,sortBy,desc);
                 return Ok(data);
             }
             catch (Exception ex)

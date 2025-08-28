@@ -32,14 +32,15 @@ namespace HR.Application.Services.PDO
             try
 
             {
-
+                int newParentId = 0;
+                bool rootparent = false;
                 page = page <= 0 ? 1 : page;
                 pageSize = pageSize <= 0 ? 50 : pageSize;
                 var result = await (from pdouo in _context.PDOUnitOrganisasi
                     join pdorkuo in _context.PDORujKategoriUnitOrganisasi  on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
-                    where EF.Functions.Like(pdouo.KodCartaOrganisasi, KodCartaOrganisasi + "%")
+                    where (parentId != 0 ? pdouo.IdIndukUnitOrganisasi == parentId : pdouo.KodCartaOrganisasi == KodCartaOrganisasi) 
                     select new StrukturUnitOrganisasiDto{
-                         Id = pdouo.Id,
+                        Id = pdouo.Id,
                          IdIndukUnitOrganisasi = pdouo.IdIndukUnitOrganisasi,
                          KategoriUnitOrganisasi = pdorkuo.Nama,
                          Kod = pdorkuo.Kod,
@@ -48,6 +49,32 @@ namespace HR.Application.Services.PDO
 
                     }
                 ).ToListAsync();
+                //Get Parent
+                if (parentId == 0)
+                {
+                    foreach (var item in result)
+                    {
+
+                        if (item.Id == item.IdIndukUnitOrganisasi)
+                        {
+                            rootparent = true;
+                        }
+                        else
+                        {
+                            newParentId = item.IdIndukUnitOrganisasi;
+                        }
+                    }
+                    result = await StrukturUnitOrganisasiGetParent(newParentId, result);
+                } else
+                {
+                    foreach (var item in result)
+                    {
+                        var children = StrukturUnitOrganisasiGetChildren(item.Id).Result;
+                        if (children.Count() > 0) item.HasChildren = true;
+                    }
+
+                }
+
                 var total = result.Count();
                 var ordered = (sortBy ?? "UnitOrganisasi").Trim().ToLowerInvariant() switch
 
@@ -78,8 +105,87 @@ namespace HR.Application.Services.PDO
             }
 
         }
+        public async Task<List<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasiGetParent(int Id, List<StrukturUnitOrganisasiDto> child)
+        {
+            bool rootparent = false;
+            int newParentId = 0;
+            var result = await (from pdouo in _context.PDOUnitOrganisasi
+                                join pdorkuo in _context.PDORujKategoriUnitOrganisasi on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
+                                where pdouo.Id == Id
+                                select new StrukturUnitOrganisasiDto
+                                {
+                                    Children = child,
+                                    HasChildren = child.Count() > 0 ? true: false,
+                                    Id = pdouo.Id,
+                                    IdIndukUnitOrganisasi = pdouo.IdIndukUnitOrganisasi,
+                                    KategoriUnitOrganisasi = pdorkuo.Nama,
+                                    Kod = pdorkuo.Kod,
+                                    Tahap = pdouo.Tahap,
+                                    UnitOrganisasi = pdouo.Nama
 
+                                }
+            ).ToListAsync();
 
+            foreach (var item in result)
+            {
+                if (item.Id == item.IdIndukUnitOrganisasi)
+                {
+                    rootparent = true;
+                } else
+                {
+                    newParentId = item.IdIndukUnitOrganisasi;
+                }
+            }
+            if (rootparent)
+            {
+                return result;
+            } else
+            {
+                return await StrukturUnitOrganisasiGetParent(newParentId, result);
+            }
+        }
+
+        public async Task<List<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasiGetChildren(int Id)
+        {
+            bool rootparent = false;
+            int newParentId = 0;
+            var result = await (from pdouo in _context.PDOUnitOrganisasi
+                                join pdorkuo in _context.PDORujKategoriUnitOrganisasi on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
+                                where pdouo.Id == Id
+                                select new StrukturUnitOrganisasiDto
+                                {
+                                    HasChildren = false,
+                                    Id = pdouo.Id,
+                                    IdIndukUnitOrganisasi = pdouo.IdIndukUnitOrganisasi,
+                                    KategoriUnitOrganisasi = pdorkuo.Nama,
+                                    Kod = pdorkuo.Kod,
+                                    Tahap = pdouo.Tahap,
+                                    UnitOrganisasi = pdouo.Nama
+
+                                }
+            ).ToListAsync();
+            foreach(var item in result)
+            {
+                var children = await (from pdouo in _context.PDOUnitOrganisasi
+                                       join pdorkuo in _context.PDORujKategoriUnitOrganisasi on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
+                                       where pdouo.Id == Id
+                                       select new StrukturUnitOrganisasiDto
+                                       {
+                                           HasChildren = false,
+                                           Id = pdouo.Id,
+                                           IdIndukUnitOrganisasi = pdouo.IdIndukUnitOrganisasi,
+                                           KategoriUnitOrganisasi = pdorkuo.Nama,
+                                           Kod = pdorkuo.Kod,
+                                           Tahap = pdouo.Tahap,
+                                           UnitOrganisasi = pdouo.Nama
+
+                                       }
+                                ).ToListAsync();
+                if (children.Count() > 0) item.HasChildren = true;
+            }
+
+            return result;
+        }
 
         public async Task<List<UnitOrganisasiLinkDto>> CarianUnitOrganisasi(UnitOrganisasiCarianDto request)
         {

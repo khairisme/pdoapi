@@ -3,7 +3,6 @@ namespace HR.PDO.Application.DTOs
 {
     public class StrukturAktivitiOrganisasiDto
     {
-        public bool HasChildren { get; set; }
         public int Id { get; set; }
         public int IdIndukAktivitiOrganisasi { get; set; }
         public int Tahap { get; set; }
@@ -11,5 +10,7 @@ namespace HR.PDO.Application.DTOs
         public string? Kod { get; set; }
         public string? KodCartaAktiviti { get; set; }
         public string? KodProgram { get; set; }
+        public List<StrukturAktivitiOrganisasiDto> Children { get; set; }
+        public bool HasChildren { get; set; }
     }
 }

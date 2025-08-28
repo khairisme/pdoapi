@@ -27,17 +27,18 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task<PagedResult<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasi(string? KodCartaOrganisasi, int parentId = 0, int page = 1, int pageSize = 50, string? keyword = null, string? sortBy = "UnitOrganisasi", bool desc = false, CancellationToken ct = default)
+        public async Task<PagedResult<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasi(string? KodCartaAktiviti, int parentId = 0, int page = 1, int pageSize = 50, string? keyword = null, string? sortBy = "AktivitiOrganisasi", bool desc = false, CancellationToken ct = default)
         {
             try
 
             {
-
+                int newParentId = 0;
+                bool rootparent = false;
                 page = page <= 0 ? 1 : page;
                 pageSize = pageSize <= 0 ? 50 : pageSize;
                 var result = await (from pdoao in _context.PDOAktivitiOrganisasi
                     join pdorkao in _context.PDORujKategoriAktivitiOrganisasi  on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
-                    where EF.Functions.Like(pdoao.KodCartaAktiviti, KodCartaOrganisasi + "%")
+                    where (parentId != 0 ? pdoao.IdIndukAktivitiOrganisasi == parentId : pdoao.KodCartaAktiviti == KodCartaAktiviti)
                     select new StrukturAktivitiOrganisasiDto{
                          AktivitiOrganisasi = pdoao.Nama,
                          Id = pdoao.Id,
@@ -49,6 +50,33 @@ namespace HR.Application.Services.PDO
 
                     }
                 ).ToListAsync();
+                //Get Parent
+                if (parentId == 0)
+                {
+                    foreach (var item in result)
+                    {
+
+                        if (item.Id == item.IdIndukAktivitiOrganisasi)
+                        {
+                            rootparent = true;
+                        }
+                        else
+                        {
+                            newParentId = item.IdIndukAktivitiOrganisasi;
+                        }
+                    }
+                    result = await StrukturAktivitiOrganisasiGetParent(newParentId, result);
+                }
+                else
+                {
+                    foreach (var item in result)
+                    {
+                        var children = StrukturAktivitiOrganisasiGetChildren(item.Id).Result;
+                        if (children.Count() > 0) item.HasChildren = true;
+                    }
+
+                }
+
                 var total = result.Count();
                 var ordered = (sortBy ?? "AktivitiOrganisasi").Trim().ToLowerInvariant() switch
 
@@ -80,6 +108,89 @@ namespace HR.Application.Services.PDO
 
         }
 
+        public async Task<List<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasiGetParent(int Id, List<StrukturAktivitiOrganisasiDto> child)
+        {
+            bool rootparent = false;
+            int newParentId = 0;
+            var result = await (from pdoao in _context.PDOAktivitiOrganisasi
+                                       join pdorkao in _context.PDORujKategoriAktivitiOrganisasi on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
+                                       where pdoao.Id == Id
+                                       select new StrukturAktivitiOrganisasiDto
+                                        {
+                                            Children = child,
+                                            HasChildren = child.Count() > 0 ? true : false,
+                                            Id = pdoao.Id,
+                                            IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
+                                            KodProgram = pdoao.KodProgram,
+                                            Kod = pdoao.Kod,
+                                            Tahap = pdoao.Tahap,
+                                            AktivitiOrganisasi = pdoao.Nama
+
+                                        }
+                            ).ToListAsync();
+
+            foreach (var item in result)
+            {
+                if (item.Id == item.IdIndukAktivitiOrganisasi)
+                {
+                    rootparent = true;
+                }
+                else
+                {
+                    newParentId = item.IdIndukAktivitiOrganisasi;
+                }
+            }
+            if (rootparent)
+            {
+                return result;
+            }
+            else
+            {
+                return await StrukturAktivitiOrganisasiGetParent(newParentId, result);
+            }
+        }
+
+        public async Task<List<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasiGetChildren(int Id)
+        {
+            bool rootparent = false;
+            int newParentId = 0;
+            var result = await (from pdoao in _context.PDOAktivitiOrganisasi
+                                join pdorkao in _context.PDORujKategoriAktivitiOrganisasi on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
+                                where pdoao.Id == Id
+                                select new StrukturAktivitiOrganisasiDto
+                                {
+                                    HasChildren = false,
+                                    Id = pdoao.Id,
+                                    IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
+                                    KodProgram = pdoao.Kod,
+                                    Kod = pdoao.Kod,
+                                    Tahap = pdoao.Tahap,
+                                    AktivitiOrganisasi = pdoao.Nama
+
+                                }
+            ).ToListAsync();
+            foreach (var item in result)
+            {
+                var children = await (from pdoao in _context.PDOAktivitiOrganisasi
+                                      join pdorkao in _context.PDORujKategoriAktivitiOrganisasi on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
+                                      where pdoao.Id == Id
+                                      select new StrukturAktivitiOrganisasiDto
+                                      {
+                                          HasChildren = false,
+                                          Id = pdoao.Id,
+                                          IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
+                                          KodProgram = pdoao.KodProgram,
+                                          Kod = pdoao.Kod,
+                                          Tahap = pdoao.Tahap,
+                                          AktivitiOrganisasi = pdoao.Nama
+
+                                      }
+                                ).ToListAsync();
+                if (children.Count() > 0) item.HasChildren = true;
+            }
+
+            return result;
+        }
 
 
         public async Task WujudAktivitiOrganisasiBaru(Guid UserId, int IdIndukAktivitiOrganisasi, string? KodProgram, string? Kod, string? Nama, int Tahap, string? KodRujKategoriAktivitiOrganisasi, string? Keterangan)
