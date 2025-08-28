@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Contracts.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Application.DTOs;
@@ -49,6 +50,7 @@ namespace HR.Application.Services.PDO
                          ImplikasiKosSebulan = pdopik.ImplikasiKosSebulan*pdobp.BilanganJawatan,
                          ImplikasiKosSetahun = pdopik.ImplikasiKosSetahun*pdobp.BilanganJawatan,
                          SkimPerkhidmatan = pdosp.Nama
+
                     }
                 ).ToListAsync();
 

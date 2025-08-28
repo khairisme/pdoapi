@@ -16,7 +16,7 @@ public class PagedResult<T>
     /// <summary>
     /// Total count of all items across all pages
     /// </summary>
-    public int TotalCount { get; set; }
+    public int Total { get; set; }
     
     /// <summary>
     /// Current page number (1-based)
@@ -27,12 +27,13 @@ public class PagedResult<T>
     /// Number of items per page
     /// </summary>
     public int PageSize { get; set; }
-    
+
     /// <summary>
     /// Total number of pages
     /// </summary>
-    public int TotalPages => (TotalCount + PageSize - 1) / PageSize;
-    
+    public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)Total / PageSize) : 0;
+
+
     /// <summary>
     /// Whether there is a previous page
     /// </summary>

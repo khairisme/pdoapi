@@ -5,6 +5,7 @@ using HR.PDO.Application.Interfaces.PDP;
 using HR.PDO.Application.Services;
 using HR.PDO.Application.Services.PDO;
 using HR.PDO.Application.Services.PDP;
+using HR.Application.Services.PDO;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HR.PDO.Application;
@@ -38,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IPermohonanJawatanService, PermohonanJawatanService>();
 
         services.AddScoped<IAktivitiOrganisasiService, AktivitiOrganisasiService>();
+        services.AddScoped<IAktivitiOrganisasiExt, AktivitiOrganisasiExtService>();
 
         services.AddScoped<IRujJenisPermohonanService, RujJenisPermohonanService>();
         services.AddScoped<IPermohonanPeriwatanService, PermohonanPeriwatanService>();
@@ -47,6 +49,7 @@ public static class DependencyInjection
 
        // services.AddScoped<IPermohonanPengisianService, PermohonanPengisianService>();
         services.AddScoped<IUnitOrganisasiService, UnitOrganisasiService>();
+        services.AddScoped<IUnitOrganisasiExt, UnitOrganisasiExtService>();
         services.AddScoped<IRujStatusKekosonganJawatanService, RujStatusKekosonganJawatanService>();
 
         services.AddScoped<IPermohonanPengisianSkimService, PermohonanPengisianSkimService>();

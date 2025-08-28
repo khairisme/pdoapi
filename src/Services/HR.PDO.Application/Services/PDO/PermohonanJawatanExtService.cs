@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Contracts.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Application.DTOs;
@@ -185,6 +186,7 @@ namespace HR.Application.Services.PDO
                          KodRujStatusPermohonanJawatan = pdorspj.Kod,
                          NomborRujukan = pdopj.NomborRujukan,
                          TajukPermohonan = pdopj.Tajuk
+
                     }
                 ).ToListAsync();
 
@@ -228,6 +230,7 @@ namespace HR.Application.Services.PDO
                          Id = pdopj.Id,
                          JenisPermohonan = pdorjp.Nama,
                          TajukPermohonan = pdopj.Tajuk
+
                     }
                 ).ToListAsync();
 
@@ -271,6 +274,7 @@ namespace HR.Application.Services.PDO
                          Id = pdopj.Id,
                          JenisPermohonan = pdorjp.Nama,
                          TajukPermohonan = pdopj.Tajuk
+
                     }
                 ).ToListAsync();
 
@@ -334,6 +338,7 @@ join pdorpp in _context.PDORujPasukanPerunding  on pdopj.KodRujPasukanPerunding 
                          TarikhPermohonan = pdopj.TarikhPermohonan,
                          TarikhPinda = pdopj.TarikhPinda,
                          TarikhWaranDiluluskan = pdopj.TarikhWaranDiluluskan
+
                     }
                 ).ToListAsync();
 
@@ -384,6 +389,7 @@ join pdorpp in _context.PDORujPasukanPerunding  on pdopj.KodRujPasukanPerunding 
                          TarikhPermohonan = pdopj.TarikhPermohonan,
                          TarikhPinda = pdopj.TarikhPinda,
                          TarikhWaranDiluluskan = pdopj.TarikhWaranDiluluskan
+
                     }
                 ).ToListAsync();
 

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Contracts.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Application.DTOs;
@@ -49,6 +50,7 @@ namespace HR.Application.Services.PDO
                          TarikhMulaJadualGaji = request.TarikhMulaJadualGaji,
                          TarikhTamatJadualGaji = request.TarikhTamatJadualGaji,
                          TingkatMataGaji = request.TingkatMataGaji
+
                     }
                 ).ToListAsync();
 

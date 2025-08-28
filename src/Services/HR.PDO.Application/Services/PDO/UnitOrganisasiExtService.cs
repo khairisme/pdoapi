@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Contracts.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Application.DTOs;
@@ -26,12 +27,14 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task<List<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasi(string? KodCartaOrganisasi)
+        public async Task<PagedResult<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasi(string? KodCartaOrganisasi, int parentId = 0, int page = 1, int pageSize = 50, string? keyword = null, string? sortBy = "UnitOrganisasi", bool desc = false, CancellationToken ct = default)
         {
             try
 
             {
 
+                page = page <= 0 ? 1 : page;
+                pageSize = pageSize <= 0 ? 50 : pageSize;
                 var result = await (from pdouo in _context.PDOUnitOrganisasi
                     join pdorkuo in _context.PDORujKategoriUnitOrganisasi  on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
                     where EF.Functions.Like(pdouo.KodCartaOrganisasi, KodCartaOrganisasi + "%")
@@ -39,13 +42,30 @@ namespace HR.Application.Services.PDO
                          Id = pdouo.Id,
                          IdIndukUnitOrganisasi = pdouo.IdIndukUnitOrganisasi,
                          KategoriUnitOrganisasi = pdorkuo.Nama,
+                         Kod = pdorkuo.Kod,
                          Tahap = pdouo.Tahap,
                          UnitOrganisasi = pdouo.Nama
+
                     }
                 ).ToListAsync();
+                var total = result.Count();
+                var ordered = (sortBy ?? "UnitOrganisasi").Trim().ToLowerInvariant() switch
 
-                return result;
+                {
+                    "kod"     => desc ? result.OrderByDescending(x => x.Kod)     : result.OrderBy(x => x.Kod),
+                    "unitorganisasi"     => desc ? result.OrderByDescending(x => x.UnitOrganisasi)     : result.OrderBy(x => x.UnitOrganisasi),
+                };
 
+
+            var items = ordered
+            .Skip((page - 1) * pageSize)        
+            .Take(pageSize)        
+            .ToList();                                                                                                                                                                                                                                                                            
+                return new PagedResult<StrukturUnitOrganisasiDto>            
+                {
+                    Total = total,
+                    Items = items   
+                };
             }
 
             catch (Exception ex)
@@ -103,6 +123,7 @@ namespace HR.Application.Services.PDO
                          TarikhHapus = pdouo.TarikhHapus,
                          TarikhPenubuhan = pdouo.TarikhPenubuhan,
                          TarikhPinda = pdouo.TarikhPinda
+
                     }
                 ).ToListAsync();
 
@@ -194,6 +215,7 @@ namespace HR.Application.Services.PDO
                          TarikhHapus = pdouo.TarikhHapus,
                          TarikhPenubuhan = pdouo.TarikhPenubuhan,
                          TarikhPinda = pdouo.TarikhPinda
+
                     }
                 ).ToListAsync();
 
