@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using  Shared.Contracts.DTOs;
 using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
@@ -17,12 +18,12 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpGet("struktur")]
-        public async Task<ActionResult<IEnumerable<StrukturUnitOrganisasiDto>>>StrukturUnitOrganisasi(string? KodCartaOrganisasi)
+        public async Task<ActionResult<IEnumerable<StrukturUnitOrganisasiDto>>>StrukturUnitOrganisasi(string? KodCartaOrganisasi, int parentId = 0, int page = 1, int pageSize = 50, string? Keyword = null, string? sortBy = "UnitOrganisasi", bool desc = false)
         {
             _logger.LogInformation("Calling StrukturUnitOrganisasi");
             try
             {
-                var data = await _unitorganisasiext.StrukturUnitOrganisasi(KodCartaOrganisasi);
+                var data = await _unitorganisasiext.StrukturUnitOrganisasi(KodCartaOrganisasi,parentId = 0,page = 1,pageSize = 50,Keyword = null,sortBy = "UnitOrganisasi",desc = false);
                 return Ok(data);
             }
             catch (Exception ex)
