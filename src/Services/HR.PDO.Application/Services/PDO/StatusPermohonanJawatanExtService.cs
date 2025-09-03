@@ -27,14 +27,44 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task TambahStatusPermohonanJawatan(Guid UserId, TambahStatusPermohonanJawatanDto request)
+        public async Task<List<DropDownDto>> RujukanStatusPermohonanJawatan(string KodRujPeranan)
         {
-            await _unitOfWork.BeginTransactionAsync();
-
             try
 
             {
 
+                var result = await (from pdorspj in _context.PDORujStatusPermohonanJawatan
+                    where pdorspj.KodRujPeranan == KodRujPeranan
+                    select new DropDownDto{
+                         Kod = pdorspj.Kod,
+                         Nama = pdorspj.Nama
+                    }
+                ).ToListAsync();
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in RujukanStatusPermohonanJawatan");
+
+                throw;
+            }
+
+        }
+
+
+
+        public async Task TambahStatusPermohonanJawatan(Guid UserId, TambahStatusPermohonanJawatanDto request)
+        {
+
+            try
+
+            {
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOStatusPermohonanJawatan();
                 entity.IdCipta = UserId;
                 entity.IdPermohonanJawatan = request.IdPermohonanJawatan;
@@ -45,7 +75,6 @@ namespace HR.Application.Services.PDO
                 entity.IdCipta = request.IdCipta;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDOStatusPermohonanJawatan.AddAsync(entity); 
-                await _context.SaveChangesAsync(); 
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
@@ -66,12 +95,11 @@ namespace HR.Application.Services.PDO
 
         public async Task TambahStatusPermohonanJawatanDraft(Guid UserId, TambahStatusPermohonanJawatanDraftDto request)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOStatusPermohonanJawatan();
                 entity.IdCipta = UserId;
                 entity.IdPermohonanJawatan = request.IdPermohonanJawatan;
@@ -82,7 +110,6 @@ namespace HR.Application.Services.PDO
                 entity.IdCipta = request.IdCipta;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDOStatusPermohonanJawatan.AddAsync(entity); 
-                await _context.SaveChangesAsync(); 
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
@@ -103,12 +130,11 @@ namespace HR.Application.Services.PDO
 
         public async Task TambahStatusPermohonanJawatanBaharu(Guid UserId, TambahStatusPermohonanJawatanBaharuDto request)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOStatusPermohonanJawatan();
                 entity.IdCipta = UserId;
                 entity.IdPermohonanJawatan = request.IdPermohonanJawatan;
@@ -119,7 +145,6 @@ namespace HR.Application.Services.PDO
                 entity.IdCipta = request.IdCipta;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDOStatusPermohonanJawatan.AddAsync(entity); 
-                await _context.SaveChangesAsync(); 
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();

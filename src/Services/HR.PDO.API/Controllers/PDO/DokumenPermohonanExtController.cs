@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/dokumen-permohonan")]
+    [Route("api/pdo/v1/dokumen-permohonan")]
     public class DokumenPermohonanExtController : ControllerBase
     {
         private readonly ILogger<DokumenPermohonanExtController> _logger;
@@ -16,7 +16,7 @@ namespace HR.PDO.API.Controllers.PDO {
             _logger = logger;
         }
 
-        [HttpPost("tambah")]
+        [HttpPost]
         public async Task<ActionResult> WujudDokumenPermohonanBaru([FromQuery] Guid UserId, int IdPermohonanJawatan, string? KodRujJenisDokumen, string? NamaDokumen, string? PautanDokumen, string? FormatDokumen, int Saiz)
         {
             _logger.LogInformation("Calling WujudDokumenPermohonanBaru");
@@ -39,7 +39,7 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpDelete("hapus-terus/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> HapusTerusDokumenPermohonan([FromQuery] Guid UserId, int Id)
         {
             _logger.LogInformation("Calling HapusTerusDokumenPermohonan");
@@ -62,8 +62,8 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpGet("senarai")]
-        public async Task<ActionResult<IEnumerable<DropDownDto>>>SenaraiDokumenPermohonan(int IdPermohonanJawatan)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<RujJenisDokumenLinkDto>>>SenaraiDokumenPermohonan(int IdPermohonanJawatan)
         {
             _logger.LogInformation("Calling SenaraiDokumenPermohonan");
             try

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/jawatan-skim-gred")]
+    [Route("api/pdo/v1/jawatan-skim-gred")]
     public class JawatanSkimGredExtController : ControllerBase
     {
         private readonly ILogger<JawatanSkimGredExtController> _logger;

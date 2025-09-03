@@ -7,6 +7,9 @@ using HR.PDO.Application.Services.PDO;
 using HR.PDO.Application.Services.PDP;
 using HR.Application.Services.PDO;
 using Microsoft.Extensions.DependencyInjection;
+using HR.PDO.Application.Interfaces.PPA;
+using HR.Application.Services.PPA;
+using Microsoft.EntityFrameworkCore;
 
 namespace HR.PDO.Application;
 
@@ -27,6 +30,23 @@ public static class DependencyInjection
         services.AddScoped<IMaklumatKlasifikasiPerkhidmatanService, MaklumatKlasifikasiPerkhidmatanService>();
 
         services.AddScoped<IMaklumatSkimPerkhidmatanService, MaklumatSkimPerkhidmatanService>();
+        services.AddScoped<IRujukanExt, RujukanExtService>();
+        services.AddScoped<IRujKategoriUnitOrganisasiExt, RujKategoriUnitOrganisasiExtService>();
+        services.AddScoped<IRujStatusJawatanExt, RujStatusJawatanExtService>();
+        services.AddScoped<IRujJenisJawatanExt, RujJenisJawatanExtService>();
+        services.AddScoped<IKumpulanPerkhidmatanExt, KumpulanPerkhidmatanExtService>();
+        services.AddScoped<IKlasifikasiPerkhidmatanExt, KlasifikasiPerkhidmatanExtService>();
+        services.AddScoped<IRujukanSkimPerkhidmatan, RujukanSkimPerkhidmatanService>();
+        services.AddScoped<IRujukanGredExt, RujukanGredExtService>();
+        services.AddScoped<ISkimKetuaPerkhidmatanExt, SkimKetuaPerkhidmatanExtService>();
+        services.AddScoped<IRujGelaranJawatanExt, RujGelaranJawatanExtService>();
+        services.AddScoped<IRujPangkatBadanBeruniformExt, RujPangkatBadanBeruniformExtService>();
+        services.AddScoped<IPermohonanJawatanExt, PermohonanJawatanExtService>();
+        services.AddScoped<IStatusPermohonanJawatanExt, StatusPermohonanJawatanExtService>();
+        services.AddScoped<IDokumenPermohonanExt, DokumenPermohonanExtService>();
+        services.AddScoped<IRujJenisDokumenExt, RujJenisDokumenExtService>();
+        
+
 
         services.AddScoped<IGredService, GredService>();
         services.AddScoped<IRujJenisSaraanService, RujJenisSaraanService>();
@@ -55,6 +75,21 @@ public static class DependencyInjection
         services.AddScoped<IPermohonanPengisianSkimService, PermohonanPengisianSkimService>();
         services.AddScoped<IJadualGajiService, JadualGajiService>();
         services.AddScoped<ISkimKetuaPerkhidmatanService, SkimKetuaPerkhidmatanService>();
+        services.AddScoped<IButiranPermohonanExt, ButiranPermohonanExtService>();
+        services.AddScoped<IButiranPermohonanJawatanExt, ButiranPermohonanJawatanExtService>();
+        services.AddScoped<IButiranPermohonanExt, ButiranPermohonanExtService>();
+        services.AddScoped<IButiranPermohonanSkimGredExt, ButiranPermohonanSkimGredExtService>();
+        services.AddScoped<IButiranPermohonanJawatanExt, ButiranPermohonanJawatanExtService>();
+        services.AddScoped<IButiranPermohonanSkimGredKUJExt, ButiranPermohonanSkimGredKUJExtService>();
+        services.AddScoped<IButiranPermohonanSkimGredTBKExt, ButiranPermohonanSkimGredTBKExtService>();
+        services.AddScoped<IPenetapanImplikasiKewanganExt, PenetapanImplikasiKewanganExtService>();
+        services.AddScoped<ICadanganJawatanExt, CadanganJawatanExtService>();
+        services.AddScoped<IRujKategoriJawatanExt, RujKategoriJawatanExtService>();
+        services.AddScoped<IProfilPemilikKompetensiExt, ProfilPemilikKompetensiExtService>();
+        
+
+
+
         return services;
     }
 }

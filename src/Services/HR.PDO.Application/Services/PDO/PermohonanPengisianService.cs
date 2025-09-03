@@ -141,12 +141,11 @@ namespace HR.PDO.Application.Services.PDO
             var permohonanPengisian = MapToEntity(requestDto);
             permohonanPengisian.StatusAktif = false;
 
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
 
-
+                await _unitOfWork.BeginTransactionAsync();
                 permohonanPengisian = await _unitOfWork.Repository<PDOPermohonanPengisian>().AddAsync(permohonanPengisian);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
@@ -228,10 +227,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> UpdateAsync(SavePermohonanPengisianPOARequestDto requestDto)
         {
             _logger.LogInformation("Service: Updating PermohonanPengisian POA");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: update into PDO_PermohonanPengisian
                 var permohonanPengisian = MapToEntity(requestDto);
 

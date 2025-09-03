@@ -7,8 +7,8 @@ public abstract class PDOBaseEntity
 {
     public int Id { get; set; }
     
-    public bool StatusAktif { get; set; }
-    public DateTime TarikhCipta { get; set; }
+    public bool? StatusAktif { get; set; }
+    public DateTime? TarikhCipta { get; set; }
     public Guid IdCipta { get; set; }
     public DateTime? TarikhPinda{ get; set; }
     public Guid? IdPinda { get; set; }

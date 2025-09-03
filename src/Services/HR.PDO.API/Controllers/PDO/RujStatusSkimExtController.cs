@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/ruj-status-skim")]
+    [Route("api/pdo/v1/ruj-status-skim")]
     public class RujStatusSkimExtController : ControllerBase
     {
         private readonly ILogger<RujStatusSkimExtController> _logger;

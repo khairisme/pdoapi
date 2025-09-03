@@ -28,4 +28,8 @@
     <Protobuf Include="..\..\Shared\Shared.Contracts\Protos\employee.proto" GrpcServices="Client" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

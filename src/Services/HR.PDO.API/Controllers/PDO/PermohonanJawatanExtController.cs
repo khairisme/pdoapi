@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/permohonan-jawatan")]
+    [Route("api/pdo/v1/permohonan-jawatan")]
     public class PermohonanJawatanExtController : ControllerBase
     {
         private readonly ILogger<PermohonanJawatanExtController> _logger;
@@ -17,30 +17,7 @@ namespace HR.PDO.API.Controllers.PDO {
             _logger = logger;
         }
 
-        [HttpGet("carian-norujukan-jenis-tajuk-status")]
-        public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>>SenaraiPermohonanJawatanCarianNoRujukanJenisTajukStatus(string? NoRujukan, string? JenisPermohonan, string? TajukPermohonan, string? KodRujStatusPermohonan)
-        {
-            _logger.LogInformation("Calling SenaraiPermohonanJawatanCarianNoRujukanJenisTajukStatus");
-            try
-            {
-                var data = await _permohonanjawatanext.SenaraiPermohonanJawatanCarianNoRujukanJenisTajukStatus(NoRujukan,JenisPermohonan,TajukPermohonan,KodRujStatusPermohonan);
-                return Ok(data);
-            }
-            catch (Exception ex)
-            {
-                 String err = "";
-                 if (ex != null) { 
-                     _logger.LogError(ex, "Error in SenaraiPermohonanJawatanCarianNoRujukanJenisTajukStatus");
-                     if (ex.InnerException!=null) {
-                         err = ex.InnerException.Message.ToString();
-                     }
-                }
-                 
-                return StatusCode(500, ex.Message+"-"+err);
-            }
-        }
-
-        [HttpGet("baca-permohonan-jawatan/{id}")]
+        [HttpGet("baca/{Id}")]
         public async Task<ActionResult<BacaPermohonanJawatanDto>> BacaPermohonanJawatan(int Id)
         {
             _logger.LogInformation("Calling BacaPermohonanJawatan");
@@ -63,14 +40,38 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
+        [HttpGet("muat/{IdUnitOrganisasi}")]
+        public async Task<ActionResult<BacaPermohonanJawatanDto>> MuatPermohonanJawatan(int IdUnitOrganisasi)
+        {
+            _logger.LogInformation("Calling MuatPermohonanJawatan");
+            try
+            {
+                var data = await _permohonanjawatanext.MuatPermohonanJawatan(IdUnitOrganisasi);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in MuatPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, ex.Message + "-" + err);
+            }
+        }
         [HttpPost("tambah")]
-        public async Task<ActionResult> TambahPermohonanJawatanBaru([FromQuery] Guid UserId, string? NomborRujukan, string? Tajuk, string? Keterangan, string? KodRujJenisPermohonan)
+        public async Task<ActionResult> TambahPermohonanJawatanBaru([FromQuery] Guid UserId, int IdAgensi, string? NomborRujukan, string? Tajuk, string? Keterangan, string? KodRujJenisPermohonan)
         {
             _logger.LogInformation("Calling TambahPermohonanJawatanBaru");
             try
             {
-                await _permohonanjawatanext.TambahPermohonanJawatanBaru(UserId,NomborRujukan,Tajuk,Keterangan,KodRujJenisPermohonan);
-                return CreatedAtAction(nameof(TambahPermohonanJawatanBaru), new {UserId, NomborRujukan,Tajuk,Keterangan,KodRujJenisPermohonan }, null);
+                await _permohonanjawatanext.TambahPermohonanJawatanBaru(UserId, IdAgensi, NomborRujukan, Tajuk,Keterangan,KodRujJenisPermohonan);
+                return CreatedAtAction(nameof(TambahPermohonanJawatanBaru), new {UserId, IdAgensi, NomborRujukan, Tajuk,Keterangan,KodRujJenisPermohonan }, null);
             }
             catch (Exception ex)
             {
@@ -86,7 +87,7 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpPut("kemaskini-permohonan-jawatan/{id}")]
+        [HttpPut("kemaskini-permohonan-jawatan/{Id}")]
         public async Task<ActionResult> KemaskiniPermohonanJawatan([FromQuery] Guid UserId, int Id, PermohonanJawatanDaftarDto filter)
         {
             _logger.LogInformation("Calling KemaskiniPermohonanJawatan");
@@ -109,7 +110,7 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpDelete("hapus-terus/{id}")]
+        [HttpDelete("hapus-terus/{Id}")]
         public async Task<ActionResult> HapusTerusPermohonanJawatan([FromQuery] Guid UserId, int Id)
         {
             _logger.LogInformation("Calling HapusTerusPermohonanJawatan");
@@ -132,55 +133,55 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpGet("carian-agensi-norujukan-tajuk-status")]
-        public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>>SenaraiPermohonanJawatanCarianAgensiNoRujukanTajukStatus(string? KodUnitOrganisasi, string? NoRujukan, string? TajukPermohonan, string? KodRujStatusPermohonan)
-        {
-            _logger.LogInformation("Calling SenaraiPermohonanJawatanCarianAgensiNoRujukanTajukStatus");
-            try
-            {
-                var data = await _permohonanjawatanext.SenaraiPermohonanJawatanCarianAgensiNoRujukanTajukStatus(KodUnitOrganisasi,NoRujukan,TajukPermohonan,KodRujStatusPermohonan);
-                return Ok(data);
-            }
-            catch (Exception ex)
-            {
-                 String err = "";
-                 if (ex != null) { 
-                     _logger.LogError(ex, "Error in SenaraiPermohonanJawatanCarianAgensiNoRujukanTajukStatus");
-                     if (ex.InnerException!=null) {
-                         err = ex.InnerException.Message.ToString();
-                     }
-                }
-                 
-                return StatusCode(500, ex.Message+"-"+err);
-            }
-        }
-
-        [HttpGet("Carian/{id:int}")]
+        [HttpGet("carian")]
         [SwaggerOperation(
-            Summary = "Carian Permohonan Jawatan mengikut",
-            Description = ""
+            Summary = "Carian Permohonan Jawatan by IdUnitOrganisasi/AgensiId/KodRujJenisPermohonan/KodRujStatusPermohonanJawatan/NomborRujukan/TajukPermohonan",
+            Description = "Search permohonan jawatan using query filters (keyword, page, pageSize, sortBy, desc).",
+            OperationId = "CarianPermohonanJawatan",
+            Tags = new[] { "PermohonanJawatanExt" }
         )]
-        public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>>CarianPermohonanJawatan([FromRoute] int Id, [FromBody] PermohonanJawatanCarianDto request)
+        public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>> CarianPermohonanJawatan([FromQuery] PermohonanJawatanCarianDto request)
         {
             _logger.LogInformation("Calling CarianPermohonanJawatan");
             try
             {
-                var data = await _permohonanjawatanext.CarianPermohonanJawatan(Id,request);
-                return Ok(data);
+                var data = await _permohonanjawatanext.CarianPermohonanJawatan(request);
+                return Ok(data); // empty list => 200 OK
             }
             catch (Exception ex)
             {
-                 String err = "";
-                 if (ex != null) { 
-                     _logger.LogError(ex, "Error in CarianPermohonanJawatan");
-                     if (ex.InnerException!=null) {
-                         err = ex.InnerException.Message.ToString();
-                     }
-                }
-                 
-                return StatusCode(500, ex.Message+"-"+err);
+                _logger.LogError(ex, "Error in CarianPermohonanJawatan");
+                var err = ex.InnerException?.Message ?? "";
+                return StatusCode(500, ex.Message + (string.IsNullOrEmpty(err) ? "" : "-" + err));
             }
         }
+        //[SwaggerOperation(
+        //    Summary = "Carian Permohonan Jawatan mengikut",
+        //    Description = ""
+        //)]
+        //public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>> CarianPermohonanJawatan([FromBody] PermohonanJawatanCarianDto request)
+        //{
+        //    _logger.LogInformation("Calling CarianPermohonanJawatan");
+        //    try
+        //    {
+        //        var data = await _permohonanjawatanext.CarianPermohonanJawatan(request);
+        //        return Ok(data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        String err = "";
+        //        if (ex != null)
+        //        {
+        //            _logger.LogError(ex, "Error in CarianPermohonanJawatan");
+        //            if (ex.InnerException != null)
+        //            {
+        //                err = ex.InnerException.Message.ToString();
+        //            }
+        //        }
+
+        //        return StatusCode(500, ex.Message + "-" + err);
+        //    }
+        //}
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>>SenaraiPermohonanJawatan(PermohonanJawatanCarianDto request)
@@ -206,13 +207,13 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpPost("")]
-        public async Task<ActionResult> DaftarPermohonanJawatan([FromQuery] Guid UserId, [FromBody] PermohonanJawatanDaftarDto request)
+        public async Task<ActionResult> DaftarPermohonanJawatan([FromBody] PermohonanJawatanDaftarDto request)
         {
             _logger.LogInformation("Calling DaftarPermohonanJawatan");
             try
             {
-                await _permohonanjawatanext.DaftarPermohonanJawatan(UserId,request);
-                return CreatedAtAction(nameof(DaftarPermohonanJawatan), new {UserId, request }, null);
+                await _permohonanjawatanext.DaftarPermohonanJawatan(request);
+                return CreatedAtAction(nameof(DaftarPermohonanJawatan), new {request }, null);
             }
             catch (Exception ex)
             {

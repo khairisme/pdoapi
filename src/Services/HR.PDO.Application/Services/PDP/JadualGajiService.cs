@@ -31,7 +31,7 @@ namespace HR.PDO.Application.Services.PDP
         {
             _logger.LogInformation("Getting all JadualGajiResponseDto using Entity Framework");
             var result = await _unitOfWork.Repository<PDPJadualGaji>().GetAllAsync();
-            result = result.ToList().Where(e => e.StatusAktif);
+            result = result.ToList().Where(e => e.StatusAktif == true);
             return result.Select(MapToDto);
         }
         private JadualGajiResponseDto MapToDto(PDPJadualGaji pDPJadualGaji)

@@ -107,10 +107,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> CreateAsync(PengisianJawatanDto dto)
         {
             _logger.LogInformation("Service: Creating new PengisianJawatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var userId = Guid.Empty;
                 var pengisian = new PDOPengisianJawatan
                 {
@@ -138,10 +138,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> DeleteAsync(Guid id)
         {
             _logger.LogInformation("Deleting Pengisian Jawatan with ID {Id} using Entity Framework", id);
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var result = await _unitOfWork.Repository<PDOPengisianJawatan>().DeleteAsync(id);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
@@ -169,10 +169,10 @@ namespace HR.PDO.Application.Services.PDO
                     return false;
                 }
 
-                await _unitOfWork.BeginTransactionAsync();
 
                 try
                 {
+                    await _unitOfWork.BeginTransactionAsync();
                     var createdEntities = new List<PDOPengisianJawatan>();
 
                     // Process each DTO in the list
@@ -232,10 +232,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> DeleteAsync(int id)
         {
             _logger.LogInformation("Deleting Pengisian Jawatan with ID {Id} using Entity Framework", id);
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var result = await _unitOfWork.Repository<PDOPengisianJawatan>().DeleteAsync(id);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();

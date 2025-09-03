@@ -7,9 +7,8 @@ namespace HR.PDO.Application.Interfaces.PDO
     public interface IRujJenisDokumenExt
     {
         public Task<List<RujJenisDokumenLinkDto>> CarianRujJenisDokumen(RujJenisDokumenCarianDto request);
-        public Task<List<RujJenisDokumenLinkDto>> SenaraiRujJenisDokumen(RujJenisDokumenCarianDto request);
-        public Task<List<DropDownDto>> RujukanRujJenisDokumen(RujJenisDokumenDaftarDto request);
+        public Task<List<DropDownDto>> RujukanRujJenisDokumen();
         public Task DaftarRujJenisDokumen(Guid UserId, RujJenisDokumenDaftarDto request);
-        public Task KemaskiniRujJenisDokumen(Guid UserId, int Id, RujJenisDokumenDaftarDto request);
+        public Task KemaskiniRujJenisDokumen(Guid UserId, RujJenisDokumenDaftarDto request);
     }
 }

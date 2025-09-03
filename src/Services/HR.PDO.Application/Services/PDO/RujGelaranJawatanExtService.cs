@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Shared.Contracts.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
+using HR.PDO.Application.DTOs;
 
 namespace HR.Application.Services.PDO
 {
@@ -25,6 +26,60 @@ namespace HR.Application.Services.PDO
             _context = dbContext;
             _logger = logger;
         }
+
+        public async Task<List<DropDownDto>> RujukanGelaranJawatan()
+        {
+            try
+
+            {
+
+                var result = await (from pdorgj in _context.PDORujGelaranJawatan
+                    select new DropDownDto{
+                         Kod = pdorgj.Kod,
+                         Nama = pdorgj.Nama
+                    }
+                ).ToListAsync();
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in RujukanGelaranJawatan");
+
+                throw;
+            }
+
+        }
+
+        public async Task<string?> BacaGelaranJawatan(string? KodRujGelaranJawatan)
+        {
+            try
+
+            {
+
+                var NamaGelaran = await (from pdorgj in _context.PDORujGelaranJawatan
+                                    where pdorgj.Kod == KodRujGelaranJawatan
+                                    select pdorgj.Nama).FirstOrDefaultAsync();
+
+                return NamaGelaran;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in RujukanGelaranJawatan");
+
+                throw;
+            }
+
+        }
+
 
     }
 

@@ -26,7 +26,7 @@ namespace HR.PDO.Application.Services.PDO
         {
             _logger.LogInformation("Getting all RujStatusPermohonan using Entity Framework");
             var result = await _unitOfWork.Repository<PDORujStatusPermohonan>().GetAllAsync();
-            result = result.ToList().Where(e => e.StatusAktif);
+            result = result.ToList().Where(e => e.StatusAktif == true);
             return result.Select(MapToDto);
         }
         private RujStatusPermohonanDto MapToDto(PDORujStatusPermohonan pDOKumpulan)

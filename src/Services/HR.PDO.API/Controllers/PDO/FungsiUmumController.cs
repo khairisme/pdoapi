@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/fungsi-umum")]
+    [Route("api/pdo/v1/fungsi-umum")]
     public class FungsiUmumController : ControllerBase
     {
         private readonly ILogger<FungsiUmumController> _logger;

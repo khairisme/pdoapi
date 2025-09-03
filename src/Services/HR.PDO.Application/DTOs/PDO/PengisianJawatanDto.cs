@@ -6,74 +6,102 @@ using System.Threading.Tasks;
 
 namespace HR.PDO.Application.DTOs.PDO
 {
+    /// <summary>
+    /// DTO representing the filling of a position within a service application.
+    /// </summary>
     public class PengisianJawatanDto
     {
+        /// <summary>
+        /// The ID of the position (Jawatan).
+        /// </summary>
         public int IdJawatan { get; set; }
+
+        /// <summary>
+        /// The ID of the service application (Permohonan Pengisian Skim).
+        /// </summary>
         public int IdPermohonanPengisianSkim { get; set; }
-        //public int UserId { get; set; } 
+
+        // Uncomment if needed in future for user tracking
+        // public int UserId { get; set; } 
     }
+    /// <summary>
+    /// DTO for filtering position filling (Pengisian Jawatan) requests.
+    /// </summary>
     public class PengisianJawatanFilterDto
     {
         #region Properties
+
         /// <summary>
-        /// Gets or sets the Service Scheme ID (IdSkimPerkhidmatan parameter from SQL)
+        /// Gets or sets the Service Scheme ID (IdSkimPerkhidmatan parameter from SQL).
         /// </summary>
         public int IdSkimPerkhidmatan { get; set; }
 
         /// <summary>
-        /// Gets or sets the Application ID
+        /// Gets or sets the Application ID.
         /// </summary>
         public int AppId { get; set; }
 
         /// <summary>
-        /// Gets or sets the Company ID
+        /// Gets or sets the Company ID.
         /// </summary>
         public int CompId { get; set; }
 
         /// <summary>
-        /// Gets or sets the User ID
+        /// Gets or sets the User ID.
         /// </summary>
-        public string UserId { get; set; } = String.Empty;
+        public string UserId { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the User GUID
+        /// Gets or sets the User GUID.
         /// </summary>
-        public string UserGUID { get; set; } = String.Empty;
+        public string UserGUID { get; set; } = string.Empty;
+
         #endregion
     }
     public class PengisianJawatanSearchResponseDto
     {
         #region Properties
-        public int Bil { get; set; }
+
         /// <summary>
-        /// Gets or sets the Pengisian Jawatan ID (a.Id from PDO_PengisianJawatan)
+        /// Gets or sets the row number (for UI pagination).
+        /// </summary>
+        public int Bil { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Id Pengisian Jawatan ID (a.Id from PDO_PengisianJawatan).
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the Job Position Code (b.kod as KodJawatan from PDO_Jawatan)
+        /// Gets or sets the Pengisian Jawatan ID (a.Id from PDO_PengisianJawatan).
         /// </summary>
-        public string KodJawatan { get; set; } = String.Empty;
+        public int IdPengisianJawatan { get; set; }
 
         /// <summary>
-        /// Gets or sets the Job Position Name (b.Nama as NamaJawatan from PDO_Jawatan)
+        /// Gets or sets the Job Position Code (b.Kod from PDO_Jawatan).
         /// </summary>
-        public string NamaJawatan { get; set; } = String.Empty;
+        public string KodJawatan { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Organizational Unit Name (c.Nama as UnitOrganisasi from PDO_UnitOrganisasi)
+        /// Gets or sets the Job Position Name (b.Nama from PDO_Jawatan).
         /// </summary>
-        public string UnitOrganisasi { get; set; } = String.Empty;
+        public string NamaJawatan { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Job Position Filling Status (e.Nama as StatusPengisianJawatan from PDO_RujStatusKekosonganJawatan)
+        /// Gets or sets the Organizational Unit Name (c.Nama from PDO_UnitOrganisasi).
         /// </summary>
-        public string StatusPengisianJawatan { get; set; } = String.Empty;
+        public string UnitOrganisasi { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the Job Vacancy Status Date (d.TarikhStatusKekosongan as TarikhKekosonganJawatan from PDO_KekosonganJawatan)
+        /// Gets or sets the Job Position Filling Status (e.Nama from PDO_RujStatusKekosonganJawatan).
+        /// </summary>
+        public string StatusPengisianJawatan { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Job Vacancy Status Date (d.TarikhStatusKekosongan from PDO_KekosonganJawatan).
         /// </summary>
         public DateTime? TarikhKekosonganJawatan { get; set; }
+
         #endregion
     }
 

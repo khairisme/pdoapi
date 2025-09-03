@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/rujukan/skim-perkhidmatan")]
+    [Route("api/pdo/v1/rujukan/skim-perkhidmatan")]
     public class RujukanSkimPerkhidmatanExtController : ControllerBase
     {
         private readonly ILogger<RujukanSkimPerkhidmatanExtController> _logger;
@@ -18,7 +18,7 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpGet("klasifikasi/{IdKlasifikasiPerkhidmatan:int}/kumpulan/{IdKumpulanPerkhidmatan:int}")]
-        public async Task<ActionResult<IEnumerable<DropDownDto>>>RujukanSkimPerkhidmatanIkutKlasifikasiDanKumpulan(int IdKlasifikasiPerkhidmatan, int IdKumpulanPerkhidmatan)
+        public async Task<ActionResult<IEnumerable<DropDownDto>>>RujukanSkimPerkhidmatanIkutKlasifikasiDanKumpulan(int? IdKlasifikasiPerkhidmatan, int? IdKumpulanPerkhidmatan)
         {
             _logger.LogInformation("Calling RujukanSkimPerkhidmatanIkutKlasifikasiDanKumpulan");
             try

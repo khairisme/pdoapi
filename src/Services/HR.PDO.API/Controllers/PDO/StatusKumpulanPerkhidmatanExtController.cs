@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/status-kumpulan-perkhidmatan")]
+    [Route("api/pdo/v1/status-kumpulan-perkhidmatan")]
     public class StatusKumpulanPerkhidmatanExtController : ControllerBase
     {
         private readonly ILogger<StatusKumpulanPerkhidmatanExtController> _logger;

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/permohonan-pengisian-skim")]
+    [Route("api/pdo/v1/permohonan-pengisian-skim")]
     public class PermohonanPengisianSkimExtController : ControllerBase
     {
         private readonly ILogger<PermohonanPengisianSkimExtController> _logger;

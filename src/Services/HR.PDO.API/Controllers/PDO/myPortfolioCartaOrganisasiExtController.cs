@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/my-portfolio-carta-organisasi")]
+    [Route("api/pdo/v1/my-portfolio-carta-organisasi")]
     public class myPortfolioCartaOrganisasiExtController : ControllerBase
     {
         private readonly ILogger<myPortfolioCartaOrganisasiExtController> _logger;

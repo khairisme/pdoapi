@@ -6,6 +6,9 @@ namespace HR.PDO.Application.Interfaces.PDO
 {
     public interface IButiranPermohonanJawatanExt
     {
+        public Task<List<ButiranPermohonanJawatanDto>> SenaraiButiranPermohonanJawatan();
+        public Task<ButiranPermohonanJawatanDto> BacaButiranPermohonanJawatan(int Id);
+        public Task HapusTerusPermohonanJawatan(Guid UserId, int Id);
         public Task TambahButiranPermohonanJawatan(Guid UserId, TambahButiranPermohonanJawatanDto request);
     }
 }

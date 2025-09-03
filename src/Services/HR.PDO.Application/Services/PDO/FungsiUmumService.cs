@@ -37,7 +37,7 @@ namespace HR.Application.Services.PDO
                     where pdouo.Id == IdUnitOrganisasi
                     select new JanaNomborRujukanDto{
                          IdUnitOrganisasi = pdouo.Id,
-                         KodJabatam = pdouo.KodJabatan,
+                         KodJabatan = pdouo.KodJabatan,
                          KodKementerian = pdouo.KodKementerian,
                          KodRujJenisAgensi = pdouo.KodRujJenisAgensi
                     }

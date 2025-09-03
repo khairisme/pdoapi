@@ -248,10 +248,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<int> CreateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Creating new MaklumatSkimPerkhidmatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var userId = Guid.Empty;
                 var perkhidmatan = new PDOSkimPerkhidmatan
                 {
@@ -457,8 +457,8 @@ namespace HR.PDO.Application.Services.PDO
                         SkimJawatnList = (
                                           from f in _dbContext.PDOSkimKetuaPerkhidmatan
                                           join jawatan in _dbContext.PDOJawatan on f.IdKetuaPerkhidmatan equals jawatan.Id
-                                          where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif
-                                                     && jawatan.StatusAktif
+                                          where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif == true
+                                                     && jawatan.StatusAktif == true
                                           select new SkimKetuaPerkhidmatanResponseDTO
                                           {
                                               Id = a.Id,
@@ -574,8 +574,8 @@ namespace HR.PDO.Application.Services.PDO
                         SkimJawatnList = (
                                           from f in _dbContext.PDOSkimKetuaPerkhidmatan
                                           join jawatan in _dbContext.PDOJawatan on f.IdKetuaPerkhidmatan equals jawatan.Id
-                                          where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif
-                                                     && jawatan.StatusAktif
+                                          where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif == true
+                                                     && jawatan.StatusAktif == true
                                           select new SkimKetuaPerkhidmatanResponseDTO
                                           {
                                               Id = a.Id,
@@ -648,10 +648,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> UpdateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Updating MaklumatSkimPerkhidmatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Fetch existing record
                 var existingSkim = await _dbContext.PDOSkimPerkhidmatan
                     .Where(x => x.Id == dto.Id)
@@ -739,7 +739,7 @@ namespace HR.PDO.Application.Services.PDO
 
                     // Step 2: Deactivate existing status
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif);
+                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif == true);
 
                     if (existingStatus != null)
                     {
@@ -872,10 +872,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> DaftarHantarSkimPerkhidmatanAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Hantar  SkimPerkhidmatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var idPerkhidmatan = await _dbContext.PDOSkimPerkhidmatan
                 .Where(x => x.Id == dto.Id)
                 .Select(x => x.Id)
@@ -975,7 +975,7 @@ namespace HR.PDO.Application.Services.PDO
                     // Step 1: Update existing active records
 
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
-                           .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == idPerkhidmatan && x.StatusAktif);
+                           .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == idPerkhidmatan && x.StatusAktif  == true);
 
                     if (existingStatus != null)
                     {
@@ -1013,10 +1013,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> UpdateHantarSkimPerkhidmatanAsync(MaklumatSkimPerkhidmatanCreateRequestDto perkhidmatanDto)
         {
             _logger.LogInformation("Service: Updating Hantar SkimPerkhidmatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Fetch existing record
                 var existingSkim = await _dbContext.PDOSkimPerkhidmatan
                     .Where(x => x.Id == perkhidmatanDto.Id)
@@ -1094,7 +1094,7 @@ namespace HR.PDO.Application.Services.PDO
 
                     // Step 2: Deactivate existing status
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif);
+                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif == true);
 
                     if (existingStatus != null)
                     {
@@ -1128,7 +1128,7 @@ namespace HR.PDO.Application.Services.PDO
 
                     // Step 2: Deactivate existing status
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif);
+                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == existingSkim.Id && x.StatusAktif == true);
 
                     if (existingStatus != null)
                     {
@@ -1317,10 +1317,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> KemaskiniStatusAsync(SkimPerkhidmatanRefStatusDto perkhidmatanDto)
         {
             _logger.LogInformation("Service: Updating KemaskiniStatusAsync");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: update into PDO_SkimPerkhidmatan
                 var perkhidmatan = MapToEntity(perkhidmatanDto);
                 perkhidmatan.KodRujStatusSkim = perkhidmatanDto.KodRujStatusSkim;
@@ -1389,7 +1389,7 @@ namespace HR.PDO.Application.Services.PDO
 
                 // Step 4: Deactivate existing PDO_StatusPermohonanSkimPerkhidmatan record
                 var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanSkimPerkhidmatan>()
-                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == perkhidmatan.Id && x.StatusAktif);
+                        .FirstOrDefaultAsync(x => x.IdSkimPerkhidmatan == perkhidmatan.Id && x.StatusAktif == true  );
 
                 if (existingStatus != null)
                 {
@@ -1482,7 +1482,7 @@ namespace HR.PDO.Application.Services.PDO
                                         Kod = a.Kod,
                                         Nama = a.Nama,
                                         Keterangan = a.Keterangan,
-                                        //StatusAktif = a.StatusAktif,
+                                        //StatusAktif = a.StatusAktif ?? false,
                                         KodRujStatusSkim = a.KodRujStatusSkim,
                                         KodRujMatawang = b2.Nama,
                                         //TarikhKemaskini = b.TarikhKemaskini
@@ -1599,8 +1599,8 @@ namespace HR.PDO.Application.Services.PDO
                         SkimJawatnList = (
                     from f in _dbContext.PDOSkimKetuaPerkhidmatan
                     join jawatan in _dbContext.PDOJawatan on f.IdKetuaPerkhidmatan equals jawatan.Id
-                    where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif
-                               && jawatan.StatusAktif
+                    where a.Id == f.IdSkimPerkhidmatan && f.StatusAktif == true
+                               && jawatan.StatusAktif == true
                     select new SkimKetuaPerkhidmatanResponseDTO
                     {
                         Id = a.Id,
@@ -1681,8 +1681,8 @@ namespace HR.PDO.Application.Services.PDO
                join b in _dbContext.PDOSkimKetuaPerkhidmatan on a.Id equals b.IdSkimPerkhidmatan
                join d in _dbContext.PDOJawatan on b.IdKetuaPerkhidmatan equals d.Id
                join e in _dbContext.PDOUnitOrganisasi on d.IdUnitOrganisasi equals e.Id
-               where a.Id == id && b.StatusAktif
-                          && d.StatusAktif
+               where a.Id == id && b.StatusAktif == true
+                          && d.StatusAktif == true
                select new SkimPerkhidmatanDetailsDTO
                {
                    Id = a.Id,
