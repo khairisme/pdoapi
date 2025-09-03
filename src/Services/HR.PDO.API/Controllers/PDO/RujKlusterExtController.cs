@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/ruj-kluster")]
+    [Route("api/pdo/v1/ruj-kluster")]
     public class RujKlusterExtController : ControllerBase
     {
         private readonly ILogger<RujKlusterExtController> _logger;

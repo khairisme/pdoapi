@@ -94,9 +94,9 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> SetPenjenamaanSemula(UnitOrganisasiPenjenamaanSemulaRequestDto penjenamaanSemulaRequestDto)
         {
             _logger.LogInformation("Service: Updating PenjenamaanSemula");
-            await _unitOfWork.BeginTransactionAsync();
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Update PDO_UnitOrganisasi
                 var unitOrganisasi = await _unitOfWork.Repository<PDOUnitOrganisasi>()
                     .FirstOrDefaultAsync(x => x.Id == penjenamaanSemulaRequestDto.IdUnitOrganisasi);

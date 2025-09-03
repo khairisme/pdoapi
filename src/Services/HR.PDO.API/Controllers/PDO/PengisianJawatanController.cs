@@ -8,7 +8,7 @@ namespace HR.PDO.API.Controllers.PDO
 {
     //[Authorize]
     [ApiController]
-    [Route("api/pdo/[controller]")]
+    [Route("api/pdo/v1/[controller]")]
     [Produces("application/json")]
     public class PengisianJawatanController : ControllerBase
     {

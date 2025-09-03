@@ -119,7 +119,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task<List<DropDownDto>> RujukanSkimPerkhidmatanIkutKlasifikasiDanKumpulan(int IdKlasifikasiPerkhidmatan, int IdKumpulanPerkhidmatan)
+        public async Task<List<DropDownDto>> RujukanSkimPerkhidmatanIkutKlasifikasiDanKumpulan(int? IdKlasifikasiPerkhidmatan, int? IdKumpulanPerkhidmatan)
         {
             try
 

@@ -35,14 +35,13 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorjd in _context.PDORujJenisDokumen
                     select new RujJenisDokumenLinkDto{
-                         FormatDiterima = pdorjd.FormatDiterima,
                          IdCipta = pdorjd.IdCipta,
                          IdHapus = pdorjd.IdHapus,
                          IdPinda = pdorjd.IdPinda,
                          Keterangan = pdorjd.Keterangan,
                          Kod = pdorjd.Kod,
                          Nama = pdorjd.Nama,
-                         StatusAktif = pdorjd.StatusAktif,
+                         StatusAktif = pdorjd.StatusAktif ?? false,
                          TarikhCipta = pdorjd.TarikhCipta,
                          TarikhHapus = pdorjd.TarikhHapus,
                          TarikhPinda = pdorjd.TarikhPinda
@@ -67,7 +66,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task<List<RujJenisDokumenLinkDto>> SenaraiRujJenisDokumen(RujJenisDokumenCarianDto request)
+        public async Task<List<RujJenisDokumenLinkDto>> SenaraiRujJenisDokumen()
         {
             try
 
@@ -75,14 +74,13 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorjd in _context.PDORujJenisDokumen
                     select new RujJenisDokumenLinkDto{
-                         FormatDiterima = pdorjd.FormatDiterima,
                          IdCipta = pdorjd.IdCipta,
                          IdHapus = pdorjd.IdHapus,
                          IdPinda = pdorjd.IdPinda,
                          Keterangan = pdorjd.Keterangan,
                          Kod = pdorjd.Kod,
                          Nama = pdorjd.Nama,
-                         StatusAktif = pdorjd.StatusAktif,
+                         StatusAktif = pdorjd.StatusAktif ?? false,
                          TarikhCipta = pdorjd.TarikhCipta,
                          TarikhHapus = pdorjd.TarikhHapus,
                          TarikhPinda = pdorjd.TarikhPinda
@@ -107,7 +105,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task<List<DropDownDto>> RujukanRujJenisDokumen(RujJenisDokumenDaftarDto request)
+        public async Task<List<DropDownDto>> RujukanRujJenisDokumen()
         {
             try
 
@@ -139,14 +137,19 @@ namespace HR.Application.Services.PDO
 
         public async Task DaftarRujJenisDokumen(Guid UserId, RujJenisDokumenDaftarDto request)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDORujJenisDokumen();
                 entity.IdCipta = UserId;
+                entity.TarikhCipta = DateTime.Now;
+                entity.FormatDiterima = request.FormatDiterima;
+                entity.Kod = request.Kod;
+                entity.Keterangan = request.Keterangan;
+                entity.Nama = request.Nama;
+                entity.StatusAktif = true;
                 await _context.PDORujJenisDokumen.AddAsync(entity); 
                 await _context.SaveChangesAsync(); 
 
@@ -167,17 +170,16 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task KemaskiniRujJenisDokumen(Guid UserId, int Id, RujJenisDokumenDaftarDto request)
+        public async Task KemaskiniRujJenisDokumen(Guid UserId,RujJenisDokumenDaftarDto request)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var data = await (from pdorjd in _context.PDORujJenisDokumen
-                             where pdorjd.Id == Id
-                             select pdorjd).FirstOrDefaultAsync();
+                             where pdorjd.Id == request.Id
+                                  select pdorjd).FirstOrDefaultAsync();
                   data.Kod = request.Kod;
                   data.Nama = request.Nama;
                   data.Keterangan = request.Keterangan;

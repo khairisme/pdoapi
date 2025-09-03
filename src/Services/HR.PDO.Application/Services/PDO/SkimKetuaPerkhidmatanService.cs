@@ -30,13 +30,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> CreateAsync(List<SkimKetuaPerkhidmatanRequestDto> dto)
         {
             _logger.LogInformation("Service: Creating new SkimKetuaPerkhidmatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
-
-
-
+                await _unitOfWork.BeginTransactionAsync();
                 var entities = dto.Select(d => new PDOSkimKetuaPerkhidmatan
                 {
                     IdSkimPerkhidmatan = d.IdSkimPerkhidmatan,

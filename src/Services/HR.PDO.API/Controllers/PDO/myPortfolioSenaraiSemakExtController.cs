@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/my-portfolio-senarai-semak")]
+    [Route("api/pdo/v1/my-portfolio-senarai-semak")]
     public class myPortfolioSenaraiSemakExtController : ControllerBase
     {
         private readonly ILogger<myPortfolioSenaraiSemakExtController> _logger;

@@ -3,6 +3,7 @@ namespace HR.PDO.Application.DTOs
 {
     public class UnitOrganisasiDto
     {
+        public string? UnitOrganisasiInduk { get; set; }
         public bool? IndikatorAgensi { get; set; }
         public bool? IndikatorAgensiRasmi { get; set; }
         public bool? IndikatorJabatanDiKerajaanNegeri { get; set; }

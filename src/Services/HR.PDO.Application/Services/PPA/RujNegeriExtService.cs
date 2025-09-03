@@ -15,11 +15,11 @@ namespace HR.Application.Services.PPA
 {
     public class RujNegeriExtService : IRujNegeriExt
     {
-        private readonly IPPAUnitOfWork _unitOfWork;
+        private readonly IPDOUnitOfWork _unitOfWork;
         private readonly PPADbContext _context;
         private readonly ILogger<RujNegeriExtService> _logger;
 
-        public RujNegeriExtService(IPPAUnitOfWork unitOfWork, PPADbContext dbContext, ILogger<RujNegeriExtService> logger)
+        public RujNegeriExtService(IPDOUnitOfWork unitOfWork, PPADbContext dbContext, ILogger<RujNegeriExtService> logger)
         {
             _unitOfWork = unitOfWork;
             _context = dbContext;

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/gred-skim-perkhidmatan")]
+    [Route("api/pdo/v1/gred-skim-perkhidmatan")]
     public class GredSkimPerkhidmatanExtController : ControllerBase
     {
         private readonly ILogger<GredSkimPerkhidmatanExtController> _logger;

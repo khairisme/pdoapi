@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/ruj-jenis-dokumen")]
+    [Route("api/pdo/v1/ruj-jenis-dokumen")]
     public class RujukanJenisDokumenExtController : ControllerBase
     {
         private readonly ILogger<RujukanJenisDokumenExtController> _logger;
@@ -40,36 +40,14 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RujJenisDokumenDto>>>SenaraiRujJenisDokumen(RujJenisDokumenCarianDto request)
-        {
-            _logger.LogInformation("Calling SenaraiRujJenisDokumen");
-            try
-            {
-                var data = await _rujjenisdokumenext.SenaraiRujJenisDokumen(request);
-                return Ok(data);
-            }
-            catch (Exception ex)
-            {
-                 String err = "";
-                 if (ex != null) { 
-                     _logger.LogError(ex, "Error in SenaraiRujJenisDokumen");
-                     if (ex.InnerException!=null) {
-                         err = ex.InnerException.Message.ToString();
-                     }
-                }
-                 
-                return StatusCode(500, ex.Message+"-"+err);
-            }
-        }
 
-        [HttpGet("ruj")]
-        public async Task<ActionResult<IEnumerable<DropDownDto>>>RujukanRujJenisDokumen(RujJenisDokumenDaftarDto request)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DropDownDto>>>RujukanRujJenisDokumen()
         {
             _logger.LogInformation("Calling RujukanRujJenisDokumen");
             try
             {
-                var data = await _rujjenisdokumenext.RujukanRujJenisDokumen(request);
+                var data = await _rujjenisdokumenext.RujukanRujJenisDokumen();
                 return Ok(data);
             }
             catch (Exception ex)
@@ -109,14 +87,14 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> KemaskiniRujJenisDokumen([FromQuery] Guid UserId, int Id, RujJenisDokumenDaftarDto filter)
+        [HttpPut]
+        public async Task<ActionResult> KemaskiniRujJenisDokumen([FromQuery] Guid UserId,RujJenisDokumenDaftarDto filter)
         {
             _logger.LogInformation("Calling KemaskiniRujJenisDokumen");
             try
             {
-                await _rujjenisdokumenext.KemaskiniRujJenisDokumen(UserId,Id,filter);
-                return CreatedAtAction(nameof(KemaskiniRujJenisDokumen), new {UserId, Id,filter }, null);
+                await _rujjenisdokumenext.KemaskiniRujJenisDokumen(UserId,filter);
+                return CreatedAtAction(nameof(KemaskiniRujJenisDokumen), new {UserId, filter }, null);
             }
             catch (Exception ex)
             {

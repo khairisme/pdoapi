@@ -15,7 +15,7 @@ using System.Diagnostics;
 namespace HR.PDO.API.Controllers.PDO;
 //[Authorize]
 [ApiController]
-[Route("api/pdo/[controller]")]
+[Route("api/pdo/v1/[controller]")]
 public class AktivitiOrganisasiController : ControllerBase
 {
     private readonly IAktivitiOrganisasiService _aktivitiOrganisasiService;

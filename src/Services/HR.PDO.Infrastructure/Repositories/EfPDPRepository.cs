@@ -25,16 +25,16 @@ public class EfPDPRepository<T> : IRepository<T> where T : PDPBaseEntity
     }
     public async Task<T?> GetByIdAsync(Guid id)
     {
-        return await _dbSet.FirstOrDefaultAsync(e =>  Convert.ToBoolean(e.StatusAktif));
+        return await _dbSet.FirstOrDefaultAsync(e =>  Convert.ToBoolean(e.StatusAktif == true));
     }
     public async Task<T?> GetByIdAsync(int id)
     {
-        return await _dbSet.Where(e => e.Id == id).FirstOrDefaultAsync(e => Convert.ToBoolean(e.StatusAktif));
+        return await _dbSet.Where(e => e.Id == id).FirstOrDefaultAsync(e => Convert.ToBoolean(e.StatusAktif == true));
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif)).ToListAsync();
+        return await _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif == true)).ToListAsync();
     }
     public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
     {
@@ -44,7 +44,7 @@ public class EfPDPRepository<T> : IRepository<T> where T : PDPBaseEntity
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
         // Combine the predicate with IsDeleted filter
-        var combinedPredicate = PredicateBuilder.And(predicate, e => Convert.ToBoolean(e.StatusAktif));
+        var combinedPredicate = PredicateBuilder.And(predicate, e => Convert.ToBoolean(e.StatusAktif == true));
         return await _dbSet.Where(combinedPredicate).ToListAsync();
     }
 
@@ -117,18 +117,18 @@ public class EfPDPRepository<T> : IRepository<T> where T : PDPBaseEntity
     }
     public async Task<bool> ExistsAsync(Guid id)
     {
-        return await _dbSet.AnyAsync(e => Convert.ToBoolean(e.StatusAktif));
+        return await _dbSet.AnyAsync(e => Convert.ToBoolean(e.StatusAktif == true));
     }
 
     public async Task<int> CountAsync()
     {
-        return await _dbSet.CountAsync(e => Convert.ToBoolean(e.StatusAktif));
+        return await _dbSet.CountAsync(e => Convert.ToBoolean(e.StatusAktif == true));
     }
 
    
     public async Task<(IEnumerable<T> Items, int TotalCount)> GetPagedListAsync(int pageNumber, int pageSize)
     {
-        var query = _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif));
+        var query = _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif == true));
         
         // Get total count
         var totalCount = await query.CountAsync();
@@ -157,7 +157,7 @@ public class EfPDPRepository<T> : IRepository<T> where T : PDPBaseEntity
         }
         
         // Build a query that searches across all string properties
-        var query = _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif));
+        var query = _dbSet.Where(e => Convert.ToBoolean(e.StatusAktif == true));
         
         // Create a parameter for the entity
         var parameter = Expression.Parameter(typeof(T), "e");
@@ -227,7 +227,7 @@ public class EfPDPRepository<T> : IRepository<T> where T : PDPBaseEntity
         var lambda = Expression.Lambda<Func<T, bool>>(equalityComparison, parameter);
         
         // Apply the filter along with IsDeleted check
-        var combinedPredicate = PredicateBuilder.And(lambda, e => Convert.ToBoolean(e.StatusAktif));
+        var combinedPredicate = PredicateBuilder.And(lambda, e => Convert.ToBoolean(e.StatusAktif == true));
         return await _dbSet.Where(combinedPredicate).ToListAsync();
     }
     public async Task<IEnumerable<T>> FindByFieldWithoutStatusAktifAsync(string fieldName, object fieldValue)

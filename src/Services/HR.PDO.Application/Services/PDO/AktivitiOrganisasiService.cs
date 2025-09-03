@@ -39,7 +39,7 @@ namespace HR.PDO.Application.Services.PDO
                                     Id = a.Id,
                                     IdIndukAktivitiOrganisasi = a.IdIndukAktivitiOrganisasi,
                                     KodProgram = b.Nama.ToUpper() + " " + a.KodProgram,
-                                    Nama = a.Nama,
+                                    AktiviOrganisasi = a.Nama,
                                     Tahap = a.Tahap
                                 }).ToListAsync();
 
@@ -68,9 +68,9 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<int> SimpanAktivitiAsync(AktivitiOrganisasiCreateRequest request)
         {
             _logger.LogInformation("Service: SimpanAktivitiAsync");
-            await _unitOfWork.BeginTransactionAsync();
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Auto-generate Tahap
                 int newTahap = await _context.PDOAktivitiOrganisasi
                     .Where(x => x.Id == request.IdAktivitiOrganisasi)
@@ -227,10 +227,9 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> SetPenjenamaanSemula(PenjenamaanSemulaRequestDto penjenamaanSemulaRequestDto)
         {
             _logger.LogInformation("Service: Updating PenjenamaanSemula");
-            await _unitOfWork.BeginTransactionAsync();
             try
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Update PDO_AktivitiOrganisasi
                 var aktivitiOrganisasi = await _unitOfWork.Repository<PDOAktivitiOrganisasi>()
                     .FirstOrDefaultAsync(x => x.Id == penjenamaanSemulaRequestDto.IdAktivitiOrganisasi);
@@ -342,9 +341,9 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> SetAktivitiOrganisasi(AktivitiOrganisasiRequestDto aktivitiOrganisasiRequestDto)
         {
             _logger.LogInformation("Service: Updating AktivitiOrganisasi");
-            await _unitOfWork.BeginTransactionAsync();
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Get all records with OldParentId using FindByFieldAsync
                 var aktivitiOrganisasiList = await _unitOfWork.Repository<PDOAktivitiOrganisasi>()
                     .FindByFieldAsync("IdIndukAktivitiOrganisasi", aktivitiOrganisasiRequestDto.OldParentId);
@@ -450,10 +449,10 @@ namespace HR.PDO.Application.Services.PDO
         {
             _logger.LogInformation("SetMansuhAktivitiOrganisasi: Updating AktivitiOrganisasi status to inactive with IdAktivitiOrganisasi: {IdAktivitiOrganisasi}", mansuhAktivitiOrganisasiRequestDto.IdAktivitiOrganisasi);
 
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Update PDO_AktivitiOrganisasi StatusAktif to 0
                 var aktivitiOrganisasi = await _unitOfWork.Repository<PDOAktivitiOrganisasi>()
                     .FirstOrDefaultAsync(x => x.Id == mansuhAktivitiOrganisasiRequestDto.IdAktivitiOrganisasi && x.StatusAktif == true);
@@ -513,7 +512,7 @@ namespace HR.PDO.Application.Services.PDO
                     Tahap = x.Tahap
                 }).ToList();
 
-                _logger.LogInformation("GeTreeButiranJawatan: Successfully processed {Count} ButiranJawatan records", result.Count);
+                _logger.LogInformation("TreeButiranJawatan: Successfully processed {Count} ButiranJawatan records", result.Count);
                 return result;
             }
             catch (Exception ex)

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/kekosongan-jawatan")]
+    [Route("api/pdo/v1/kekosongan-jawatan")]
     public class KekosonganJawatanExtController : ControllerBase
     {
         private readonly ILogger<KekosonganJawatanExtController> _logger;

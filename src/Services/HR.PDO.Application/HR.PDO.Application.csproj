@@ -4,12 +4,18 @@
     <ProjectReference Include="..\HR.PDO.Core\HR.PDO.Core.csproj" />
     <ProjectReference Include="..\HR.PDO.Infrastructure\HR.PDO.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
+    <!--ProjectReference Include="..\HR.PDO.API\HR.PDO.API.csproj" />-->
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\PPA\" />
   </ItemGroup>
 
   <PropertyGroup>

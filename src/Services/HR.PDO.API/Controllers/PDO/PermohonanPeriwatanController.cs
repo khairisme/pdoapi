@@ -10,7 +10,7 @@ namespace HR.PDO.API.Controllers.PDO
 {
     //[Authorize]
     [ApiController]
-    [Route("api/pdo/[controller]")]
+    [Route("api/pdo/v1/[controller]")]
     public class PermohonanPeriwatanController : Controller
     {
         private readonly IPermohonanPeriwatanService _permohonanPeriwatan;

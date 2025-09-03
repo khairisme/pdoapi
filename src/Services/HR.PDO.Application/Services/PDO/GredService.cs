@@ -43,9 +43,9 @@ namespace HR.PDO.Application.Services
                             join c in _context.PDOKumpulanPerkhidmatan on a.IdKumpulanPerkhidmatan equals c.Id
                             where a.IdKlasifikasiPerkhidmatan == filter.IdKlasifikasiPerkhidmatan
                                   && a.IdKumpulanPerkhidmatan == filter.IdKumpulanPerkhidmatan
-                                  && b.StatusAktif
-                                  && c.StatusAktif
-                                  && a.StatusAktif
+                                  && b.StatusAktif==true
+                                  && c.StatusAktif == true
+                                  && a.StatusAktif == true
                             orderby a.Kod
                             select new
                             {
@@ -149,13 +149,13 @@ namespace HR.PDO.Application.Services
         public async Task<bool> CreateAsync(CreateGredDto dto)
         {
             _logger.LogInformation("Service: Creating new Gred");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Insert into PDO_Gred
-               
-                if(dto.KodGred=="VU" || dto.KodGred == "VK")
+
+                if (dto.KodGred=="VU" || dto.KodGred == "VK")
                 {
                     dto.Kod = $"{dto.KodGred}{dto.NomborGred:D2}000";
                 }
@@ -199,10 +199,10 @@ namespace HR.PDO.Application.Services
         public async Task<bool> DaftarGredJawatanAsync(CreateGredDto dto)
         {
             _logger.LogInformation("Service: Hantar  GredJawatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var idGred = await _context.PDOGred
                 .Where(x => x.Kod == dto.Kod)
                 .Select(x => x.Id)
@@ -238,7 +238,7 @@ namespace HR.PDO.Application.Services
                     // Step 1: Update existing active records
 
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanGred>()
-                           .FirstOrDefaultAsync(x => x.IdGred == idGred && x.StatusAktif);
+                           .FirstOrDefaultAsync(x => x.IdGred == idGred && x.StatusAktif == true);
 
                     if (existingStatus != null)
                     {
@@ -276,10 +276,10 @@ namespace HR.PDO.Application.Services
         public async Task<bool> UpdateAsync(CreateGredDto dto)
         {
             _logger.LogInformation("Service: Updating GredJawatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var gred = await _context.PDOGred
                       .Where(x => x.Id == dto.Id && x.Kod == dto.Kod)
                       .FirstOrDefaultAsync();
@@ -288,7 +288,7 @@ namespace HR.PDO.Application.Services
                     _logger.LogError("GredJawatan with ID {Id} not found", dto.Id);
                     return false; // or throw an exception
                 }
-                if (!gred.StatusAktif)
+                if (!gred.StatusAktif == true)
                 {
                     // Step 1: update into PDO_GRED
                     var gredUpdate = MapToEntity(dto);
@@ -315,7 +315,7 @@ namespace HR.PDO.Application.Services
 
                     //Step 2: Deactivate existing PDO_StatusPermohonanGred record
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanGred>()
-                            .FirstOrDefaultAsync(x => x.IdGred == dto.Id && x.StatusAktif);
+                            .FirstOrDefaultAsync(x => x.IdGred == dto.Id && x.StatusAktif == true);
 
                     if (existingStatus != null)
                     {
@@ -354,10 +354,10 @@ namespace HR.PDO.Application.Services
         public async Task<bool> UpdateHantarGredJawatanAsync(CreateGredDto dto)
         {
             _logger.LogInformation("Service: Updating Hantar Gred");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var gred = await _context.PDOGred
                       .Where(x => x.Id == dto.Id && x.Kod == dto.Kod)
                       .FirstOrDefaultAsync();
@@ -367,7 +367,7 @@ namespace HR.PDO.Application.Services
                     return false; // or throw an exception
                 }
 
-                if (!gred.StatusAktif)
+                if (!gred.StatusAktif == true)
                 {
 
                     // Step 1: update into PDO_Gred
@@ -385,7 +385,7 @@ namespace HR.PDO.Application.Services
 
                     // Step 2: Deactivate existing PDO_StatusPermohonanGred record
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanGred>()
-                            .FirstOrDefaultAsync(x => x.IdGred == gred.Id && x.StatusAktif);
+                            .FirstOrDefaultAsync(x => x.IdGred == gred.Id && x.StatusAktif == true);
 
                     if (existingStatus != null)
                     {
@@ -424,7 +424,7 @@ namespace HR.PDO.Application.Services
 
                     // Step 2: Deactivate existing PDO_StatusPermohonanGred record
                     var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanGred>()
-                            .FirstOrDefaultAsync(x => x.IdGred == gred.Id && x.StatusAktif);
+                            .FirstOrDefaultAsync(x => x.IdGred == gred.Id && x.StatusAktif == true);
 
                     if (existingStatus != null)
                     {
@@ -494,7 +494,7 @@ namespace HR.PDO.Application.Services
                     IndikatorGredLantikanTerus = dtoSource.IndikatorGredLantikanTerus,
                     IndikatorGredLantikan = dtoSource.IndikatorGredLantikan,
                     Keterangan = dtoSource.Keterangan,
-                    StatusAktif = dtoSource.StatusAktif,
+                    StatusAktif = dtoSource.StatusAktif ?? false,
                     StatusPermohonan = result.b2.Nama,
 
                 };
@@ -571,7 +571,7 @@ namespace HR.PDO.Application.Services
                                         IndikatorGredLantikanTerus = a.IndikatorGredLantikanTerus,
                                         IndikatorGredLantikan = a.IndikatorGredLantikan,
                                         Keterangan = a.Keterangan,
-                                        StatusAktif = a.StatusAktif,
+                                        StatusAktif = a.StatusAktif ?? false,
                                         StatusPermohonan = b2.Nama,
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                     }
@@ -657,10 +657,10 @@ namespace HR.PDO.Application.Services
         public async Task<bool> KemaskiniStatusAsync(CreateGredDto dto)
         {
             _logger.LogInformation("Service: Updating KemaskiniStatusAsync");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: update into PDO_Gred
                 var gred = MapToEntity(dto);
                 gred.StatusAktif = dto.StatusAktif;
@@ -677,7 +677,7 @@ namespace HR.PDO.Application.Services
 
                 // Step 2: Deactivate existing PDO_StatusPermohonanGred record
                 var existingStatus = await _unitOfWork.Repository<PDOStatusPermohonanGred>()
-                        .FirstOrDefaultAsync(x => x.IdGred == gred.Id && x.StatusAktif);
+                        .FirstOrDefaultAsync(x => x.IdGred == gred.Id && x.StatusAktif == true);
 
                 if (existingStatus != null)
                 {
@@ -737,7 +737,7 @@ namespace HR.PDO.Application.Services
                                         IndikatorGredLantikanTerus = a.IndikatorGredLantikanTerus,
                                         IndikatorGredLantikan = a.IndikatorGredLantikan,
                                         Keterangan = a.Keterangan,
-                                        StatusAktif = a.StatusAktif,
+                                        StatusAktif = a.StatusAktif ?? false,
                                         StatusPermohonan = b2.Nama,
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                     }

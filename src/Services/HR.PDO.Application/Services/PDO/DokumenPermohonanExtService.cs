@@ -11,6 +11,7 @@ using Shared.Contracts.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Application.DTOs;
+using System.Runtime.Intrinsics.Arm;
 
 namespace HR.Application.Services.PDO
 {
@@ -27,7 +28,7 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task<List<DokumenPermohonanDto>> SenaraiDokumenPermohonan(int IdPermohonanJawatan)
+        public async Task<List<RujJenisDokumenLinkDto>> SenaraiDokumenPermohonan(int IdPermohonanJawatan)
         {
             try
 
@@ -36,9 +37,20 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdodp in _context.PDODokumenPermohonan
                     join pdorjd in _context.PDORujJenisDokumen  on  pdodp.KodRujJenisDokumen equals pdorjd.Kod
                     where pdodp.IdPermohonanJawatan==IdPermohonanJawatan
-                    select new DokumenPermohonanDto{
-                         JenisDokumen = pdorjd.Nama,
-                         NamaDokumen = pdodp.NamaDokumen
+                    select new RujJenisDokumenLinkDto
+                    {
+                        StatusAktif = pdodp.StatusAktif ?? false,
+                        TarikhCipta = pdodp.TarikhCipta,
+                        TarikhHapus  = pdodp.TarikhHapus,
+                        TarikhPinda = pdodp.TarikhPinda,
+                        IdCipta = pdodp.IdCipta,
+                        IdHapus = pdodp.IdHapus,
+                        IdPinda = pdodp.IdPinda,
+                        FormatDokumen = pdorjd.Nama,
+                        JenisDokumen = pdodp.KodRujJenisDokumen,
+                        PautanDokumen = pdodp.PautanDokumen,
+                        IdPermohonanJawatan = pdodp.IdPermohonanJawatan,
+                        NamaDokumen = pdodp.NamaDokumen
 
                     }
                 ).ToListAsync();
@@ -62,20 +74,17 @@ namespace HR.Application.Services.PDO
 
         public async Task WujudDokumenPermohonanBaru(Guid UserId, int IdPermohonanJawatan, string? KodRujJenisDokumen, string? NamaDokumen, string? PautanDokumen, string? FormatDokumen, int Saiz)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDODokumenPermohonan();
                 entity.IdPermohonanJawatan = IdPermohonanJawatan;
                 entity.KodRujJenisDokumen = KodRujJenisDokumen;
                 entity.NamaDokumen = NamaDokumen;
                 entity.PautanDokumen = PautanDokumen;
                 entity.FormatDokumen = FormatDokumen;
-                entity.Saiz = Saiz;
-                entity.Saiz = Saiz;
                 entity.Saiz = Saiz;
                 entity.IdCipta = UserId;
                 entity.TarikhCipta = DateTime.Now;
@@ -101,14 +110,14 @@ namespace HR.Application.Services.PDO
 
         public async Task HapusTerusDokumenPermohonan(Guid UserId, int Id)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = await (from pdodp in _context.PDODokumenPermohonan
-                             where pdodp.Id == Id select pdodp
+                             where pdodp.Id == Id 
+                             select pdodp
                               ).FirstOrDefaultAsync();
                 if (entity == null)
                 {

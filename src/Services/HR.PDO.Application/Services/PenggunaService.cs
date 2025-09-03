@@ -76,10 +76,10 @@ namespace HR.PDO.Application.Services
         public async Task<IEnumerable<SoalanKeselamatanDto>> CreateSoalanKeselamatanAsync(List<SoalanKeselamatanDto> soalanKeselamatanDto)
         {
             _logger.LogInformation("Creating user security question using Entity Framework");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 List<PNSSoalanKeselamatan> _SoalanKeselamatans = MapToEntityList<SoalanKeselamatanDto, PNSSoalanKeselamatan>(soalanKeselamatanDto, MapUserSecurityQuestions);
                 var soalanKeselamatans = await _unitOfWork.Repository<PNSSoalanKeselamatan>().AddRangeAsync(_SoalanKeselamatans);
                 await _unitOfWork.SaveChangesAsync();
@@ -108,10 +108,10 @@ namespace HR.PDO.Application.Services
         public async Task<string> CreatePerkhidmatanAsync(PerkhidmatanLogDto perkhidmatanLog)
         {
             _logger.LogInformation("Creating a PerkhidmatanLogDto using Entity Framework");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var perkhidmatan = MapPerkhidmatanLogToEntity(perkhidmatanLog);
                 perkhidmatan = await _unitOfWork.Repository<PerkhidmatanLog>().AddAsync(perkhidmatan);
                 await _unitOfWork.SaveChangesAsync();

@@ -30,7 +30,8 @@ namespace HR.PDO.Application.DTOs
         public string? KodCartaOrganisasi { get; set; }
         public string? KodJabatan { get; set; }
         public string? KodKementerian { get; set; }
-        public string? Nama { get; set; }
+        public string? UnitOrganisasi { get; set; }
+        public string? UnitOrganisasiInduk { get; set; }
         public string? SejarahPenubuhan { get; set; }
         public string? Singkatan { get; set; }
     }

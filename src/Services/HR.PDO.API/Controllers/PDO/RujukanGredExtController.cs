@@ -5,15 +5,15 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/rujukan/ruj-gred")]
+    [Route("api/pdo/v1/rujukan/gred")]
     public class RujukanGredExtController : ControllerBase
     {
         private readonly ILogger<RujukanGredExtController> _logger;
-        private readonly IRujukanGred _rujukangred;
+        private readonly IRujukanGredExt _rujukangredext;
 
-        public RujukanGredExtController(IRujukanGred rujukangred, ILogger<RujukanGredExtController> logger)
+        public RujukanGredExtController(IRujukanGredExt rujukangredext, ILogger<RujukanGredExtController> logger)
         {
-            _rujukangred = rujukangred;
+            _rujukangredext = rujukangredext;
             _logger = logger;
         }
 
@@ -23,7 +23,7 @@ namespace HR.PDO.API.Controllers.PDO {
             _logger.LogInformation("Calling RujukanGredIkutKlasifikasiDanKumpulan");
             try
             {
-                var data = await _rujukangred.RujukanGredIkutKlasifikasiDanKumpulan(IdKlasifikasiPerkhidmatan,IdKumpulanPerkhidmatan);
+                var data = await _rujukangredext.RujukanGredIkutKlasifikasiDanKumpulan(IdKlasifikasiPerkhidmatan,IdKumpulanPerkhidmatan);
                 return Ok(data);
             }
             catch (Exception ex)

@@ -12,7 +12,7 @@ using Shared.Contracts.DTOs;
 namespace HR.PDO.API.Controllers.PDO;
 //[Authorize]
 [ApiController]
-[Route("api/pdo/[controller]")]
+[Route("api/pdo/v1/[controller]")]
 public class SkimKetuaPerkhidmatanController : ControllerBase
 {
     private readonly ISkimKetuaPerkhidmatanService _skimKetuaPerkhidmatanService;

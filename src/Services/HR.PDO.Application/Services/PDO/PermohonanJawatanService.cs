@@ -270,9 +270,9 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> SetUlasanPasukanPerunding(UlasanPasukanPerundingRequestDto ulasanPasukanPerundingRequestDto)
         {
             _logger.LogInformation("Service: Updating UlasanPasukanPerunding");
-            await _unitOfWork.BeginTransactionAsync();
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // Step 1: Update PDO_PermohonanJawatan
                 var permohonanJawatan = await _unitOfWork.Repository<PDOPermohonanJawatan>()
                     .FirstOrDefaultAsync(x => x.IdUnitOrganisasi == ulasanPasukanPerundingRequestDto.AgensiId && x.Id == ulasanPasukanPerundingRequestDto.IdPermohonanJawatan);

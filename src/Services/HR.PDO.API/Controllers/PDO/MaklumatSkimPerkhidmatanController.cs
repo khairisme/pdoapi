@@ -9,7 +9,7 @@ namespace HR.PDO.API.Controllers.PDO
 {
     //[Authorize]
     [ApiController]
-    [Route("api/pdo/[controller]")]
+    [Route("api/pdo/v1/[controller]")]
     public class MaklumatSkimPerkhidmatanController : Controller
     {
         private readonly IMaklumatSkimPerkhidmatanService _maklumatSkimPerkhidmatan;

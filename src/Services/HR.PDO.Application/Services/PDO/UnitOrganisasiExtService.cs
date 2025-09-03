@@ -1,4 +1,4 @@
-using HR.PDO.Application.Interfaces.PDO;
+﻿using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +11,9 @@ using Shared.Contracts.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Application.DTOs;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.Json;
+using Azure.Core;
 
 namespace HR.Application.Services.PDO
 {
@@ -27,18 +30,18 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task<PagedResult<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasi(string? KodCartaOrganisasi, int parentId = 0, int page = 1, int pageSize = 50, string? keyword = null, string? sortBy = "UnitOrganisasi", bool desc = false, CancellationToken ct = default)
+        public async Task<PagedResult<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasi(StrukturUnitOrganisasiRequestDto request)
         {
             try
 
             {
                 int newParentId = 0;
                 bool rootparent = false;
-                page = page <= 0 ? 1 : page;
-                pageSize = pageSize <= 0 ? 50 : pageSize;
+                request.Page = request.Page <= 0 ? 1 : request.Page;
+                request.PageSize = request.PageSize <= 0 ? 50 : request.PageSize;
                 var result = await (from pdouo in _context.PDOUnitOrganisasi
                     join pdorkuo in _context.PDORujKategoriUnitOrganisasi  on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
-                    where (parentId != 0 ? pdouo.IdIndukUnitOrganisasi == parentId : pdouo.KodCartaOrganisasi == KodCartaOrganisasi) 
+                    where (request.ParentId != 0 ? pdouo.IdIndukUnitOrganisasi == request.ParentId : pdouo.KodCartaOrganisasi == request.KodCartaOrganisasi) 
                     select new StrukturUnitOrganisasiDto{
                         Id = pdouo.Id,
                          IdIndukUnitOrganisasi = pdouo.IdIndukUnitOrganisasi,
@@ -50,43 +53,51 @@ namespace HR.Application.Services.PDO
                     }
                 ).ToListAsync();
                 //Get Parent
-                if (parentId == 0)
-                {
-                    foreach (var item in result)
-                    {
 
-                        if (item.Id == item.IdIndukUnitOrganisasi)
-                        {
-                            rootparent = true;
-                        }
-                        else
-                        {
-                            newParentId = item.IdIndukUnitOrganisasi;
-                        }
-                    }
-                    result = await StrukturUnitOrganisasiGetParent(newParentId, result);
-                } else
+                foreach (var item in result)
                 {
-                    foreach (var item in result)
-                    {
-                        var children = StrukturUnitOrganisasiGetChildren(item.Id).Result;
-                        if (children.Count() > 0) item.HasChildren = true;
-                    }
-
+                    item.Children = StrukturUnitOrganisasiGetChildren(item.Id).Result;
+                    if (item.Children.Count() > 0) item.HasChildren = true;
                 }
 
+
+                //if (request.ParentId == 0)
+                //{
+                //    //foreach (var item in result)
+                //    //{
+
+                //    //    if (item.Id == item.IdIndukUnitOrganisasi)
+                //    //    {
+                //    //        rootparent = true;
+                //    //    }
+                //    //    else
+                //    //    {
+                //    //        newParentId = item.IdIndukUnitOrganisasi;
+                //    //    }
+                //    //}
+                //    //result = await StrukturUnitOrganisasiGetParent(newParentId, result);
+                //} else
+                //{
+                //    foreach (var item in result)
+                //    {
+                //        var children = StrukturUnitOrganisasiGetChildren(item.Id).Result;
+                //        if (children.Count() > 0) item.HasChildren = true;
+                //    }
+
+                //}
+
                 var total = result.Count();
-                var ordered = (sortBy ?? "UnitOrganisasi").Trim().ToLowerInvariant() switch
+                var ordered = (request.SortBy ?? "UnitOrganisasi").Trim().ToLowerInvariant() switch
 
                 {
-                    "kod"     => desc ? result.OrderByDescending(x => x.Kod)     : result.OrderBy(x => x.Kod),
-                    "unitorganisasi"     => desc ? result.OrderByDescending(x => x.UnitOrganisasi)     : result.OrderBy(x => x.UnitOrganisasi),
+                    "kod"     => request.Desc ? result.OrderByDescending(x => x.Kod)     : result.OrderBy(x => x.Kod),
+                    "unitorganisasi"     => request.Desc ? result.OrderByDescending(x => x.UnitOrganisasi)     : result.OrderBy(x => x.UnitOrganisasi),
                 };
 
 
             var items = ordered
-            .Skip((page - 1) * pageSize)        
-            .Take(pageSize)        
+            .Skip((request.Page - 1) * request.PageSize)        
+            .Take(request.PageSize)        
             .ToList();                                                                                                                                                                                                                                                                            
                 return new PagedResult<StrukturUnitOrganisasiDto>            
                 {
@@ -151,7 +162,7 @@ namespace HR.Application.Services.PDO
             int newParentId = 0;
             var result = await (from pdouo in _context.PDOUnitOrganisasi
                                 join pdorkuo in _context.PDORujKategoriUnitOrganisasi on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
-                                where pdouo.Id == Id
+                                where pdouo.IdIndukUnitOrganisasi == Id
                                 select new StrukturUnitOrganisasiDto
                                 {
                                     HasChildren = false,
@@ -166,10 +177,10 @@ namespace HR.Application.Services.PDO
             ).ToListAsync();
             foreach(var item in result)
             {
-                var children = await (from pdouo in _context.PDOUnitOrganisasi
+               item.Children = await (from pdouo in _context.PDOUnitOrganisasi
                                        join pdorkuo in _context.PDORujKategoriUnitOrganisasi on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
-                                       where pdouo.Id == Id
-                                       select new StrukturUnitOrganisasiDto
+                                       where pdouo.IdIndukUnitOrganisasi == item.Id
+                                      select new StrukturUnitOrganisasiDto
                                        {
                                            HasChildren = false,
                                            Id = pdouo.Id,
@@ -181,7 +192,7 @@ namespace HR.Application.Services.PDO
 
                                        }
                                 ).ToListAsync();
-                if (children.Count() > 0) item.HasChildren = true;
+                if (item.Children.Count() > 0) item.HasChildren = true;
             }
 
             return result;
@@ -218,10 +229,9 @@ namespace HR.Application.Services.PDO
                          KodCartaOrganisasi = pdouo.KodCartaOrganisasi,
                          KodJabatan = pdouo.KodJabatan,
                          KodKementerian = pdouo.KodKementerian,
-                         Nama = pdouo.Nama,
                          SejarahPenubuhan = pdouo.SejarahPenubuhan,
                          Singkatan = pdouo.Singkatan,
-                         StatusAktif = pdouo.StatusAktif,
+                         StatusAktif = pdouo.StatusAktif ?? false,
                          Tahap = pdouo.Tahap,
                          TarikhAkhirPengukuhan = pdouo.TarikhAkhirPengukuhan,
                          TarikhAkhirPenyusunan = pdouo.TarikhAkhirPenyusunan,
@@ -248,6 +258,52 @@ namespace HR.Application.Services.PDO
 
         }
 
+        public async Task<UnitOrganisasiFormDisplayDto> BacaUnitOrganisasi(int Id)
+        {
+            try
+
+            {
+
+                var result = await (from pdouo in _context.PDOUnitOrganisasi
+                                    join paoparent in _context.PDOUnitOrganisasi on pdouo.IdIndukUnitOrganisasi equals paoparent.Id
+                                    join pdorja in _context.PDORujJenisAgensi on pdouo.KodRujJenisAgensi equals pdorja.Kod
+                                    where pdouo.Id == Id
+                                    select new UnitOrganisasiFormDisplayDto
+                                    {
+                                        JenisAgensi = pdorja.Nama,
+                                        Keterangan = pdouo.Keterangan,
+                                        KodUnitOrganisasi = pdouo.Kod,
+                                        NamUnitOrganisasi = pdouo.Nama,
+                                        Tahap = pdouo.Tahap,
+                                        UnitOrganisasiInduk = pdouo.Nama,
+                                        KodJabatan = pdouo.KodJabatan,
+                                        KodKementerian = pdouo.KodKementerian,
+                                        KodRujJenisAgensi = pdorja.Kod
+                                    }
+                ).FirstOrDefaultAsync();
+                string? KodPrefix = result.KodRujJenisAgensi + result.KodKementerian + "-"+result.KodJabatan;
+                int count = await _context.PDOUnitOrganisasi
+                    .CountAsync(puo =>
+                        puo.KodRujJenisAgensi == result.KodRujJenisAgensi &&
+                        puo.KodKementerian == result.KodKementerian &&
+                        puo.KodJabatan == result.KodJabatan);
+                count++;
+                string countStr = count.ToString("D7");
+                result.KodUnitOrganisasi = KodPrefix + "-" + countStr;
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in BacaUnitOrganisasi");
+
+                throw;
+            }
+
+        }
 
 
         public async Task<List<DropDownDto>> RujukanUnitOrganisasi()
@@ -310,10 +366,10 @@ namespace HR.Application.Services.PDO
                          KodCartaOrganisasi = pdouo.KodCartaOrganisasi,
                          KodJabatan = pdouo.KodJabatan,
                          KodKementerian = pdouo.KodKementerian,
-                         Nama = pdouo.Nama,
+                         UnitOrganisasi = pdouo.Nama,
                          SejarahPenubuhan = pdouo.SejarahPenubuhan,
                          Singkatan = pdouo.Singkatan,
-                         StatusAktif = pdouo.StatusAktif,
+                         StatusAktif = pdouo.StatusAktif ?? false,
                          Tahap = pdouo.Tahap,
                          TarikhAkhirPengukuhan = pdouo.TarikhAkhirPengukuhan,
                          TarikhAkhirPenyusunan = pdouo.TarikhAkhirPenyusunan,
@@ -342,17 +398,16 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task KemaskiniUnitOrganisasi(Guid UserId, int Id, UnitOrganisasiDaftarDto request)
+        public async Task KemaskiniUnitOrganisasi(UnitOrganisasiDaftarDto request)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var data = await (from pdouo in _context.PDOUnitOrganisasi
-                             where pdouo.Id == Id
-                             select pdouo).FirstOrDefaultAsync();
+                             where pdouo.Id == request.Id
+                                  select pdouo).FirstOrDefaultAsync();
                   data.Id = request.Id;
                   data.KodRujKategoriUnitOrganisasi = request.KodRujKategoriUnitOrganisasi;
                   data.KodRujJenisAgensi = request.KodRujJenisAgensi;
@@ -401,18 +456,42 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task PenjenamaanSemulaUnitOrganisasi(Guid UserId, int Id, string? Nama)
+        public async Task PenjenamaanSemulaUnitOrganisasi(PenjenamaanUnitOrganisasiDto request)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var data = await (from pdouo in _context.PDOUnitOrganisasi
-                             where pdouo.Id == Id
+                             where pdouo.Id == request.Id
                              select pdouo).FirstOrDefaultAsync();
-     data.Nama = Nama;
+                var newPDOUnitOrganisasi = new PDOUnitOrganisasi
+                {
+                    // ⚠️ Do not copy Id — let EF generate it if identity
+                    KodRujKategoriUnitOrganisasi = data.KodRujKategoriUnitOrganisasi,
+                    IdIndukUnitOrganisasi = data.IdIndukUnitOrganisasi, // <-- override parent
+                    Kod = data.Kod,
+                    Nama = data.Nama,
+                    Keterangan = data.Keterangan,
+                    Tahap = data.Tahap,
+                    KodCartaOrganisasi = data.KodCartaOrganisasi,
+                    StatusAktif = data.StatusAktif ?? false,
+
+                    // metadata
+                    IdCipta = Guid.NewGuid(),          // new creator? (depends on your logic)
+                    TarikhCipta = DateTime.UtcNow,
+                    IdPinda = request.UserId,
+                    TarikhPinda = DateTime.Now,
+                    IdHapus = null,
+                    TarikhHapus = null,
+                };
+
+                string json = JsonSerializer.Serialize(newPDOUnitOrganisasi);
+
+                data.ButiranKemaskini = json;
+                data.IdPinda = request.UserId;
+                data.TarikhPinda = DateTime.Now;
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
@@ -429,18 +508,73 @@ namespace HR.Application.Services.PDO
 
         }
 
-
-
-        public async Task HapusTerusUnitOrganisasi(Guid UserId, int Id)
+        public async Task MansuhUnitOrganisasi(Guid UserId, int Id)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
 
             {
-
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = await (from pdouo in _context.PDOUnitOrganisasi
-                             where pdouo.Id == Id select pdouo
+                                    where pdouo.Id == Id
+                                    select pdouo
+                              ).FirstOrDefaultAsync();
+                if (entity == null)
+                {
+                    throw new Exception("PDOAktivitiOrganisasi not found.");
+                }
+                else
+                {
+                    var newPDOUnitOrganisasi = new PDOUnitOrganisasi
+                    {
+                        // ⚠️ Do not copy Id — let EF generate it if identity
+                        KodRujKategoriUnitOrganisasi = entity.KodRujKategoriUnitOrganisasi,
+                        IdIndukUnitOrganisasi = entity.IdIndukUnitOrganisasi, // <-- override parent
+                        Kod = entity.Kod,
+                        Nama = entity.Nama,
+                        Keterangan = entity.Keterangan,
+                        Tahap = entity.Tahap,
+                        KodCartaOrganisasi = entity.KodCartaOrganisasi,
+                        ButiranKemaskini = entity.ButiranKemaskini,
+                        StatusAktif = entity.StatusAktif ?? false,
+
+                        // metadata
+                        IdHapus = UserId,
+                        TarikhHapus = DateTime.Now,
+                    };
+                    string json = JsonSerializer.Serialize(newPDOUnitOrganisasi);
+
+                    entity.ButiranKemaskini = json;
+                    entity.IdPinda = UserId;
+                    entity.TarikhPinda = DateTime.Now;
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in MansuhAktivitiOrganisasi");
+
+                throw;
+            }
+
+        }
+
+
+        public async Task HapusTerusUnitOrganisasi(HapusTerusUnitOrganisasiRequestDto request)
+        {
+
+            try
+
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                var entity = await (from pdouo in _context.PDOUnitOrganisasi
+                             where pdouo.Id == request.Id
+                                    select pdouo
                               ).FirstOrDefaultAsync();
                 if (entity == null)
                 {
@@ -464,6 +598,41 @@ namespace HR.Application.Services.PDO
         }
 
 
+
+    public async Task WujudUnitOrganisasiBaru(Guid UserId, UnitOrganisasiWujudDto request)
+        {
+
+            try
+
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                var entity = new PDOUnitOrganisasi();
+                entity.IdCipta = UserId;
+                entity.KodRujJenisAgensi = request.KodRujJenisAgensi;
+                entity.KodRujKategoriUnitOrganisasi = request.KodRujKategoriUnitOrganisasi;
+                entity.Kod = request.Kod;
+                entity.Nama = request.Nama;
+                entity.Tahap = request.Tahap;
+                entity.Keterangan = request.Keterangan;
+                entity.StatusAktif = false;
+                entity.IdCipta = UserId;
+                entity.TarikhCipta = DateTime.Now;
+                await _context.PDOUnitOrganisasi.AddAsync(entity);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in WujudUnitOrganisasiBaru");
+
+                throw;
+            }
+
+        }
 
     }
 

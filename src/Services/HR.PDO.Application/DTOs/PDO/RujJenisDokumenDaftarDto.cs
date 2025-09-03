@@ -3,6 +3,7 @@ namespace HR.PDO.Application.DTOs
 {
     public class RujJenisDokumenDaftarDto
     {
+        public int Id { get; set; }
         public bool StatusAktif { get; set; }
         public DateTime? TarikhHapus { get; set; }
         public DateTime? TarikhPinda { get; set; }

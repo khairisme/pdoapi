@@ -1,8 +1,11 @@
 using System;
+using System.ComponentModel;
 namespace HR.PDO.Application.DTOs
 {
     public class UnitOrganisasiDaftarDto
     {
+        public Guid UserId { get; set; }
+        public int Id { get; set; }
         public bool? IndikatorAgensi { get; set; }
         public bool? IndikatorAgensiRasmi { get; set; }
         public bool? IndikatorJabatanDiKerajaanNegeri { get; set; }
@@ -17,7 +20,6 @@ namespace HR.PDO.Application.DTOs
         public Guid? IdCipta { get; set; }
         public Guid? IdHapus { get; set; }
         public Guid? IdPinda { get; set; }
-        public int Id { get; set; }
         public int IdAsal { get; set; }
         public int IdIndukUnitOrganisasi { get; set; }
         public int Tahap { get; set; }
@@ -34,4 +36,24 @@ namespace HR.PDO.Application.DTOs
         public string? SejarahPenubuhan { get; set; }
         public string? Singkatan { get; set; }
     }
+    public class StrukturUnitOrganisasiRequestDto
+    {
+        public string? KodCartaOrganisasi { get; set; }
+        public int ParentId { get; set; } = 0;
+        [DefaultValue(1)]
+        public int Page { get; set; } = 1;
+        [DefaultValue(50)]
+        public int PageSize { get; set; } = 50;
+        public string? Keyword { get; set; }
+        [DefaultValue("UnitOrganisasi")]
+        public string? SortBy { get; set; } = "UnitOrganisasi";
+        [DefaultValue(false)]
+        public bool Desc { get; set; } = false;
+    }
+    public class HapusTerusUnitOrganisasiRequestDto
+    {
+        public Guid UserId { get; set; }
+        public int Id { get; set; }
+    }
+
 }

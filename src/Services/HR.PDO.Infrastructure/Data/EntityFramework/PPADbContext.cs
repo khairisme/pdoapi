@@ -9,8 +9,8 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
         public PPADbContext(DbContextOptions<PDODbContext> options) : base(options)
         {
         }
-        //public DbSet<PDOKumpulanPerkhidmatan> PDOKumpulanPerkhidmatan { get; set; }
-        
+        public DbSet<PPARujPangkatBadanBeruniform> PPARujPangkatBadanBeruniform { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

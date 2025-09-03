@@ -2,6 +2,15 @@
 using HR.PDO.Core.Entities.PDP;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Options;
+using System.Data.SqlTypes;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data.SqlTypes;
+
 
 namespace HR.PDO.Infrastructure.Data.EntityFramework
 {
@@ -59,6 +68,10 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
         public DbSet<PDORujUrusanPerkhidmatan> PDORujUrusanPerkhidmatan { get; set; }
         public DbSet<PDORujJenisMesyuarat> PDORujJenisMesyuarat { get; set; }
         public DbSet<PDORujJenisJawatan> PDORujJenisJawatan { get; set; }
+        public DbSet<PDORujStatusJawatan> PDORujStatusJawatan { get; set; }
+        public DbSet<PDOCadanganJawatan> PDOCadanganJawatan { get; set; }
+        public DbSet<PDORujKategoriJawatan> PDORujKategoriJawatan { get; set; }
+        public DbSet<PPAProfilPemilikKompetensi> PPAProfilPemilikKompetensi { get; set; }
         
 
 
@@ -69,14 +82,20 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<PDOKumpulanPerkhidmatan>().ToTable("PDO_KumpulanPerkhidmatan");
 
-            modelBuilder.Entity<PDORujStatusPermohonan>(entity =>
+            modelBuilder.Entity<PDORujJenisDokumen>(entity =>
             {
-                entity.ToTable("PDO_RujStatusPermohonan"); 
+                entity.ToTable("PDO_RujJenisDokumen"); 
                 entity.HasKey(e => e.Kod); // Set Kod as the PK
                 entity.Ignore(e => e.Id); // Don't map base Id
             });
+            modelBuilder.Entity<PDORujStatusPermohonan>(entity =>
+            {
+                entity.ToTable("PDO_RujStatusPermohonan");
+                entity.HasKey(e => e.Kod); // Set Kod as the PK
+                entity.Ignore(e => e.Id); // Don't map base Id
+            });
+
             modelBuilder.Entity<PDOStatusPermohonanKumpulanPerkhidmatan>().ToTable("PDO_StatusPermohonanKumpulanPerkhidmatan");
             modelBuilder.Entity<PDOStatusPermohonanKlasifikasiPerkhidmatan>().ToTable("PDO_StatusPermohonanKlasifikasiPerkhidmatan");
             modelBuilder.Entity<PDOKlasifikasiPerkhidmatan>().ToTable("PDO_KlasifikasiPerkhidmatan");
@@ -95,6 +114,52 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
                 entity.HasKey(e => e.Kod); // Set Kod as the PK
                 entity.Ignore(e => e.Id); // Don't map base Id
             });
+            modelBuilder.Entity<PDODokumenPermohonan>(entity =>
+            {
+                entity.ToTable("PDO_DokumenPermohonan");
+                entity.Ignore(e => e.StatusAktif); // Don't map base Id
+            });
+            modelBuilder.Entity<PDOButiranPermohonanSkimGred>(entity =>
+            {
+                entity.ToTable("PDO_ButiranPermohonanSkimGred");
+                entity.Ignore(e => e.Id); // Don't map base Id
+                entity.Ignore(e => e.StatusAktif); // Don't map base Id
+                entity.HasNoKey();
+
+                entity.HasKey(x => new { x.IdButiranPermohonan, x.IdSkimPerkhidmatan, x.IdGred });
+
+            });
+            modelBuilder.Entity<PDOButiranPermohonanSkimGredKUJ>(entity =>
+            {
+                entity.ToTable("PDO_ButiranPermohonanSkimGredKUJ");
+                entity.Ignore(e => e.Id); // Don't map base Id
+                entity.Ignore(e => e.StatusAktif); // Don't map base Id
+                entity.HasNoKey();
+
+                entity.HasKey(x => new { x.IdButiranPermohonan, x.IdSkim, x.IdGred });
+
+            });
+            modelBuilder.Entity<PDOPenetapanImplikasiKewangan>(e =>
+            {
+                e.ToTable("PDO_PenetapanImplikasiKewangan");
+                e.HasKey(x => new { x.IdGred, x.IdSkimPerkhidmatan });
+                e.Ignore(x => x.Id); // if inherited from BaseEntity
+            });
+
+            modelBuilder.Entity<PDOButiranPermohonanSkimGredTBK>(entity =>
+            {
+                entity.ToTable("PDO_ButiranPermohonanSkimGredTBK");
+                entity.Ignore(e => e.Id); // Don't map base Id
+                entity.Ignore(e => e.StatusAktif); // Don't map base Id
+                entity.HasNoKey();
+
+                entity.HasKey(x => new { x.IdButiranPermohonan, x.IdSkimPerkhidmatan, x.IdGred });
+
+            });
+
+
+
+
             modelBuilder.Entity<PDORujStatusSkim>(entity =>
             {
                 entity.ToTable("PDO_RujStatusSkim");
@@ -126,7 +191,8 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
             modelBuilder.Entity<PDOPermohonanJawatan>(entity =>
             {
                 entity.ToTable("PDO_PermohonanJawatan");
-                entity.HasKey(e => e.Id); 
+                entity.HasKey(e => e.Id);
+                entity.Ignore(e => e.StatusAktif);
             });
 
             modelBuilder.Entity<PDOStatusPermohonanJawatan>().ToTable("PDO_StatusPermohonanJawatan");
@@ -207,6 +273,9 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
             {
                 entity.ToTable("PDO_ButiranPermohonan");
                 entity.HasKey(e => e.Id);
+                entity.Property(x => x.IdButiranPermohonanLama).IsRequired(false);
+                entity.Property(x => x.IdSkimPerkhidmatanPemilikKompetensi).IsRequired(false);
+                entity.Property(x => x.IdGredPemilikKompetensi).IsRequired(false);
             });
             modelBuilder.Entity<PDORujPasukanPerunding>(entity =>
             {
@@ -224,5 +293,71 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
 
             base.OnModelCreating(modelBuilder);
         }
-    }
+    
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+            {
+                return SaveChangesInternal(() => base.SaveChanges(acceptAllChangesOnSuccess));
+            }
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken ct = default)
+        {
+            return SaveChangesInternal(() => base.SaveChangesAsync(acceptAllChangesOnSuccess, ct));
+        }
+
+        private async Task<int> SaveChangesInternal(Func<Task<int>> save)
+        {
+            try
+            {
+                return await save();
+            }
+            catch (DbUpdateException ex)
+            {
+                DumpBadDateTimes(); // tell us which fields are invalid
+                throw;              // keep original stack/error
+            }
+        }
+
+        private int SaveChangesInternal(Func<int> save)
+        {
+            try
+            {
+                return save();
+            }
+            catch (DbUpdateException)
+            {
+                DumpBadDateTimes();
+                throw;
+            }
+        }
+
+        private void DumpBadDateTimes()
+        {
+            var minSql = (DateTime)SqlDateTime.MinValue; // 1753-01-01
+            foreach (var e in ChangeTracker.Entries()
+                         .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
+            {
+                // Resolve table metadata to get actual column names
+                var storeObj = StoreObjectIdentifier.Create(e.Metadata, StoreObjectType.Table);
+
+                foreach (var p in e.Properties)
+                {
+                    var clr = p.Metadata.ClrType;
+                    if (clr != typeof(DateTime) && clr != typeof(DateTime?)) continue;
+
+                    DateTime? val = p.CurrentValue as DateTime?;
+                    if (val.HasValue && val.Value < minSql)
+                    {
+                        var columnName = storeObj.HasValue
+                            ? p.Metadata.GetColumnName(storeObj.Value)
+                            : p.Metadata.GetColumnName(); // fallback
+
+                        var colType = p.Metadata.GetColumnType() ?? "(unmapped)";
+                        Console.WriteLine($"[BAD DATE] {e.Entity.GetType().Name}.{p.Metadata.Name} " +
+                                          $"Column='{columnName}', SqlType='{colType}', Value='{val:O}'");
+                    }
+                }
+            }
+        }
+
+}
 }

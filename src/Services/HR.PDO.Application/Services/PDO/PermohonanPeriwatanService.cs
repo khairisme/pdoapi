@@ -27,10 +27,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> CreateAsync(PermohonanPeriwatanCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Creating new PermohonanPeriwatan");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var userId = Guid.Empty;
                 var Periwatan = new PDOPermohonanJawatan
                 {
@@ -73,10 +73,10 @@ namespace HR.PDO.Application.Services.PDO
         public async Task<bool> CreateAktivitiOrganisasiAsync(AktivitiOrganisasiCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Creating new AktivitiOrganisasi");
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 var userId = Guid.Empty;
                 var aktiviti = new PDOAktivitiOrganisasi
                 {
@@ -117,10 +117,10 @@ namespace HR.PDO.Application.Services.PDO
 
         public async Task<bool> SimpanStatusPermohonanAsync(SimpanStatusPermohonanDto dto)
         {
-            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                await _unitOfWork.BeginTransactionAsync();
                 // 1. Set existing statuses to inactive
                 var existingStatuses = await _dbContext.PDOStatusPermohonanJawatan
                     .Where(x => x.IdPermohonanJawatan == dto.IdPermohonanJawatan && x.StatusAktif == true)

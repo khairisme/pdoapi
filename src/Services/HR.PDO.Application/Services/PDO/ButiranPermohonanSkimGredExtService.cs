@@ -27,24 +27,164 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task TambahButiranPermohonanSkimGred(Guid UserId, TambahButiranPermohonanSkimGredDto request)
+        public async Task<List<ButiranPermohonanSkimGredDto>> SenaraiButiranPermohonanSkimGred()
         {
-            await _unitOfWork.BeginTransactionAsync();
-
             try
 
             {
 
+                var result = await (from pdobpsg in _context.PDOButiranPermohonanSkimGred
+                    select new ButiranPermohonanSkimGredDto{
+                         IdButiranPermohonan = pdobpsg.IdButiranPermohonan,
+                         IdCipta = pdobpsg.IdCipta,
+                         IdGred = pdobpsg.IdGred,
+                         IdHapus = pdobpsg.IdHapus,
+                         IdKetuaPerkhidmatan = pdobpsg.IdKetuaPerkhidmatan,
+                         IdPinda = pdobpsg.IdPinda,
+                         IdSkimPerkhidmatan = pdobpsg.IdSkimPerkhidmatan,
+                         KodBidangPengkhususan = pdobpsg.KodBidangPengkhususan,
+                         KodRujLaluanKemajuanKerjaya = pdobpsg.KodRujLaluanKemajuanKerjaya,
+                         TarikhCipta = pdobpsg.TarikhCipta,
+                         TarikhHapus = pdobpsg.TarikhHapus,
+                         TarikhPinda = pdobpsg.TarikhPinda
+
+                    }
+                ).ToListAsync();
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in SenaraiButiranPermohonanSkimGred");
+
+                throw;
+            }
+
+        }
+
+
+
+        public async Task<ButiranPermohonanSkimGredDto> BacaButiranPermohonanSkimGred(int Id)
+        {
+            try
+
+            {
+
+                var result = await (from pdobpsg in _context.PDOButiranPermohonanSkimGred
+                    where pdobpsg.Id == Id
+                    select new ButiranPermohonanSkimGredDto{
+                         IdButiranPermohonan = pdobpsg.IdButiranPermohonan,
+                         IdCipta = pdobpsg.IdCipta,
+                         IdGred = pdobpsg.IdGred,
+                         IdHapus = pdobpsg.IdHapus,
+                         IdKetuaPerkhidmatan = pdobpsg.IdKetuaPerkhidmatan,
+                         IdPinda = pdobpsg.IdPinda,
+                         IdSkimPerkhidmatan = pdobpsg.IdSkimPerkhidmatan,
+                         KodBidangPengkhususan = pdobpsg.KodBidangPengkhususan,
+                         KodRujLaluanKemajuanKerjaya = pdobpsg.KodRujLaluanKemajuanKerjaya,
+                         TarikhCipta = pdobpsg.TarikhCipta,
+                         TarikhHapus = pdobpsg.TarikhHapus,
+                         TarikhPinda = pdobpsg.TarikhPinda
+                    }
+                ).FirstOrDefaultAsync();
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in BacaButiranPermohonanSkimGred");
+
+                throw;
+            }
+
+        }
+
+
+
+        public async Task HapusTerusButiranPermohonanSkimGred(Guid UserId, int Id)
+        {
+
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                var entity = await (from pdobpsg in _context.PDOButiranPermohonanSkimGred
+                             where pdobpsg.Id == Id select pdobpsg
+                              ).FirstOrDefaultAsync();
+                if (entity == null)
+                {
+                    throw new Exception("PDOButiranPermohonanSkimGred not found.");
+                }
+                _context.PDOButiranPermohonanSkimGred.Remove(entity);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in HapusTerusButiranPermohonanSkimGred");
+
+                throw;
+            }
+
+        }
+
+
+
+        public async Task KemaskiniButiranPermohonanSkimGred(Guid UserId, int Id, ButiranPermohonanSkimGredDto request)
+        {
+
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                var data = await (from pdobpsg in _context.PDOButiranPermohonanSkimGred
+                             where pdobpsg.Id == Id
+                             select pdobpsg).FirstOrDefaultAsync();
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in KemaskiniButiranPermohonanSkimGred");
+
+                throw;
+            }
+
+        }
+
+
+
+        public async Task TambahButiranPermohonanSkimGred(Guid UserId, TambahButiranPermohonanSkimGredDto request)
+        {
+
+            try
+
+            {
+                await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOButiranPermohonanSkimGred();
                 entity.IdCipta = UserId;
                 entity.IdButiranPermohonan = request.IdButiranPermohonan;
                 entity.IdSkimPerkhidmatan = request.IdSkimPerkhidmatan;
+                entity.KodBidangPengkhususan = request.KodBidangPengkhususan;
+                entity.KodRujLaluanKemajuanKerjaya = request.KodRujLaluanKemajuanKerjaya;
                 entity.IdGred = request.IdGred;
                 entity.IdKetuaPerkhidmatan = request.IdKetuaPerkhidmatan;
-                entity.IdCipta = request.IdCipta;
+                entity.IdCipta = UserId;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDOButiranPermohonanSkimGred.AddAsync(entity); 
-                await _context.SaveChangesAsync(); 
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();

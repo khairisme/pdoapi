@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDP {
     [ApiController]
-    [Route("api/pdo/jadual-gaji")]
+    [Route("api/pdo/v1/jadual-gaji")]
     public class JadualGajiExtController : ControllerBase
     {
         private readonly ILogger<JadualGajiExtController> _logger;
