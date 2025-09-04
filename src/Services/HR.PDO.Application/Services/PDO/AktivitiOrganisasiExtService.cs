@@ -647,8 +647,10 @@ namespace HR.Application.Services.PDO
             try
             {
                 await _unitOfWork.BeginTransactionAsync();
-                var entity = await _context.PDOAktivitiOrganisasi
-                    .FirstOrDefaultAsync(pdoao => pdoao.Id == request.IdAktivitiOrganisasi);
+                var entity = await (from pdoao in _context.PDOAktivitiOrganisasi
+                                    where pdoao.Id == request.IdAktivitiOrganisasi
+                                    select pdoao
+                                    ).FirstOrDefaultAsync();
 
                 if (entity == null)
                 {
@@ -656,25 +658,15 @@ namespace HR.Application.Services.PDO
                 }
 
                 // Archive current state into JSON and set deletion metadata
-                var newPDOAktivitiOrganisasi = new PDOAktivitiOrganisasi
+                var newButiranKemaskini = new MansuhAktivitiOrganisasiButiranKemaskiniDto
                 {
-                    KodRujKategoriAktivitiOrganisasi = entity.KodRujKategoriAktivitiOrganisasi,
-                    IdIndukAktivitiOrganisasi = entity.IdIndukAktivitiOrganisasi,
-                    Kod = entity.Kod,
-                    Nama = entity.Nama,
-                    Keterangan = entity.Keterangan,
-                    KodProgram = entity.KodProgram,
-                    Tahap = entity.Tahap,
-                    KodCartaAktiviti = entity.KodCartaAktiviti,
-                    ButiranKemaskini = entity.ButiranKemaskini,
+                    Id = entity.Id,
                     StatusAktif = entity.StatusAktif ?? false,
-
-                    // metadata
-                    IdHapus = request.UserId,
-                    TarikhHapus = DateTime.Now,
                 };
 
-                string json = JsonSerializer.Serialize(newPDOAktivitiOrganisasi);
+                string json = JsonSerializer.Serialize(newButiranKemaskini);
+
+                int count = json.Length;
 
                 // Apply update on the original entity
                 entity.ButiranKemaskini = json;
