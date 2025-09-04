@@ -9,6 +9,6 @@ namespace HR.PDO.Application.Interfaces.PDO
         public Task<List<DropDownDto>> RujukanSkimPerkhidmatan();
         public Task<List<DropDownDto>> RujukanSkimPerkhidmatanIkutKumpulan(int IdKumpulanPerkhidmatan);
         public Task<List<DropDownDto>> RujukanSkimPerkhidmatanIkutKlasifikasi(int IdKlasifikasiPerkhidmatan);
-        public Task<List<DropDownDto>> RujukanSkimPerkhidmatanIkutKlasifikasiDanKumpulan(int? IdKlasifikasiPerkhidmatan, int? IdKumpulanPerkhidmatan);
+        public Task<List<DropDownDto>> RujukanSkimPerkhidmatanIkutKlasifikasiDanKumpulan(RujukanSkimPerkhidmatanRequestDto request);
     }
 }
