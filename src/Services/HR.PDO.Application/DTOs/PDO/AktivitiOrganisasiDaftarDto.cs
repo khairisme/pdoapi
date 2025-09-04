@@ -80,5 +80,9 @@ namespace HR.PDO.Application.DTOs
         /// </summary>
         public int IdAktivitiOrganisasi { get; set; }
     }
-
+    public class MansuhAktivitiOrganisasiButiranKemaskiniDto
+    {
+        public int Id { get; set; }
+        public bool? StatusAktif { get; set;  }
+    }
 }

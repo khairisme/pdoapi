@@ -230,7 +230,7 @@ namespace HR.PDO.API.Controllers.PDO {
         /// Purpose     : Marks an AktivitiOrganisasi entity as inactive (soft delete) instead of 
         ///               permanently removing it. Provides safer handling for audit trail.  
         /// </remarks>
-        [HttpDelete("mansuh/{Id}")]
+        [HttpDelete("mansuh")]
         public async Task<ActionResult> MansuhAktivitiOrganisasi([FromBody] MansuhAktivitiOrganisasiRequestDto request)
         {
             _logger.LogInformation("Calling MansuhAktivitiOrganisasi");
