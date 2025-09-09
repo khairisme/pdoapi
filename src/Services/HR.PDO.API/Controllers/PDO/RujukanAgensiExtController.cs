@@ -18,12 +18,12 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DropDownDto>>>RujukanAgensi()
+        public async Task<ActionResult<IEnumerable<DropDownDto>>>RujukanAgensi(string? NamaAgensi)
         {
             _logger.LogInformation("Calling RujukanAgensi");
             try
             {
-                var data = await _rujukanagensiext.RujukanAgensi();
+                var data = await _rujukanagensiext.RujukanAgensi(NamaAgensi);
                 return Ok(data);
             }
             catch (Exception ex)

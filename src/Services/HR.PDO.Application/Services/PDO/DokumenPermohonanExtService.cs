@@ -50,7 +50,7 @@ namespace HR.Application.Services.PDO
                         JenisDokumen = pdodp.KodRujJenisDokumen,
                         PautanDokumen = pdodp.PautanDokumen,
                         IdPermohonanJawatan = pdodp.IdPermohonanJawatan,
-                        NamaDokumen = pdodp.NamaDokumen
+                        NamaDokumen = pdodp.NamaDokumen.Trim()
 
                     }
                 ).ToListAsync();
@@ -82,7 +82,7 @@ namespace HR.Application.Services.PDO
                 var entity = new PDODokumenPermohonan();
                 entity.IdPermohonanJawatan = IdPermohonanJawatan;
                 entity.KodRujJenisDokumen = KodRujJenisDokumen;
-                entity.NamaDokumen = NamaDokumen;
+                entity.NamaDokumen = NamaDokumen.Trim();
                 entity.PautanDokumen = PautanDokumen;
                 entity.FormatDokumen = FormatDokumen;
                 entity.Saiz = Saiz;

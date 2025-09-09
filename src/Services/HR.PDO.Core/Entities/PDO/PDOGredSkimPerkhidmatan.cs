@@ -11,7 +11,7 @@ namespace HR.PDO.Core.Entities.PDO
     public class PDOGredSkimPerkhidmatan : PDOBaseEntity
     {
         public int IdGred { get; set; }
-        public int IdSkimPerkhidmatan { get; set; }
+        public int? IdSkimPerkhidmatan { get; set; }
         [NotMapped]
         public int Id { get; set; }
         [NotMapped]

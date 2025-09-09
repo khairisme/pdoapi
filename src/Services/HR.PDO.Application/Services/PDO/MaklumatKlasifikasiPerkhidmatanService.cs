@@ -121,7 +121,7 @@ namespace HR.PDO.Application.Services.PDO
            .Select(c => c.Id)  // Or use your primary key name
             .AsEnumerable()    // <-- Force client-side evaluation
             .DefaultIfEmpty(0)
-           .Max();
+           .Max() ?? 0;
 
             return (maxId + 1).ToString("D3"); // Formats to 3-digit KOD like "001"
 

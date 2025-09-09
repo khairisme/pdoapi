@@ -38,8 +38,8 @@ namespace HR.PDO.Application.Services.PDO
                                 {
                                     Id = a.Id,
                                     IdIndukAktivitiOrganisasi = a.IdIndukAktivitiOrganisasi,
-                                    KodProgram = b.Nama.ToUpper() + " " + a.KodProgram,
-                                    AktiviOrganisasi = a.Nama,
+                                    KodProgram = b.Nama.Trim().ToUpper() + " " + a.KodProgram.Trim(),
+                                    AktiviOrganisasi = a.Nama.Trim(),
                                     Tahap = a.Tahap
                                 }).ToListAsync();
 
@@ -56,9 +56,9 @@ namespace HR.PDO.Application.Services.PDO
                                 where a.Id==Id
                                 select new AktivitiOrganisasiResponseDto
                                 {
-                                   AktivitOrganisasiInduk=a.Nama,
+                                   AktivitOrganisasiInduk=a.Nama.Trim(),
                                     KodAktivitiOrganisasi=a.Kod,
-                                    KategoriProgramAktiviti = b.Nama
+                                    KategoriProgramAktiviti = b.Nama.Trim()
                                 }).ToListAsync();
 
             return result;
@@ -119,7 +119,7 @@ namespace HR.PDO.Application.Services.PDO
                     KodRujKategoriAktivitiOrganisasi = request.KodRujKategoriAktivitiOrganisasi,
                     IdIndukAktivitiOrganisasi = request.IdAktivitiOrganisasi,
                     Kod = request.Kod,
-                    Nama = request.Nama,
+                    Nama = request.Nama.Trim(),
                     Keterangan = request.Keterangan,
                     KodProgram = newKodProgram,
                     Tahap = newTahap,
@@ -189,7 +189,7 @@ namespace HR.PDO.Application.Services.PDO
 
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
-                    Nama = x.Nama ?? String.Empty,
+                    Nama = (x.Nama ?? String.Empty).Trim(),
                     Tahap = x.Tahap,
                     FullPath = x.FullPath ?? String.Empty
                 }).ToList();
@@ -211,7 +211,7 @@ namespace HR.PDO.Application.Services.PDO
             {
                 var result = await _context.PDOAktivitiOrganisasi
                     .Where(pao => pao.Id == IdIndukAktivitiOrganisasi)
-                    .Select(pao => pao.Nama)
+                    .Select(pao => pao.Nama.Trim())
                     .FirstOrDefaultAsync();
 
                 _logger.LogInformation("GetNamaAktivitiOrganisasi: Successfully retrieved NamaAktivitiOrganisasi");
@@ -238,7 +238,7 @@ namespace HR.PDO.Application.Services.PDO
 
                 if (aktivitiOrganisasi != null)
                 {
-                    aktivitiOrganisasi.Nama = penjenamaanSemulaRequestDto.NamaAktivitiOrganisasiBaharu;
+                    aktivitiOrganisasi.Nama = penjenamaanSemulaRequestDto.NamaAktivitiOrganisasiBaharu.Trim();
 
                     await _unitOfWork.Repository<PDOAktivitiOrganisasi>().UpdateAsync(aktivitiOrganisasi);
                     await _unitOfWork.SaveChangesAsync();
@@ -299,7 +299,7 @@ namespace HR.PDO.Application.Services.PDO
                 {
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
-                    Nama = x.Nama ?? String.Empty,
+                    Nama = (x.Nama ?? String.Empty),
                     Tahap = x.Tahap,
                     FullPath = x.FullPath ?? String.Empty
                 }).ToList();
@@ -324,7 +324,7 @@ namespace HR.PDO.Application.Services.PDO
                     .Select(pao => new
                     {
                         KodAktivitiOrganisasi = pao.Kod,
-                        NamaAktivitiOrganisasi = pao.Nama
+                        NamaAktivitiOrganisasi = pao.Nama.Trim()
                     })
                     .FirstOrDefaultAsync();
 
@@ -429,7 +429,7 @@ namespace HR.PDO.Application.Services.PDO
                 {
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
-                    Nama = x.Nama ?? String.Empty,
+                    Nama = (x.Nama ?? String.Empty).Trim(),
                     Tahap = x.Tahap,
                     FullPath = x.FullPath ?? String.Empty
                 }).ToList();
@@ -494,7 +494,7 @@ namespace HR.PDO.Application.Services.PDO
                             {
                                 a.Id,
                                 a.IdIndukAktivitiOrganisasi,
-                                KodProgram = b.Nama.ToUpper() + " " + a.KodProgram,
+                                KodProgram = b.Nama.Trim().ToUpper() + " " + a.KodProgram.Trim(),
                                 a.Nama,
                                 a.Tahap
                             };
@@ -508,7 +508,7 @@ namespace HR.PDO.Application.Services.PDO
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
                     KodProgram = x.KodProgram ?? String.Empty,
-                    Nama = x.Nama ?? String.Empty,
+                    Nama = (x.Nama ?? String.Empty).Trim(),
                     Tahap = x.Tahap
                 }).ToList();
 

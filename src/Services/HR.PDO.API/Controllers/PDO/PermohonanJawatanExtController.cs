@@ -133,14 +133,14 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpGet("carian")]
+        [HttpPost("carian")]
         [SwaggerOperation(
             Summary = "Carian Permohonan Jawatan by IdUnitOrganisasi/AgensiId/KodRujJenisPermohonan/KodRujStatusPermohonanJawatan/NomborRujukan/TajukPermohonan",
             Description = "Search permohonan jawatan using query filters (keyword, page, pageSize, sortBy, desc).",
             OperationId = "CarianPermohonanJawatan",
             Tags = new[] { "PermohonanJawatanExt" }
         )]
-        public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>> CarianPermohonanJawatan([FromQuery] PermohonanJawatanCarianDto request)
+        public async Task<ActionResult<IEnumerable<SenaraiPermohonanJawatanDto>>> CarianPermohonanJawatan([FromBody] PermohonanJawatanCarianDto request)
         {
             _logger.LogInformation("Calling CarianPermohonanJawatan");
             try
@@ -229,5 +229,29 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
+        [HttpPatch("Ulasan")]
+        public async Task<ActionResult> KemaskiniUlasanPermohonanJawatan([FromBody] UlasanRequestDto request)
+        {
+            _logger.LogInformation("Calling DaftarPermohonanJawatan");
+            try
+            {
+                await _permohonanjawatanext.KemaskiniUlasanPermohonanJawatan(request);
+                return CreatedAtAction(nameof(KemaskiniUlasanPermohonanJawatan), new { request }, null);
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in KemaskiniUlasanPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, ex.Message + "-" + err);
+            }
+        }
     }
 }

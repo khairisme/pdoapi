@@ -14,7 +14,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Required. Unique identifier for the dropdown item.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Required. Code or shorthand for the item.

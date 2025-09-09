@@ -26,7 +26,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Required. Unique identifier of the service scheme.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Required. Code of the service scheme.
@@ -241,7 +241,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Identifier of this record (default is 0 for new entries).
         /// </summary>
-        public int Id { get; set; } = 0;
+        public int? Id { get; set; } = 0;
 
         /// <summary>
         /// Required. Code of the related classification.
@@ -421,7 +421,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier for the service scheme.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the service scheme.
@@ -481,7 +481,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier for the service scheme.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the service scheme.
@@ -551,7 +551,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the service scheme.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the service scheme.
@@ -576,7 +576,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the service scheme.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the service scheme.
@@ -677,7 +677,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Required. Unique identifier for the service scheme record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Required. Identifier for the classification of the service.
@@ -782,7 +782,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier for the Gred.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Optional code representing the Gred.
@@ -812,12 +812,12 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier for the Skim Perkhidmatan record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Unique identifier for the associated Jawatan.
         /// </summary>
-        public int IdJawatan { get; set; }
+        public int? IdJawatan { get; set; }
 
         /// <summary>
         /// Optional code for the Skim Perkhidmatan.
@@ -862,7 +862,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier for the Skim Ketua Perkhidmatan record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Unique identifier for the associated Jawatan.

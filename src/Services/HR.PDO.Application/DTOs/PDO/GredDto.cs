@@ -61,7 +61,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the Gred.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the Gred.
@@ -221,7 +221,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the Gred record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Reference code for the type of remuneration.
@@ -236,12 +236,12 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Identifier for the service classification.
         /// </summary>
-        public int IdKlasifikasiPerkhidmatan { get; set; }
+        public int? IdKlasifikasiPerkhidmatan { get; set; }
 
         /// <summary>
         /// Identifier for the service group.
         /// </summary>
-        public int IdKumpulanPerkhidmatan { get; set; }
+        public int? IdKumpulanPerkhidmatan { get; set; }
 
         /// <summary>
         /// Name of the service group.
@@ -272,7 +272,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// Gred number, serialized as a padded string (e.g., 08).
         /// </summary>
         [JsonConverter(typeof(IntToPaddedStringConverter))]
-        public int NomborGred { get; set; }
+        public int? NomborGred { get; set; }
 
         /// <summary>
         /// Optional. Description or notes about the Gred.

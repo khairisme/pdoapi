@@ -15,6 +15,6 @@ namespace HR.PDO.Application.Interfaces.PDO
         public Task HapusTerusUnitOrganisasi(HapusTerusUnitOrganisasiRequestDto request);
         public Task<UnitOrganisasiFormDisplayDto> BacaUnitOrganisasi(int Id);
         public Task WujudUnitOrganisasiBaru(Guid UserId, UnitOrganisasiWujudDto request);
-        public Task MansuhUnitOrganisasi(Guid UserId, int Id);
+        public Task MansuhUnitOrganisasi(MansuhUnitOrganisasiRequestDto request);
     }
 }

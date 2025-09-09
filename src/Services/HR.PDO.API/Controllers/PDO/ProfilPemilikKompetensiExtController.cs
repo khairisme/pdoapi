@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using  Shared.Contracts.DTOs;
 using Microsoft.Extensions.Logging;
-using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
+using HR.PDO.Application.Interfaces.PDO;
+using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO
 {
     [ApiController]
@@ -39,6 +40,29 @@ namespace HR.PDO.API.Controllers.PDO
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in CarianProfilPemilikKompetensi");
+                var inner = ex.InnerException?.Message;
+                return StatusCode(500, string.IsNullOrEmpty(inner) ? ex.Message : $"{ex.Message} - {inner}");
+            }
+        }
+
+        [HttpPost("External")]
+        [SwaggerOperation(
+            Summary = "Senarai Profil Pemilik Kompetensi",
+            Description = "List of  Profil Pemilik Kompetensi.",
+            OperationId = "SenaraiProfilPemilikKompetensi",
+            Tags = new[] { "ProfilPemilikKompetensiExt" }
+        )]
+        public async Task<ActionResult<IEnumerable<SenaraiPemilikKompetensiOutputDto>>> SenaraiProfilPemilikKompetensi([FromBody] JawatanListDto request)
+        {
+            _logger.LogInformation("Calling SenaraiProfilPemilikKompetensi");
+            try
+            {
+                var data = await _profilpemilikkompetensiext.SenaraiProfilPemilikKompetensi(request);
+                return Ok(data); // empty list => 200 OK
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in SenaraiProfilPemilikKompetensi");
                 var inner = ex.InnerException?.Message;
                 return StatusCode(500, string.IsNullOrEmpty(inner) ? ex.Message : $"{ex.Message} - {inner}");
             }

@@ -64,8 +64,8 @@ namespace HR.Application.Services.PDO
                         IdButiranPermohonan = pdobp != null ? pdobp.Id : 0,
 
                         // Prefer values from PDOCadanganJawatan; fallback to the joined masters
-                        SkimPerkhidmatan = pdocj != null && pdocj.SkimPerkhidmatan != null ? pdocj.SkimPerkhidmatan : pdosp!.Nama,
-                        Gred = pdocj != null && pdocj.Gred != null ? pdocj.Gred : pdog!.Nama,
+                        SkimPerkhidmatan = pdocj != null && pdocj.SkimPerkhidmatan != null ? pdocj.SkimPerkhidmatan.Trim() : pdosp!.Nama.Trim(),
+                        Gred = pdocj != null && pdocj.Gred != null ? pdocj.Gred : pdog!.Nama.Trim(),
 
                         GelaranJawatan = pdocj!.GelaranJawatan,
                         KodRujJenisJawatan = pdocj!.KodRujJenisJawatan,
@@ -120,12 +120,12 @@ namespace HR.Application.Services.PDO
                     entity.IdAktivitiOrganisasi = request.IdAktivitiOrganisasi;
                     entity.IdButiranPermohonan = request.IdButiranPermohonan;
                     entity.SkimPerkhidmatan = skim.Nama;
-                    entity.Gred = gred.Nama;
+                    entity.Gred = gred.Nama.Trim();
                     entity.IdButiranPermohonan = request.IdButiranPermohonan;
                     entity.TarikhCipta = DateTime.Now;
                     entity.StatusAktif = false;
                     entity.KodRujJenisJawatan = request.KodRujJenisJawatan;
-                    entity.GelaranJawatan = gelaranJawatan.Nama;
+                    entity.GelaranJawatan = gelaranJawatan.Nama.Trim();
                     entity.KodRujStatusBekalan = request.KodRujStatusBekalan;
                     entity.KodRujStatusJawatan = request.KodRujStatusJawatan;
                     entity.IdCipta = UserId;

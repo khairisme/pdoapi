@@ -5,6 +5,7 @@ using Dapper;
 using HR.PDO.Core.Entities;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data;
+using HR.PDO.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 
 namespace HR.PDO.Infrastructure.Repositories;
@@ -16,11 +17,22 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 {
     protected readonly IDatabaseConnection _connection;
     protected readonly string _tableName;
+    protected readonly PDODbContext _context;
+    protected readonly DbSet<T> _dbSet; // <-- ADD THIS
 
-    public Repository(IDatabaseConnection connection)
+    public Repository(PDODbContext context,IDatabaseConnection connection)
     {
         _connection = connection;
         _tableName = typeof(T).Name;
+        _dbSet = context.Set<T>(); // <-- Initialize it
+    }
+    /// <summary>
+    /// Provides IQueryable access to the entity set for advanced LINQ queries.
+    /// </summary>
+    /// <returns>IQueryable of T</returns>
+    public IQueryable<T> Query()
+    {
+        return _dbSet.AsQueryable();
     }
 
     public async Task<T?> GetByIdAsync(Guid id)
@@ -215,4 +227,5 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
         return await conn.QueryAsync<T>(query, parameters);
     }
+
 }

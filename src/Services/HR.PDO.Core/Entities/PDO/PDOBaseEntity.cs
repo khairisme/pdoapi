@@ -5,7 +5,7 @@ namespace HR.PDO.Core.Entities.PDO;
 /// </summary>
 public abstract class PDOBaseEntity
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
     
     public bool? StatusAktif { get; set; }
     public DateTime? TarikhCipta { get; set; }

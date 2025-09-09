@@ -245,7 +245,7 @@ namespace HR.PDO.Application.Services.PDO
             }
         }
 
-        public async Task<int> CreateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
+        public async Task<int?> CreateAsync(MaklumatSkimPerkhidmatanCreateRequestDto dto)
         {
             _logger.LogInformation("Service: Creating new MaklumatSkimPerkhidmatan");
 

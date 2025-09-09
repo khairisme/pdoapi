@@ -15,5 +15,7 @@ namespace HR.PDO.Application.Interfaces.PDO
         public Task<PagedResult<PermohonanJawatanLinkDto>> CarianPermohonanJawatan(PermohonanJawatanCarianDto request);
         public Task<List<PermohonanJawatanLinkDto>> SenaraiPermohonanJawatan(PermohonanJawatanCarianDto request);
         public Task DaftarPermohonanJawatan(PermohonanJawatanDaftarDto request);
+        public Task KemaskiniUlasanPermohonanJawatan(UlasanRequestDto request);
+        
     }
 }

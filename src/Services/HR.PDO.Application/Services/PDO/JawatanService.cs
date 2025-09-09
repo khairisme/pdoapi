@@ -32,14 +32,14 @@ namespace HR.PDO.Application.Services.PDO
             var query = from a in _context.PDOJawatan
                         join b in _context.PDOUnitOrganisasi on a.IdUnitOrganisasi equals b.Id
                         where a.StatusAktif == true && b.StatusAktif == true &&
-                              a.Nama.Contains(namaJwtn) &&
+                              a.Nama.Contains(namaJwtn.Trim()) &&
                               b.KodCartaOrganisasi.Contains(kodCartaOrganisasi)
                         select new JawatanWithAgensiDto
                         {
                             Id = a.Id,
                             Kod = a.Kod,
-                            Nama = a.Nama,
-                            Agensi = b.Nama
+                            Nama = a.Nama.Trim(),
+                            Agensi = b.Nama.Trim()
                         };
 
             return await query.ToListAsync();
@@ -65,8 +65,8 @@ namespace HR.PDO.Application.Services.PDO
                                 && e.StatusAktif == true
                                 && e.KodRujStatusKekosonganJawatan == "01"
                                                   && c.Id == filter.SkimPerkhidmatanId
-                                  && (string.IsNullOrEmpty(filter.NamaJawatan) || a.Nama.Contains(filter.NamaJawatan))
-                                  && (string.IsNullOrEmpty(filter.UnitOrganisasi) || f.Nama.Contains(filter.UnitOrganisasi))
+                                  && (string.IsNullOrEmpty(filter.NamaJawatan.Trim()) || a.Nama.Contains(filter.NamaJawatan.Trim()))
+                                  && (string.IsNullOrEmpty(filter.UnitOrganisasi.Trim()) || f.Nama.Contains(filter.UnitOrganisasi.Trim()))
                             orderby a.Kod
                             select new
                             {
@@ -127,7 +127,7 @@ namespace HR.PDO.Application.Services.PDO
                                 && e.KodRujStatusKekosonganJawatan == "01"
                                   && (filter.SkimPerkhidmatanId == null || c.Id == filter.SkimPerkhidmatanId)
                                   && (string.IsNullOrEmpty(filter.KodJawatanSebenar) || a.Kod == filter.KodJawatanSebenar)
-                                  && (string.IsNullOrEmpty(filter.NamaJawatanSebenar) || a.Nama.Contains(filter.NamaJawatanSebenar))
+                                  && (string.IsNullOrEmpty(filter.NamaJawatanSebenar.Trim()) || a.Nama.Contains(filter.NamaJawatanSebenar.Trim()))
                                   && (string.IsNullOrEmpty(filter.StatusKekosonganJawatan) || e2.Kod == filter.StatusKekosonganJawatan)
                                   && (filter.UnitOrganisasiId == null || a.IdUnitOrganisasi == filter.UnitOrganisasiId)
                             orderby a.Kod
@@ -218,7 +218,7 @@ namespace HR.PDO.Application.Services.PDO
                             select new CarianKetuaPerkhidmatanResponseDto
                             {
                                 Id = a.Id,
-                                Nama = a.Nama ?? string.Empty
+                                Nama = (a.Nama ?? string.Empty).Trim()
                             };
 
                 var result = await query.ToListAsync();
@@ -249,13 +249,13 @@ namespace HR.PDO.Application.Services.PDO
                                   && a.IndikatorKetuaPerkhidmatan == true
                                   && b.StatusAktif == true
                                   && b.KodCartaOrganisasi.StartsWith(kodCartaOrganisasi)
-                                  && (string.IsNullOrEmpty(NamaJawatan) || a.Nama.Contains(NamaJawatan))
+                                  && (string.IsNullOrEmpty(NamaJawatan.Trim()) || a.Nama.Contains(NamaJawatan.Trim()))
                             select new SenaraiKetuaPerkhidmatanResponseDto
                             {
                                 Id = a.Id,
                                 Kod = a.Kod ?? string.Empty,
-                                Jawatan = a.Nama ?? string.Empty,
-                                Agensi = b.Nama ?? string.Empty
+                                Jawatan = (a.Nama ?? string.Empty).Trim(),
+                                Agensi = (b.Nama ?? string.Empty).Trim()
                             };
 
                 var result = await query.ToListAsync();

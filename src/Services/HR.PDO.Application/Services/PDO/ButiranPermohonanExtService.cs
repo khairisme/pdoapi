@@ -14,6 +14,8 @@ using HR.PDO.Application.DTOs;
 using Azure.Core;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using HR.PDO.Shared.Interfaces;
 
 namespace HR.Application.Services.PDO
 {
@@ -22,10 +24,32 @@ namespace HR.Application.Services.PDO
         private readonly IPDOUnitOfWork _unitOfWork;
         private readonly PDODbContext _context;
         private readonly IRujGelaranJawatanExt _rujGelaranJawatanExt;
+        private readonly IRujStatusJawatanExt _rujstatusjawatanExt;
+        private readonly IRujJenisJawatanExt _rujjenisjawatanExt;
+        private readonly IKumpulanPerkhidmatanExt _kumpulanperkhidmatanext;
+        private readonly IKlasifikasiPerkhidmatanExt _klasifikasiperkhidmatanext;
+        private readonly IRujukanSkimPerkhidmatan _rujukanskimperkhidmatan;
+        private readonly IRujPangkatBadanBeruniformExt _rujpangkatbadanberuniformext;
+        private readonly IObjectMapper _mapper;
+
+
+
+
+
         private readonly ILogger<ButiranPermohonanExtService> _logger;
 
-        public ButiranPermohonanExtService(IPDOUnitOfWork unitOfWork, PDODbContext dbContext, ILogger<ButiranPermohonanExtService> logger)
+        public ButiranPermohonanExtService(IObjectMapper mapper, IRujGelaranJawatanExt rujGelaranJawatanExt, IRujStatusJawatanExt rujstatusjawatanExt,
+        IRujJenisJawatanExt rujjenisjawatanExt, IKumpulanPerkhidmatanExt kumpulanperkhidmatanext, IKlasifikasiPerkhidmatanExt klasifikasiperkhidmatanext,
+        IRujukanSkimPerkhidmatan rujukanskimperkhidmatan, IRujPangkatBadanBeruniformExt rujpangkatbadanberuniformext, IPDOUnitOfWork unitOfWork, PDODbContext dbContext, ILogger<ButiranPermohonanExtService> logger)
         {
+            _mapper = mapper;
+            _rujGelaranJawatanExt = rujGelaranJawatanExt;
+            _rujstatusjawatanExt = rujstatusjawatanExt;
+            _rujjenisjawatanExt = rujjenisjawatanExt;
+            _kumpulanperkhidmatanext = kumpulanperkhidmatanext;
+            _klasifikasiperkhidmatanext = klasifikasiperkhidmatanext;
+            _rujukanskimperkhidmatan = rujukanskimperkhidmatan;
+            _rujpangkatbadanberuniformext = rujpangkatbadanberuniformext;
             _unitOfWork = unitOfWork;
             _context = dbContext;
             _logger = logger;
@@ -54,7 +78,7 @@ namespace HR.Application.Services.PDO
                 entity.JumlahKosSebulan = request.JumlahKosSebulan;
                 entity.TahunButiran = request.TahunButiran;
                 entity.BilanganJawatan = request.BilanganJawatan;
-                entity.NamaPemilikKompetensi = request.NamaPemilikKompetensi;
+                entity.NamaPemilikKompetensi = request.NamaPemilikKompetensi.Trim();
                 entity.NoKadPengenalanPemilikKompetensi = request.NoKadPengenalanPemilikKompetensi;
                 entity.IndikatorJawatanKritikal = request.IndikatorJawatanKritikal;
                 entity.IndikatorJawatanSensitif = request.IndikatorJawatanSensitif;
@@ -133,7 +157,7 @@ namespace HR.Application.Services.PDO
                     record.IdPinda = UserId;
                     record.TarikhPinda = DateTime.Now;
                     record.TahunButiran = (short?)DateTime.Now.Year;
-                    record.NamaPemilikKompetensi = request.NamaPemilikKompetensi;
+                    record.NamaPemilikKompetensi = request.NamaPemilikKompetensi.Trim();
                     record.NoKadPengenalanPemilikKompetensi=request.NoKadPengenalanPemilikKompetensi;
                     record.IdSkimPerkhidmatanPemilikKompetensi = request.IdSkimPerkhidmatanPemilikKompetensi;
                     record.IndikatorJawatanStrategik = request.IndikatorJawatanStrategik;
@@ -159,7 +183,7 @@ namespace HR.Application.Services.PDO
 
         }
 
-        public async Task MansuhButiranPermohonanCadanganJawatan(Guid UserId, int IdButiranPermohonan, int IdCadanganJawatan)
+        public async Task MansuhButiranButiranJawatan(MansuhButiranJawatanRequestDto request)
         {
             /*
              * Created by : Khairi bin Abu Bakar
@@ -168,24 +192,64 @@ namespace HR.Application.Services.PDO
              */
 
             try
-
             {
+                var recordButiran = await (from pdobp in _context.PDOButiranPermohonan
+                                    where pdobp.Id == request.IdButiranPermohonan && pdobp.IdPermohonanJawatan==request.IdPermohonanJawatan
+                                    select pdobp).FirstOrDefaultAsync();
+
+                //Soft Delete current ButiranPermohonan
                 await _unitOfWork.BeginTransactionAsync();
-                var record = await (from pdocj in _context.PDOCadanganJawatan
-                                    where pdocj.IdButiranPermohonan == IdButiranPermohonan
-                                    && pdocj.Id == IdCadanganJawatan
-                                    select pdocj).FirstOrDefaultAsync();
-
-                record.IdHapus = UserId;
-                record.TarikhHapus = DateTime.Now;
-                record.StatusAktif = false;
-
-                //There is no Butiran Kemaskini field, so I update direct to the table
-
-                _context.PDOCadanganJawatan.Update(record);
-
+                recordButiran.StatusAktif = false;
+                recordButiran.IdHapus = request.UserId;
+                recordButiran.TarikhHapus = DateTime.Now;
+                _context.PDOButiranPermohonan.Update(recordButiran);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+
+                //Copy current record to new record
+                var newRecord = new PDOButiranPermohonan();
+                newRecord.TagJawatan = recordButiran.TagJawatan;
+               newRecord.BilanganJawatan = recordButiran.BilanganJawatan;
+                newRecord.AnggaranTajukJawatan = recordButiran.AnggaranTajukJawatan;
+                newRecord.ButirPerubahan = recordButiran.ButirPerubahan;
+                newRecord.IdAktivitiOrganisasi = recordButiran.IdAktivitiOrganisasi;
+                newRecord.IdButiranPermohonanLama = recordButiran.IdButiranPermohonanLama;
+                newRecord.IdGredPemilikKompetensi = recordButiran.IdGredPemilikKompetensi;
+                newRecord.IdPemilikKompetensi = recordButiran.IdPemilikKompetensi;
+                newRecord.IdPermohonanJawatan = recordButiran.IdPermohonanJawatan;
+                newRecord.IdSkimPerkhidmatanPemilikKompetensi = recordButiran.IdSkimPerkhidmatanPemilikKompetensi;
+                newRecord.IndikatorHBS = recordButiran.IndikatorHBS;
+                newRecord.IndikatorJawatanKritikal = recordButiran.IndikatorJawatanKritikal;
+                newRecord.IndikatorJawatanSensitif = recordButiran.IndikatorJawatanSensitif;
+                newRecord.IndikatorJawatanStrategik = recordButiran.IndikatorJawatanStrategik;
+                newRecord.IndikatorPemohon = recordButiran.IndikatorPemohon;
+                newRecord.IndikatorTBK = recordButiran.IndikatorTBK;
+                newRecord.JumlahKosSebulan = recordButiran.JumlahKosSebulan;
+                newRecord.JumlahKosSetahun = recordButiran.JumlahKosSetahun;
+                newRecord.KodRujGelaranJawatan = recordButiran.KodRujGelaranJawatan;
+                newRecord.KodRujJenisJawatan = recordButiran.KodRujJenisJawatan;
+                newRecord.KodRujPangkatBadanBeruniform = recordButiran.KodRujPangkatBadanBeruniform;
+                newRecord.KodRujStatusJawatan= recordButiran.KodRujStatusJawatan;
+                newRecord.KodRujUrusanPerkhidmatan = recordButiran.KodRujUrusanPerkhidmatan;
+                newRecord.NamaPemilikKompetensi = recordButiran.NamaPemilikKompetensi.Trim();
+                newRecord.TarikhMula = recordButiran.TarikhMula;
+                newRecord.TarikhTamat = recordButiran.TarikhTamat;
+                newRecord.NoButiran = recordButiran.NoButiran;
+                newRecord.TahunButiran = recordButiran.TahunButiran;
+                newRecord.NoKadPengenalanPemilikKompetensi = recordButiran.NoKadPengenalanPemilikKompetensi;
+                newRecord.KodRujTujuanTambahSentara = recordButiran.KodRujTujuanTambahSentara;
+                newRecord.KodRujTujuanTambahSentara = recordButiran.KodRujTujuanTambahSentara;
+                newRecord.IndikatorRekod = 4; // Mansuh
+                
+                await _unitOfWork.BeginTransactionAsync();
+                recordButiran.StatusAktif = false;
+                recordButiran.IdHapus = request.UserId;
+                recordButiran.TarikhHapus = DateTime.Now;
+                await _context.PDOButiranPermohonan.AddAsync(recordButiran);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+                //Insert new record with indikatorrekod = 4 (mansuh) 
+                //MansuhButiranJawatanDto
             }
 
             catch (Exception ex)
@@ -280,6 +344,7 @@ namespace HR.Application.Services.PDO
                 _context.PDOButiranPermohonan.Update(entity);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+
             }
 
             catch (Exception ex)
@@ -332,6 +397,106 @@ namespace HR.Application.Services.PDO
 
         }
 
+        public async Task<ButiranPermohonanLoadOutputDto>MuatButiranPermohonan()
+        {
+            var newOutput = new ButiranPermohonanLoadOutputDto();
+            newOutput.StatusJawatanList = await _rujstatusjawatanExt.RujukanStatusJawatan();
+            newOutput.JenisJawatanList = await _rujjenisjawatanExt.RujukanJenisJawatan();
+            newOutput.KumpulanPerkhidmatanList = await _kumpulanperkhidmatanext.RujukanKumpulanPerkhidmatan();
+            newOutput.KlasifikasiPerkhidmatanList = await _klasifikasiperkhidmatanext.RujukanKlasifikasiPerKhidmatan();
+            newOutput.GelaranjawatanList = await _rujGelaranJawatanExt.RujukanGelaranJawatan();
+            newOutput.pangkatList = await _rujpangkatbadanberuniformext.GetPangkatAsync();
+
+            return newOutput;
+        }
+        public async Task PindahButiranPermohonan(PindahButiranPermohonanRequestDto request)
+        {
+            if (request.IdOldAktivitiOrganisasi == request.IdNewAktivitiOrganisasi)
+            {
+                throw new Exception("Aktiviti Organisasi Lama dan Baru tidak boleh sama.");
+            }
+
+            try {
+                await _unitOfWork.BeginTransactionAsync();
+                var query = (from pdobp in _context.PDOButiranPermohonan
+                             where pdobp.IdPermohonanJawatan == request.IdPermohonanJawatan
+                             && pdobp.Id == request.IdButiranPermohonan
+                             && pdobp.IdAktivitiOrganisasi == request.IdOldAktivitiOrganisasi
+                             select pdobp);
+
+                Console.WriteLine(query.ToQueryString()); // EF Core 5+
+                var record = await query.FirstOrDefaultAsync();
+
+                var newRecord = _mapper.Map<PDOButiranPermohonan>(record);
+                var butiranKemaskini = new PindahButiranPermohonanContentDto();
+                butiranKemaskini.IdAktivitiOrganisasi = request.IdNewAktivitiOrganisasi;
+                butiranKemaskini.IdOldAktivitiOrganisasi = request.IdOldAktivitiOrganisasi;
+                butiranKemaskini.IdPermohonanJawatan = request.IdPermohonanJawatan;
+                butiranKemaskini.IdButiranPermohonan = request.IdButiranPermohonan;
+
+                var json = JsonSerializer.Serialize(butiranKemaskini);
+                newRecord.Id = 0;
+                newRecord.ButirPerubahan = json;
+                newRecord.IdPinda = request.UserId;
+                newRecord.TarikhPinda = DateTime.Now;
+                newRecord.ButiranKemaskini = json;
+                _context.PDOButiranPermohonan.Add(newRecord);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+            } catch (Exception ex) 
+            { 
+                Console.WriteLine(ex.ToString());
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine(ex.InnerException.ToString());
+                }
+            }
+            //return record;
+        }
+        //public async Task<List<TambahButiranPermohonanDto>> SenaraiMansuhJawatan(SenaraiMansuhRequestDto request)
+        //{
+        //    /*
+        //     * The SQL
+        //     *   Select pj.Kod as KodJawatan, pj.Nama as NamaJawatan, puo.Nama as UnitOrganisasi, ppappk.NamaPemilikKompetensi as Penyandang
+        //     *   from PDO_ButiranPermohonan pbp 
+        //     *   join PDO_ButiranPermohonanJawatan pbpj on pbp.Id = pbpj.IdButiranPermohonan 
+        //     *   join PDO_Jawatan pj on pbpj.IdJawatan = pj.Id 
+        //     *   join PDO_UnitOrganisasi puo on pj.IdUnitOrganisasi = puo.Id 
+        //     *   join ONB_Sandangan onbs on pj.Id = onbs.IdJawatan 
+        //     *   join PPA_ProfilPemilikKompetensi ppappk on onbs.IdPemilikKompetensi = ppappk.IdPemilikKompetensi 
+        //     *   where pbp.IdPermohonanJawatan = @IdPermohonanJawatan and pbp.Id = @IdButiranPermohonan
+        //     *   && pbp.IndikatorRekod 
+        //     */
+        //    try
+        //    {
+        //        var result =
+        //            from pbp in _context.PDOButiranPermohonan join pbpj in _context.PDOButiranPermohonanJawatan
+        //                on pbp.Id equals pbpj.IdButiranPermohonan join pj in _context.PDOJawatan
+        //                on pbpj.IdJawatan equals pj.Id join puo in _context.PDOUnitOrganisasi
+        //                on pj.IdUnitOrganisasi equals puo.Id join onbs in _context.ONBSandangan
+        //                on pj.Id equals onbs.IdJawatan join ppappk in _context.PPAProfilPemilikKompetensi
+        //                on onbs.IdPemilikKompetensi equals ppappk.IdPemilikKompetensi
+        //            where pbp.IdPermohonanJawatan == request.IdPermohonanJawatan && pbp.Id == request.IdButiranPermohonan
+        //            select new
+        //            {
+        //                KodJawatan = pj.Kod,
+        //                NamaJawatan = pj.Nama,
+        //                UnitOrganisasi = puo.Nama,
+        //                Penyandang = ppappk.NamaPemilikKompetensi
+        //            };
+        //        return result;
+        //    }
+
+        //    catch (Exception ex)
+
+        //    {
+
+        //        _logger.LogError(ex, "Error in TambahButiranPermohonan");
+
+        //        throw;
+        //    }
+
+        //}
         public async Task<TambahButiranPermohonanDto> BacaButiranPermohonan(int IdPermohonanJawatan)
         {
 

@@ -27,15 +27,15 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task<List<DropDownDto>> RujukanAgensi()
+        public async Task<List<DropDownDto>> RujukanAgensi(string? NamaAgensi)
         {
             try
 
             {
 
                 var result = await (from pdouo in _context.PDOUnitOrganisasi
-                    where pdouo.IndikatorAgensi == true
-                    select new DropDownDto{
+                    where pdouo.IndikatorAgensi == true && pdouo.Nama.Contains(NamaAgensi)
+                                    select new DropDownDto{
                          Kod = pdouo.Kod,
                          Nama = pdouo.Nama
                     }

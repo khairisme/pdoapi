@@ -11,4 +11,12 @@ namespace HR.PDO.Application.DTOs
         public string? NomborRujukan { get; set; }
         public string? Tajuk { get; set; }
     }
+    public class UlasanRequestDto
+    {
+        public int IdPermohonanJawatan {  get; set; }
+        public Guid? UserId { get; set; }
+        public string? KodRujStatusPermohonanJawatan { get; set; }
+        public string? Ulasan { get; set; }
+    }
+
 }

@@ -1,16 +1,26 @@
+using HR.PDO.Application.DTOs;
+using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Application.Interfaces.PPA;
+using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data.EntityFramework;
+//using AutoMapper;
+using HR.PDO.Shared.Configuration;
+using HR.PDO.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Shared.Contracts.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Shared.Contracts.DTOs;
-using HR.PDO.Application.Interfaces.PDO;
-using HR.PDO.Core.Entities.PDO;
-using HR.PDO.Application.DTOs;
+using static System.Net.Mime.MediaTypeNames;
+
 
 namespace HR.Application.Services.PPA
 {
@@ -19,9 +29,15 @@ namespace HR.Application.Services.PPA
         private readonly IPDOUnitOfWork _unitOfWork;
         private readonly PDODbContext _context;
         private readonly ILogger<ProfilPemilikKompetensiExtService> _logger;
+        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ApiSettings _apiSettings;
+        private readonly IObjectMapper _mapper;
 
-        public ProfilPemilikKompetensiExtService(IPDOUnitOfWork unitOfWork, PDODbContext dbContext, ILogger<ProfilPemilikKompetensiExtService> logger)
+        public ProfilPemilikKompetensiExtService(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings, IObjectMapper mapper, IPDOUnitOfWork unitOfWork, PDODbContext dbContext, ILogger<ProfilPemilikKompetensiExtService> logger)
         {
+            _httpClient = httpClientFactory.CreateClient("PpaApi");
+            _apiSettings = apiSettings.Value;
             _unitOfWork = unitOfWork;
             _context = dbContext;
             _logger = logger;
@@ -32,30 +48,17 @@ namespace HR.Application.Services.PPA
             try
 
             {
-                var ProfilPemilikKompetensi = new List<ProfilPemilikKompetensiDto>
-                {
-                    new() { Bil = 1, NomborKadPengenalan="000000000001",NamaPemilikKompetensi="PEMILIK KOMPETENSI 1",NamaSkimPerkhidmatan="Pembantu Pembangunan Masyarakat",Gred="S19"},
-                    new() { Bil = 2, NomborKadPengenalan="000000000002",NamaPemilikKompetensi="PEMILIK KOMPETENSI 2",NamaSkimPerkhidmatan="Pembantu Pendaftaran",Gred="KP19      "},
-                    new() { Bil = 3, NomborKadPengenalan="000000000003",NamaPemilikKompetensi="PEMILIK KOMPETENSI 3",NamaSkimPerkhidmatan="Jururawat Masyarakat",Gred="U19       "},
-                    new() { Bil = 4, NomborKadPengenalan="000000000004",NamaPemilikKompetensi="PEMILIK KOMPETENSI 4",NamaSkimPerkhidmatan="Pegawai Perkhidmatan Pendidikan",Gred="DG48      "},
-                    new() { Bil = 5, NomborKadPengenalan="000000000005",NamaPemilikKompetensi="PEMILIK KOMPETENSI 5",NamaSkimPerkhidmatan="Pembantu Awam",Gred="H11"},
-                    new() { Bil = 6, NomborKadPengenalan="000000000006",NamaPemilikKompetensi="PEMILIK KOMPETENSI 6",NamaSkimPerkhidmatan="Pembantu Ehwal Ekonomi",Gred="E22       "},
-                    new() { Bil = 7, NomborKadPengenalan="000000000007",NamaPemilikKompetensi="PEMILIK KOMPETENSI 7",NamaSkimPerkhidmatan="Pembantu Tadbir (Perkeranian/Operasi)",Gred="N22       "},
-                    new() { Bil = 8, NomborKadPengenalan="000000000008",NamaPemilikKompetensi="PEMILIK KOMPETENSI 8",NamaSkimPerkhidmatan="Pegawai Perkhidmatan Pendidikan",Gred="DG54      "},
-                    new() { Bil = 9, NomborKadPengenalan="000000000009",NamaPemilikKompetensi="PEMILIK KOMPETENSI 9",NamaSkimPerkhidmatan="Pegawai Perkhidmatan Pendidikan",Gred="DG44      "},
-                    new() { Bil = 10, NomborKadPengenalan="000000000010",NamaPemilikKompetensi="PEMILIK KOMPETENSI 10",NamaSkimPerkhidmatan="Pegawai Tadbir",Gred="N48       "}
-                };
 
-                var result = (from pdoppk in ProfilPemilikKompetensi
+                var result = (from pdoppk in _context.PPAProfilPemilikKompetensi
+                              join pdog in _context.PDOGred on pdoppk.IdGred equals pdog.Id
                              where (filter.NomborKadPengenalan!=null && pdoppk.NomborKadPengenalan.Contains(filter.NomborKadPengenalan) || filter.NomborKadPengenalan == null)
                              && (filter.NamaPemilikKompetensi!=null && pdoppk.NamaPemilikKompetensi.Contains(filter.NamaPemilikKompetensi) || filter.NamaPemilikKompetensi==null)
                              select new ProfilPemilikKompetensiDisplayDto
                              {
-                                 Bil= pdoppk.Bil,
                                  NomborKadPengenalan=pdoppk.NomborKadPengenalan,
                                  NamaPemilikKompetensi = pdoppk.NamaPemilikKompetensi,
                                  NamaSkimPerkhidmatan = pdoppk.NamaSkimPerkhidmatan,
-                                 Gred = pdoppk.Gred
+                                 Gred = pdog.Nama
                              }).ToList();
 
 
@@ -74,7 +77,45 @@ namespace HR.Application.Services.PPA
 
         }
 
+        public async Task<List<ProfilPemilikKompetensi>> SenaraiProfilPemilikKompetensi(JawatanListDto request)
+        {
+            try
+            {
+                var query = from p in _context.PPAProfilPemilikKompetensi
+                where request.IdJawatanList.Contains(p.IdJawatan)
+                            orderby p.NamaPemilikKompetensi
+                             select p;
+                var result = await query.ToListAsync();
+                return result;
+                              
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in SenaraiProfilPemilikKompetensi");
+                throw;
+            }
+        }
+        public async Task<List<ProfilPemilikKompetensi>> GetExternalSenaraiProfilPemilikKompetensiAsync(JawatanListDto request)
+        {
+            var url = _apiSettings.ExternalSenaraiPemilikKompetensiEndpoint;
 
+            // Serialize the whole DTO
+            var jsonContent = JsonSerializer.Serialize(request);
+            var content = new StringContent(jsonContent, Encoding.UTF8, MediaTypeHeaderValue.Parse("application/json"));
+
+            // Send POST
+            var response = await _httpClient.PostAsync(url, content);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+
+            var json = await response.Content.ReadAsStringAsync();
+            var data = JsonSerializer.Deserialize<List<ProfilPemilikKompetensi>>(json, options);
+            return data;
+        }
 
     }
 

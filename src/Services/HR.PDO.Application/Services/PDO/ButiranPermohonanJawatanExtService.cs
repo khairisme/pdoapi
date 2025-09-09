@@ -65,14 +65,15 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task<ButiranPermohonanJawatanDto> BacaButiranPermohonanJawatan(int Id)
+        public async Task<ButiranPermohonanJawatanDto> BacaButiranPermohonanJawatan(AddButiranPermohonanJawatanRequestDto request)
         {
             try
 
             {
 
                 var result = await (from pdobpj in _context.PDOButiranPermohonanJawatan
-                    where pdobpj.Id == Id
+                    where pdobpj.IdButiranPermohonan == request.IdButiranPermohonan
+                    && pdobpj.IdJawatan == request.IdJawatan
                     select new ButiranPermohonanJawatanDto{
                          IdButiranPermohonan = pdobpj.IdButiranPermohonan,
                          IdCipta = pdobpj.IdCipta,
@@ -102,7 +103,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task HapusTerusPermohonanJawatan(Guid UserId, int Id)
+        public async Task HapusTerusPermohonanJawatan(AddButiranPermohonanJawatanRequestDto request)
         {
 
             try
@@ -110,7 +111,9 @@ namespace HR.Application.Services.PDO
             {
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = await (from pdobpj in _context.PDOButiranPermohonanJawatan
-                             where pdobpj.Id == Id select pdobpj
+                             where pdobpj.IdButiranPermohonan == request.IdButiranPermohonan
+                             && pdobpj.IdJawatan == request.IdJawatan
+                                    select pdobpj
                               ).FirstOrDefaultAsync();
                 if (entity == null)
                 {
@@ -135,36 +138,31 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task TambahButiranPermohonanJawatan(Guid UserId, TambahButiranPermohonanJawatanDto request)
+        public async Task TambahButiranPermohonanJawatan(TambahButiranPermohonanJawatanDto request)
         {
-
             try
-
             {
                 await _unitOfWork.BeginTransactionAsync();
-                var entity = new PDOButiranPermohonanJawatan();
-                entity.IdCipta = UserId;
-                entity.IdButiranPermohonan = request.IdButiranPermohonan;
-                entity.IdJawatan = request.IdJawatan;
-                entity.StatusAktif = request.StatusAktif;
-                entity.IdCipta = request.IdCipta;
-                entity.TarikhCipta = DateTime.Now;
-                entity.StatusAktif = false;
-                await _context.PDOButiranPermohonanJawatan.AddAsync(entity); 
+                var entity = new PDOButiranPermohonanJawatan
+                {
+                    IdButiranPermohonan = request.IdButiranPermohonan,
+                    IdJawatan = request.IdJawatan,
+                    IdCipta = request.UserId,
+                    TarikhCipta = DateTime.UtcNow,   // use UTC for consistency
+                    StatusAktif = false
+                };
+
+                await _context.PDOButiranPermohonanJawatan.AddAsync(entity);
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
             }
-
             catch (Exception ex)
-
             {
-
                 _logger.LogError(ex, "Error in TambahButiranPermohonanJawatan");
-
+                await _unitOfWork.RollbackAsync();  // rollback on error
                 throw;
             }
-
         }
 
 
