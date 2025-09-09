@@ -9,7 +9,7 @@ namespace HR.PDO.Application.DTOs.PDO
     public class PegawaiTeknologiMaklumatResponseDto
     {
         public int Bil { get; set; }
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string KodJawatan { get; set; }
         public string NamaJawatan { get; set; }
         public string UnitOrganisasi { get; set; }
@@ -52,7 +52,7 @@ namespace HR.PDO.Application.DTOs.PDO
 
     public class HadSilingUpdateRequestDto
     {
-        public int RecordId { get; set; }
+        public int? RecordId { get; set; }
         public int BilanganHadSiling { get; set; }
     }
     //Nitya Code End

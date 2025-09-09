@@ -10,7 +10,7 @@ namespace HR.PDO.Core.Entities.PDO
     [Table("PDO_StatusPermohonanKumpulanPerkhidmatan")] // This is the key
     public class PDOStatusPermohonanKumpulanPerkhidmatan :  PDOBaseEntity
     {
-        public int IdKumpulanPerkhidmatan { get; set; }
+        public int? IdKumpulanPerkhidmatan { get; set; }
         public string KodRujStatusPermohonan { get; set; }
         public DateTime TarikhKemaskini { get; set; }
     }

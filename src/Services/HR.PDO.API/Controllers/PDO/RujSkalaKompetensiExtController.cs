@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/v1/ruj-skala-kompetensi")]
+    [Route("api/pdo/v1/rujukan/skala-kompetensi")]
     public class RujSkalaKompetensiExtController : ControllerBase
     {
         private readonly ILogger<RujSkalaKompetensiExtController> _logger;

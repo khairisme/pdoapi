@@ -1,3 +1,4 @@
+using Azure.Core;
 using System;
 namespace HR.PDO.Application.DTOs
 {
@@ -40,5 +41,57 @@ namespace HR.PDO.Application.DTOs
         /// </summary>
         public string Nama { get; set; } = string.Empty;
     }
+    /// <summary>
+    /// Request DTO for removing (mansuh) a Unit Organisasi.
+    /// </summary>
+    /// <remarks>
+    /// This DTO is used when a client requests to delete or deactivate 
+    /// a Unit Organisasi record in the system.
+    /// </remarks>
+    /// <author>Khairi bin Abu Bakar</author>
+    /// <date>2025-09-04</date>
+    public class MansuhUnitOrganisasiRequestDto
+    {
+        /// <summary>
+        /// The unique identifier of the user performing the operation.
+        /// </summary>
+        public Guid UserId { get; set; }
 
+        /// <summary>
+        /// The unique identifier of the Unit Organisasi to be removed.
+        /// </summary>
+        public int Id { get; set; }
+    }
+
+    /// <summary>
+    /// DTO for updating the details (butiran) of a record when it is removed (mansuh).
+    /// </summary>
+    /// <remarks>
+    /// This DTO is typically used to mark a record as inactive, 
+    /// track the deletion action, and record the timestamp of removal.
+    /// </remarks>
+    /// <author>Your Name</author>
+    /// <date>2025-09-04</date>
+    public class MansuhButiranKemaskiniDto
+    {
+        /// <summary>
+        /// Indicates whether the record is still active.
+        /// </summary>
+        public bool StatusAktif { get; set; }
+
+        /// <summary>
+        /// The unique identifier of the user or process that performed the removal.
+        /// </summary>
+        public Guid? IdHapus { get; set; }
+
+        /// <summary>
+        /// The date and time when the record was removed.
+        /// </summary>
+        public DateTime TarikhHapus { get; set; }
+
+        /// <summary>
+        /// The Status
+        /// </summary>
+        public string? StatusTindakan{ get; set; }
+    }
 }

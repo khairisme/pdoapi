@@ -10,10 +10,12 @@ namespace HR.PDO.API.Controllers.PDO {
     {
         private readonly ILogger<ButiranPermohonanExtController> _logger;
         private readonly IButiranPermohonanExt _butiranpermohonanext;
+        private readonly IRujStatusJawatanExt _rujstatusjawatanExt;
 
-        public ButiranPermohonanExtController(IButiranPermohonanExt butiranpermohonanext, ILogger<ButiranPermohonanExtController> logger)
+        public ButiranPermohonanExtController(IButiranPermohonanExt butiranpermohonanext, IRujStatusJawatanExt rujstatusjawatanExt, ILogger<ButiranPermohonanExtController> logger)
         {
             _butiranpermohonanext = butiranpermohonanext;
+            _rujstatusjawatanExt = rujstatusjawatanExt;
             _logger = logger;
         }
 
@@ -65,14 +67,64 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpPost("mansuh-cadangan-jawatan")]
-        public async Task<ActionResult> MansuhButiranPermohonanCadanganJawatan([FromQuery] Guid UserId, int IdButiranPermohonan, int IdCadanganJawatan)
+        [HttpPost("muat")]
+        public async Task<ActionResult> MuatButiranPermohonan()
+        {
+            _logger.LogInformation("Calling MuatButiranPermohonan");
+            try
+            {
+                var result = await _butiranpermohonanext.MuatButiranPermohonan();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in KemaskiniButiranPermohonan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, ex.Message + "-" + err);
+            }
+        }
+
+        //[HttpPost]
+        //public async Task<ActionResult<IEnumerable<TambahButiranPermohonanDto>>> SenaraiMansuhJawatan([FromBody] SenaraiMansuhRequestDto request)
+        //{
+        //    _logger.LogInformation("Calling TambahButiranPermohonan");
+        //    try
+        //    {
+        //        var result = await _butiranpermohonanext.SenaraiMansuhJawatan(request);
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        String err = "";
+        //        if (ex != null)
+        //        {
+        //            _logger.LogError(ex, "Error in TambahButiranPermohonan");
+        //            if (ex.InnerException != null)
+        //            {
+        //                err = ex.InnerException.Message.ToString();
+        //            }
+        //        }
+
+        //        return StatusCode(500, ex.Message + "-" + err);
+        //    }
+        //}
+
+        [HttpPost("mansuh-butiran-jawatan")]
+        public async Task<ActionResult> MansuhButiranButiranJawatan([FromBody] MansuhButiranJawatanRequestDto request)
         {
             _logger.LogInformation("Calling MansuhButiranPermohonanCadanganJawatan");
             try
             {
-                await _butiranpermohonanext.MansuhButiranPermohonanCadanganJawatan(UserId, IdButiranPermohonan, IdCadanganJawatan);
-                return CreatedAtAction(nameof(MansuhButiranPermohonanCadanganJawatan), new { UserId, IdCadanganJawatan }, null);
+                await _butiranpermohonanext.MansuhButiranButiranJawatan(request);
+                return CreatedAtAction(nameof(MansuhButiranButiranJawatan), new { request }, null);
             }
             catch (Exception ex)
             {
@@ -80,6 +132,31 @@ namespace HR.PDO.API.Controllers.PDO {
                 if (ex != null)
                 {
                     _logger.LogError(ex, "Error in MansuhButiranPermohonanCadanganJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, ex.Message + "-" + err);
+            }
+        }
+
+        [HttpPost("pindah-butiran")]
+        public async Task<ActionResult> PindahButiranPermohonan([FromBody] PindahButiranPermohonanRequestDto request)
+        {
+            _logger.LogInformation("Calling PindahButiranPermohonan");
+            try
+            {
+                await _butiranpermohonanext.PindahButiranPermohonan(request);
+                return CreatedAtAction(nameof(PindahButiranPermohonan), new { request }, null);
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in PindahButiranPermohonan");
                     if (ex.InnerException != null)
                     {
                         err = ex.InnerException.Message.ToString();

@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using HR.PDO.Application.Interfaces.PPA;
 using HR.Application.Services.PPA;
 using Microsoft.EntityFrameworkCore;
+using HR.PDO.Shared.Interfaces;
+
 
 namespace HR.PDO.Application;
 
@@ -37,14 +39,14 @@ public static class DependencyInjection
         services.AddScoped<IKumpulanPerkhidmatanExt, KumpulanPerkhidmatanExtService>();
         services.AddScoped<IKlasifikasiPerkhidmatanExt, KlasifikasiPerkhidmatanExtService>();
         services.AddScoped<IRujukanSkimPerkhidmatan, RujukanSkimPerkhidmatanService>();
-        services.AddScoped<IRujukanGredExt, RujukanGredExtService>();
+        services.AddScoped<IGredExt, GredExtService>();
         services.AddScoped<ISkimKetuaPerkhidmatanExt, SkimKetuaPerkhidmatanExtService>();
         services.AddScoped<IRujGelaranJawatanExt, RujGelaranJawatanExtService>();
         services.AddScoped<IRujPangkatBadanBeruniformExt, RujPangkatBadanBeruniformExtService>();
         services.AddScoped<IPermohonanJawatanExt, PermohonanJawatanExtService>();
         services.AddScoped<IStatusPermohonanJawatanExt, StatusPermohonanJawatanExtService>();
         services.AddScoped<IDokumenPermohonanExt, DokumenPermohonanExtService>();
-        services.AddScoped<IRujJenisDokumenExt, RujJenisDokumenExtService>();
+        services.AddScoped<IRujukanJenisDokumenExt, RujukanJenisDokumenExtService>();
         
 
 
@@ -85,9 +87,16 @@ public static class DependencyInjection
         services.AddScoped<IPenetapanImplikasiKewanganExt, PenetapanImplikasiKewanganExtService>();
         services.AddScoped<ICadanganJawatanExt, CadanganJawatanExtService>();
         services.AddScoped<IRujKategoriJawatanExt, RujKategoriJawatanExtService>();
+        services.AddScoped<IRujukanStatusPengesahan, RujukanStatusPengesahanService>();
+        services.AddScoped<IObjectMapper, ReflectionObjectMapper>();
+        services.AddScoped<ISandanganExt, SandanganExtService>();
+        services.AddScoped<IJawatanExt, JawatanExtService>();
+        services.AddScoped<IRujukanJenisSaraanExt, RujukanJenisSaraanExtService>();
         services.AddScoped<IProfilPemilikKompetensiExt, ProfilPemilikKompetensiExtService>();
+        services.AddScoped<IRujukanAgensiExt, RujukanAgensiExtService>();
+        services.AddScoped<IRujukanJenisAgensiExt, RujukanJenisAgensiExtService>();
+        services.AddScoped<IRujukanPasukanPerundingExt, RujukanPasukanPerundingExtService>();
         
-
 
 
         return services;

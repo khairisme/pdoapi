@@ -57,7 +57,7 @@ namespace HR.PDO.Application.Services
                             };
 
                 if (!string.IsNullOrEmpty(filter.Nama))
-                    query = query.Where(x => x.Nama.Contains(filter.Nama));
+                    query = query.Where(x => x.Nama.Contains(filter.Nama.Trim()));
 
                 if (!string.IsNullOrWhiteSpace(filter.KodRujJenisSaraan))
                     query = query.Where(q => q.KodRujJenisSaraan == filter.KodRujJenisSaraan);
@@ -68,8 +68,8 @@ namespace HR.PDO.Application.Services
                     Bil = index + 1,
                     Id = x.Id,
                     Kod = x.Kod,
-                    Nama = x.Nama,
-                    Keterangan = x.Keterangan,
+                    Nama = x.Nama.Trim(),
+                    Keterangan = x.Keterangan.Trim(),
                     KodRujJenisSaraan=x.KodRujJenisSaraan.Trim()
 
                 }).ToList();
@@ -99,7 +99,7 @@ namespace HR.PDO.Application.Services
                                 a.Kod,
                                 a.Nama,
                                 a.Keterangan,
-                                StatusPermohonan = b2.Nama,
+                                StatusPermohonan = b2.Nama.Trim(),
                                 StatusGred = a.StatusAktif == true ? "Aktif" : "Tidak Aktif",
                                 a.IdKumpulanPerkhidmatan,
                                 a.IdKlasifikasiPerkhidmatan,
@@ -117,8 +117,8 @@ namespace HR.PDO.Application.Services
                 if (!string.IsNullOrEmpty(filter.KodRujStatusPermohonan))
                     query = query.Where(x => x.KodRujStatusPermohonan == filter.KodRujStatusPermohonan);
 
-                if (!string.IsNullOrEmpty(filter.Nama))
-                    query = query.Where(x => x.Nama.Contains(filter.Nama));
+                if (!string.IsNullOrEmpty(filter.Nama.Trim()))
+                    query = query.Where(x => x.Nama.Contains(filter.Nama.Trim()));
                 if (!string.IsNullOrEmpty(filter.KodRujJenisSaraan))
                     query = query.Where(x => x.KodRujJenisSaraan == filter.KodRujJenisSaraan);
 
@@ -483,19 +483,19 @@ namespace HR.PDO.Application.Services
                 {
                     Id = dtoSource.Id,
                     KodRujJenisSaraan = dtoSource.KodRujJenisSaraan,
-                    Klasifikasi = result.d.Nama,
+                    Klasifikasi = result.d.Nama.Trim(),
                     IdKlasifikasiPerkhidmatan = dtoSource.IdKlasifikasiPerkhidmatan,
                     IdKumpulanPerkhidmatan = dtoSource.IdKumpulanPerkhidmatan,
-                    Kumpulan = result.c.Nama,
+                    Kumpulan = result.c.Nama.Trim(),
                     Kod = dtoSource.Kod,
-                    Nama = dtoSource.Nama,
+                    Nama = dtoSource.Nama.Trim(),
                     KodGred = dtoSource.KodGred,
                     NomborGred = dtoSource.NomborGred,
                     IndikatorGredLantikanTerus = dtoSource.IndikatorGredLantikanTerus,
                     IndikatorGredLantikan = dtoSource.IndikatorGredLantikan,
-                    Keterangan = dtoSource.Keterangan,
+                    Keterangan = dtoSource.Keterangan.Trim(),
                     StatusAktif = dtoSource.StatusAktif ?? false,
-                    StatusPermohonan = result.b2.Nama,
+                    StatusPermohonan = result.b2.Nama.Trim(),
 
                 };
 
@@ -563,16 +563,16 @@ namespace HR.PDO.Application.Services
                                         Klasifikasi = d.Nama,
                                         IdKlasifikasiPerkhidmatan = a.IdKlasifikasiPerkhidmatan,
                                         IdKumpulanPerkhidmatan = a.IdKumpulanPerkhidmatan,
-                                        Kumpulan = c.Nama,
+                                        Kumpulan = c.Nama.Trim(),
                                         Kod = a.Kod,
-                                        Nama = a.Nama,
+                                        Nama = a.Nama.Trim(),
                                         KodGred = a.KodGred,
                                         NomborGred = a.NomborGred,
                                         IndikatorGredLantikanTerus = a.IndikatorGredLantikanTerus,
                                         IndikatorGredLantikan = a.IndikatorGredLantikan,
                                         Keterangan = a.Keterangan,
                                         StatusAktif = a.StatusAktif ?? false,
-                                        StatusPermohonan = b2.Nama,
+                                        StatusPermohonan = b2.Nama.Trim(),
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                     }
                                 ).FirstOrDefaultAsync();
@@ -604,8 +604,8 @@ namespace HR.PDO.Application.Services
                                         //Id = a.Id,
                                         //Kod = a.Kod,
                                         ButiranKemaskini = a.ButiranKemaskini,
-                                        Klasifikasi= d.Nama,
-                                        Kumpulan = c.Nama,
+                                        Klasifikasi= d.Nama.Trim(),
+                                        Kumpulan = c.Nama.Trim(),
                                         //KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                         //StatusPermohonan = b2.Nama,
                                         //TarikhKemaskini = b.TarikhKemaskini
@@ -643,7 +643,7 @@ namespace HR.PDO.Application.Services
                 IdKlasifikasiPerkhidmatan = dto.IdKlasifikasiPerkhidmatan,
                 IdKumpulanPerkhidmatan = dto.IdKumpulanPerkhidmatan,
                 Kod = dto.Kod,
-                Nama = dto.Nama,
+                Nama = dto.Nama.Trim(),
                 TurutanGred = dto.TurutanGred,
                 KodGred = dto.KodGred,
                 NomborGred = dto.NomborGred,
@@ -726,19 +726,19 @@ namespace HR.PDO.Application.Services
                                     select new PaparMaklumatGredDto
                                     {
                                         KodRujJenisSaraan = a.KodRujJenisSaraan,
-                                        Klasifikasi = d.Nama,
+                                        Klasifikasi = d.Nama.Trim(),
                                         IdKlasifikasiPerkhidmatan = a.IdKlasifikasiPerkhidmatan,
                                         IdKumpulanPerkhidmatan = a.IdKumpulanPerkhidmatan,
-                                        Kumpulan = c.Nama,
+                                        Kumpulan = c.Nama.Trim(),
                                         Kod = a.Kod,
-                                        Nama = a.Nama,
+                                        Nama = a.Nama.Trim(),
                                         KodGred = a.KodGred,
                                         NomborGred = a.NomborGred,
                                         IndikatorGredLantikanTerus = a.IndikatorGredLantikanTerus,
                                         IndikatorGredLantikan = a.IndikatorGredLantikan,
-                                        Keterangan = a.Keterangan,
+                                        Keterangan = a.Keterangan.Trim(),
                                         StatusAktif = a.StatusAktif ?? false,
-                                        StatusPermohonan = b2.Nama,
+                                        StatusPermohonan = b2.Nama.Trim(),
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,
                                     }
                                 ).FirstOrDefaultAsync();

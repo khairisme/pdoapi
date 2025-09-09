@@ -246,6 +246,11 @@ public class EfPDORepository<T> : IRepository<T> where T : PDOBaseEntity
 
         return await _dbSet.Where(lambda).ToListAsync();
     }
+    public IQueryable<T> Query()
+    {
+        // Returns the DbSet as IQueryable so you can use LINQ-to-Entities
+        return _dbSet.AsQueryable();
+    }
 
 }
 

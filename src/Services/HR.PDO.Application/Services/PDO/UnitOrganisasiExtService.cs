@@ -508,7 +508,7 @@ namespace HR.Application.Services.PDO
 
         }
 
-        public async Task MansuhUnitOrganisasi(Guid UserId, int Id)
+        public async Task MansuhUnitOrganisasi(MansuhUnitOrganisasiRequestDto request)
         {
 
             try
@@ -516,36 +516,31 @@ namespace HR.Application.Services.PDO
             {
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = await (from pdouo in _context.PDOUnitOrganisasi
-                                    where pdouo.Id == Id
+                                    where pdouo.Id == request.Id
                                     select pdouo
                               ).FirstOrDefaultAsync();
+
                 if (entity == null)
                 {
-                    throw new Exception("PDOAktivitiOrganisasi not found.");
+                    throw new Exception("AktivitiOrganisasi not found.");
                 }
                 else
                 {
-                    var newPDOUnitOrganisasi = new PDOUnitOrganisasi
+                    if (entity.StatusAktif != true)
                     {
-                        // ⚠️ Do not copy Id — let EF generate it if identity
-                        KodRujKategoriUnitOrganisasi = entity.KodRujKategoriUnitOrganisasi,
-                        IdIndukUnitOrganisasi = entity.IdIndukUnitOrganisasi, // <-- override parent
-                        Kod = entity.Kod,
-                        Nama = entity.Nama,
-                        Keterangan = entity.Keterangan,
-                        Tahap = entity.Tahap,
-                        KodCartaOrganisasi = entity.KodCartaOrganisasi,
-                        ButiranKemaskini = entity.ButiranKemaskini,
-                        StatusAktif = entity.StatusAktif ?? false,
-
-                        // metadata
-                        IdHapus = UserId,
+                        throw new Exception("AktivitiOrganisasi is not valid for Mansuh operation because the StatusAktif is True");
+                    }
+                    var newMansuhButiranKemaskini = new MansuhButiranKemaskiniDto
+                    {
+                        StatusAktif =false,
+                        IdHapus = request.UserId,
                         TarikhHapus = DateTime.Now,
+                        StatusTindakan = "Mansuh"
                     };
-                    string json = JsonSerializer.Serialize(newPDOUnitOrganisasi);
+                    string json = JsonSerializer.Serialize(newMansuhButiranKemaskini);
 
                     entity.ButiranKemaskini = json;
-                    entity.IdPinda = UserId;
+                    entity.IdPinda = request.UserId;
                     entity.TarikhPinda = DateTime.Now;
                 }
 
@@ -573,12 +568,12 @@ namespace HR.Application.Services.PDO
             {
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = await (from pdouo in _context.PDOUnitOrganisasi
-                             where pdouo.Id == request.Id
+                             where pdouo.Id == request.Id && pdouo.StatusAktif == true
                                     select pdouo
                               ).FirstOrDefaultAsync();
                 if (entity == null)
                 {
-                    throw new Exception("PDOUnitOrganisasi not found.");
+                    throw new Exception("Tiada Unit Organisasi yang boleh dihapuskan.");
                 }
                 _context.PDOUnitOrganisasi.Remove(entity);
 

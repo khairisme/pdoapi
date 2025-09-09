@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/v1/ruj-status-rekod")]
+    [Route("api/pdo/v1/rujukan/status-rekod")]
     public class RujStatusRekodExtController : ControllerBase
     {
         private readonly ILogger<RujStatusRekodExtController> _logger;

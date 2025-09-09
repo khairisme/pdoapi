@@ -24,7 +24,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Number of positions counted.
         /// </summary>
-        public int BilanganJawatan { get; set; }
+        public int? BilanganJawatan { get; set; }
 
         /// <summary>
         /// Grade of the position. Nullable.

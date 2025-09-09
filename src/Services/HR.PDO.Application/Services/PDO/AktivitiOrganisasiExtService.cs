@@ -43,12 +43,12 @@ namespace HR.Application.Services.PDO
                     join pdorkao in _context.PDORujKategoriAktivitiOrganisasi  on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
                     where (request.parentId != 0 ? pdoao.IdIndukAktivitiOrganisasi == request.parentId : pdoao.KodCartaAktiviti == request.KodCartaAktiviti)
                     select new StrukturAktivitiOrganisasiDto{
-                         AktivitiOrganisasi = pdoao.Nama,
+                         AktivitiOrganisasi = pdoao.Nama.Trim(),
                          Id = pdoao.Id,
                          IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
                          Kod = pdoao.Kod,
                          KodCartaAktiviti = pdoao.KodCartaAktiviti,
-                         KodProgram = pdorkao.Nama.ToUpper() + ' ' +pdoao.KodProgram,
+                         KodProgram = pdorkao.Nama.Trim().ToUpper() + ' ' +pdoao.KodProgram.Trim(),
                          Tahap = pdoao.Tahap
 
                     }
@@ -107,7 +107,7 @@ namespace HR.Application.Services.PDO
                                             KodProgram = pdoao.KodProgram,
                                             Kod = pdoao.Kod,
                                             Tahap = pdoao.Tahap,
-                                            AktivitiOrganisasi = pdoao.Nama
+                                            AktivitiOrganisasi = pdoao.Nama.Trim()
 
                                         }
                             ).ToListAsync();
@@ -149,7 +149,7 @@ namespace HR.Application.Services.PDO
                                     KodProgram = pdoao.Kod,
                                     Kod = pdoao.Kod,
                                     Tahap = pdoao.Tahap,
-                                    AktivitiOrganisasi = pdoao.Nama
+                                    AktivitiOrganisasi = pdoao.Nama.Trim()
 
                                 }
             ).ToListAsync();
@@ -167,9 +167,9 @@ namespace HR.Application.Services.PDO
                                           KodProgram = pdoao.KodProgram,
                                           Kod = pdoao.Kod,
                                           Tahap = pdoao.Tahap,
-                                          AktivitiOrganisasi = pdoao.Nama
+                                          AktivitiOrganisasi = pdoao.Nama.Trim()
 
-                                      }
+                                       }
                                 ).ToListAsync();
                 foreach(var child in item.Children)
                 {
@@ -185,9 +185,9 @@ namespace HR.Application.Services.PDO
                                                KodProgram = pdoao.KodProgram,
                                                Kod = pdoao.Kod,
                                                Tahap = pdoao.Tahap,
-                                               AktivitiOrganisasi = pdoao.Nama
+                                               AktivitiOrganisasi = pdoao.Nama.Trim()
 
-                                           }
+                                          }
                                     ).ToListAsync();
                     if (children.Count() > 0) child.HasChildren = true;
                 }
@@ -222,10 +222,10 @@ namespace HR.Application.Services.PDO
                     IdIndukAktivitiOrganisasi = request.IdIndukAktivitiOrganisasi,
                     KodProgram = request.KodProgram,
                     Kod = request.Kod,
-                    Nama = request.Nama,
+                    Nama = request.Nama.Trim(),
                     Tahap = request.Tahap,
                     KodRujKategoriAktivitiOrganisasi = request.KodRujKategoriAktivitiOrganisasi,
-                    Keterangan = request.Keterangan,
+                    Keterangan = request.Keterangan.Trim(),
                     IdCipta = request.UserId,
                     TarikhCipta = DateTime.Now,
                     StatusAktif = true // usually "baru" means aktif — confirm if you want default = false
@@ -246,7 +246,7 @@ namespace HR.Application.Services.PDO
                     "Error in {Method} for UserId: {UserId}, Nama: {Nama}, Kod: {Kod}, ParentId: {ParentId}",
                     nameof(WujudAktivitiOrganisasiBaru),
                     request.UserId,
-                    request.Nama,
+                    request.Nama.Trim(),
                     request.Kod,
                     request.IdIndukAktivitiOrganisasi
                 );
@@ -290,7 +290,7 @@ namespace HR.Application.Services.PDO
                     KodRujKategoriAktivitiOrganisasi = entity.KodRujKategoriAktivitiOrganisasi,
                     IdIndukAktivitiOrganisasi = entity.IdIndukAktivitiOrganisasi,
                     Kod = entity.Kod,
-                    Nama = entity.Nama, // old name for history
+                    Nama = entity.Nama.Trim(), // old name for history
                     Keterangan = entity.Keterangan,
                     KodProgram = entity.KodProgram,
                     Tahap = entity.Tahap,
@@ -323,7 +323,7 @@ namespace HR.Application.Services.PDO
                     nameof(PenjenamaanAktivitiOrganisasi),
                     request.UserId,
                     request.Id,
-                    request.Nama
+                    request.Nama.Trim()
                 );
 
                 throw;
@@ -363,8 +363,8 @@ namespace HR.Application.Services.PDO
                     KodRujKategoriAktivitiOrganisasi = entity.KodRujKategoriAktivitiOrganisasi,
                     IdIndukAktivitiOrganisasi = request.NewParentId, // <-- override parent
                     Kod = entity.Kod,
-                    Nama = entity.Nama,
-                    Keterangan = entity.Keterangan,
+                    Nama = entity.Nama.Trim(),
+                    Keterangan = entity.Keterangan.Trim(),
                     KodProgram = entity.KodProgram,
                     Tahap = entity.Tahap,
                     KodCartaAktiviti = entity.KodCartaAktiviti,
@@ -426,7 +426,7 @@ namespace HR.Application.Services.PDO
                     where pdoao.Id == Id
                     select new AktivitiOrganisasiDto
                     {
-                        AktiviOrganisasi = pdoao.Nama,
+                        AktiviOrganisasi = pdoao.Nama.Trim(),
                         AktivitiOrganisasiInduk = paoparent != null ? paoparent.Nama : null,
                         ButiranKemaskini = pdoao.ButiranKemaskini,
                         Id = pdoao.Id,
@@ -510,7 +510,7 @@ namespace HR.Application.Services.PDO
                     .Select(pdoao => new DropDownDto
                     {
                         Kod = pdoao.Kod,
-                        Nama = pdoao.Nama
+                        Nama = pdoao.Nama.Trim()
                     })
                     .ToListAsync();
 
@@ -545,7 +545,7 @@ namespace HR.Application.Services.PDO
                 {
                     IdCipta = request.UserId,
                     Kod = request.KodAktiviti,
-                    Nama = request.NamaAktiviti,
+                    Nama = request.NamaAktiviti.Trim(),
                     KodRujKategoriAktivitiOrganisasi = request.KodRujKategoriAktivitiOrganisasi,
                     IdAsal = request.IdAsal
                 };
@@ -614,7 +614,7 @@ namespace HR.Application.Services.PDO
 
                 _logger.LogInformation(
                     "AktivitiOrganisasi deleted successfully. UserId: {UserId}, Id: {Id}, Nama: {Nama}",
-                    request.UserId, entity.Id, entity.Nama
+                    request.UserId, entity.Id, entity.Nama.Trim()
                 );
             }
             catch (Exception ex)

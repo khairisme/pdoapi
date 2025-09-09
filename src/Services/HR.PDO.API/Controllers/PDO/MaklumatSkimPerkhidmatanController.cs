@@ -59,7 +59,7 @@ namespace HR.PDO.API.Controllers.PDO
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            int id = await _maklumatSkimPerkhidmatan.CreateAsync(maklumatSkimPerkhidmatanCreateRequestDto);
+            int? id = await _maklumatSkimPerkhidmatan.CreateAsync(maklumatSkimPerkhidmatanCreateRequestDto);
 
             return Ok(new
             {

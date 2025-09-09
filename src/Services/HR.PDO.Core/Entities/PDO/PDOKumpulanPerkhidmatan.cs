@@ -10,6 +10,7 @@ namespace HR.PDO.Core.Entities.PDO
     [Table("PDO_KumpulanPerkhidmatan")] // This is the key
     public class PDOKumpulanPerkhidmatan : PDOBaseEntity
     {
+        public int? Id { get; set; }
         public string  Kod { get; set; }
         public string  Nama { get; set; }
         public string? Keterangan { get; set; }

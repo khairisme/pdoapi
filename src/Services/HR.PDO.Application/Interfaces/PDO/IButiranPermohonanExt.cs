@@ -9,10 +9,14 @@ namespace HR.PDO.Application.Interfaces.PDO
     {
         public Task TambahButiranPermohonan(Guid UserId, TambahButiranPermohonanDto request);
         public Task KemaskiniButiranPermohonan(Guid UserId, KemaskiniButiranPermohonanRequestDto request);
-        public Task MansuhButiranPermohonanCadanganJawatan(Guid UserId, int IdButiranPermohonan,int IdCadanganJawatan);
+        public Task MansuhButiranButiranJawatan(MansuhButiranJawatanRequestDto request);
         public Task KemaskiniButiranPerubahanButiranPermohonan(Guid UserId, KemaskiniButiranPermohonanRequestDto request);
         public Task KiraImplikasiKewanganButiranPermohonan(Guid UserId, KiraImplikasiKewanganRequestDto request);
         public Task<TambahButiranPermohonanDto> BacaButiranPermohonan(int IdPermohonanJawatan);
         public Task<List<TambahButiranPermohonanDto>> SenaraiButiranPermohonan();
+        public Task<ButiranPermohonanLoadOutputDto> MuatButiranPermohonan();
+        public Task PindahButiranPermohonan(PindahButiranPermohonanRequestDto request);
+        
+        //public Task<List<TambahButiranPermohonanDto>> SenaraiMansuhJawatan(SenaraiMansuhRequestDto request);
     }
 }

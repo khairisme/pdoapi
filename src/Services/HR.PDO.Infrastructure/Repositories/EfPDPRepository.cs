@@ -246,5 +246,14 @@ public class EfPDPRepository<T> : IRepository<T> where T : PDPBaseEntity
 
         return await _dbSet.Where(lambda).ToListAsync();
     }
+    /// <summary>
+    /// Provides IQueryable access to the entity set for advanced LINQ queries.
+    /// </summary>
+    /// <returns>IQueryable of T</returns>
+    public IQueryable<T> Query()
+    {
+        return _dbSet.AsQueryable();
+    }
+
 }
 

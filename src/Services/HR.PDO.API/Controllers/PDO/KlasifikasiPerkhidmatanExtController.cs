@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
-    [Route("api/pdo/v1/klasifikasi-perkhidmatan")]
+    [Route("api/pdo/v1/rujukan/klasifikasi-perkhidmatan")]
     public class KlasifikasiPerkhidmatanExtController : ControllerBase
     {
         private readonly ILogger<KlasifikasiPerkhidmatanExtController> _logger;
@@ -17,7 +17,7 @@ namespace HR.PDO.API.Controllers.PDO {
             _logger = logger;
         }
 
-        [HttpGet("ruj")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<DropDownDto>>>RujukanKlasifikasiPerkhidmatan()
         {
             _logger.LogInformation("Calling RujukanKlasifikasiPerkhidmatan");

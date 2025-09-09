@@ -26,7 +26,6 @@ namespace HR.Application.Services.PDO
             _context = dbContext;
             _logger = logger;
         }
-
         public async Task<List<DropDownDto>> RujukanKlasifikasiPerKhidmatan()
         {
             try

@@ -13,7 +13,7 @@ namespace HR.PDO.Core.Entities.PDO
         [NotMapped]
         public new bool StatusAktif { get; set; }
 
-        public int IdPermohonanPengisian { get; set; }
+        public int? IdPermohonanPengisian { get; set; }
         public int IdSkimPerkhidmatan { get; set; }
         public int BilanganPengisian { get; set; }
         public int BilanganHadSIling { get; set; }

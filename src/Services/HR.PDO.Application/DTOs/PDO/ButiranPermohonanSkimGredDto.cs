@@ -50,7 +50,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Required. ID of the grade associated with this job application.
         /// </summary>
-        public int IdGred { get; set; }
+        public int? IdGred { get; set; }
 
         /// <summary>
         /// Required. ID of the service head (Ketua Perkhidmatan) approving or associated with this record.
