@@ -1,3 +1,4 @@
+using HR.PDO.Core.Entities.PDO;
 using System;
 using System.ComponentModel;
 namespace HR.PDO.Application.DTOs
@@ -38,8 +39,16 @@ namespace HR.PDO.Application.DTOs
     }
     public class StrukturUnitOrganisasiRequestDto
     {
+        [DefaultValue(1)]
+        public int IdPermohonanJawatan{ get; set; }
+
+        [DefaultValue(1)]
+        public int IdAktivitiOrganisasi { get; set; } 
+
+        [DefaultValue("0101")]
         public string? KodCartaOrganisasi { get; set; }
         public int ParentId { get; set; } = 0;
+    
         [DefaultValue(1)]
         public int Page { get; set; } = 1;
         [DefaultValue(50)]

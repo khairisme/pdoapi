@@ -27,24 +27,24 @@ namespace HR.PDO.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] TokenRequest request)
         {
-            //string keyCloakUrl = _keycloakSettings.BaseUrl + "realms/" + _keycloakSettings.Realm + "/protocol/openid-connect/token";
-            //var tokenResponse = await _keycloakService.GetTokenAsync(request.UserName, request.Password,
-            //    keyCloakUrl, _keycloakSettings.ClientId, _keycloakSettings.ClientSecret);
+            string keyCloakUrl = _keycloakSettings.BaseUrl + "realms/" + _keycloakSettings.Realm + "/protocol/openid-connect/token";
+            var tokenResponse = await _keycloakService.GetTokenAsync(request.UserName, request.Password,
+                keyCloakUrl, _keycloakSettings.ClientId, _keycloakSettings.ClientSecret);
 
-            //var extractedToken = _tokenGeneratorService.ExtractToken(tokenResponse);
-            //var token = _tokenGeneratorService.GenerateNewToken(extractedToken);
+            var extractedToken = _tokenGeneratorService.ExtractToken(tokenResponse);
+            var token = _tokenGeneratorService.GenerateNewToken(extractedToken);
 
-            //return Ok(token);
+            return Ok(token);
 
-            var blankTokenResponse = new HR.PDO.API.Models.KeycloakTokenResponse
-            {
-                AccessToken = "",
-                RefreshToken = "",
-                ExpiresIn = 0,
-                TokenType = "",
-                Scope = ""
-            };
-            return Ok(blankTokenResponse);
+        //    var blankTokenResponse = new HR.PDO.API.Models.KeycloakTokenResponse
+        //    {
+        //        AccessToken = "",
+        //        RefreshToken = "",
+        //        ExpiresIn = 0,
+        //        TokenType = "",
+        //        Scope = ""
+        //    };
+        //    return Ok(blankTokenResponse);
         }
     }
 }

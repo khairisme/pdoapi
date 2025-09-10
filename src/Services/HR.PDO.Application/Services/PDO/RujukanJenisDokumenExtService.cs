@@ -114,8 +114,8 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdorjd in _context.PDORujJenisDokumen
                                     select new DropDownDto
                                     {
-                                        Kod = pdorjd.Kod,
-                                        Nama = pdorjd.Nama
+                                        Kod = pdorjd.Kod.Trim(),
+                                        Nama = pdorjd.Nama.Trim()
                                     }
                 ).ToListAsync();
 

@@ -341,11 +341,11 @@ namespace HR.PDO.Application.Services.PDO
                             select new
                             {
                                 a.Id,
-                                a.Kod,
-                                a.Nama,
+                                Kod = a.Kod.Trim(),
+                                Nama = a.Nama.Trim(),
                                 a.Keterangan,
-                                b.KodRujStatusPermohonan,
-                                StatusPermohonan = b2.Nama,
+                                KodRujStatusPermohonan=b.KodRujStatusPermohonan.Trim(),
+                                StatusPermohonan = b2.Nama.Trim(),
                                 b.TarikhKemaskini,
                                 a.Ulasan,
                                 a.IndikatorTanpaSkim,
@@ -415,12 +415,12 @@ namespace HR.PDO.Application.Services.PDO
                                     select new KumpulanPerkhidmatanStatusDto
                                     {
                                         Id = a.Id,
-                                        Kod = a.Kod,
-                                        Nama = a.Nama,
+                                        Kod = a.Kod.Trim(),
+                                        Nama = a.Nama.Trim(),
                                         Keterangan = a.Keterangan,
                                         StatusAktif = a.StatusAktif ?? false,
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,
-                                        StatusPermohonan = b2.Nama,
+                                        StatusPermohonan = b2.Nama.Trim(),
                                         TarikhKemaskini = b.TarikhKemaskini,
                                         KodJana = a.KodJana,
                                         IndikatorSkim = a.IndikatorSkim,
@@ -727,9 +727,9 @@ namespace HR.PDO.Application.Services.PDO
             return new PDOKumpulanPerkhidmatan
             {
                 Id = dto.Id,
-                Kod = dto.Kod,
-                Nama = dto.Nama,
-                Keterangan = dto.Keterangan,
+                Kod = dto.Kod.Trim(),
+                Nama = dto.Nama.Trim(),
+                Keterangan = dto.Keterangan.Trim(),
                 IndikatorSkim = dto.IndikatorSkim,
                 IndikatorTanpaSkim = dto.IndikatorTanpaSkim,
                 ButiranKemaskini = dto.ButiranKemaskini,
@@ -741,9 +741,9 @@ namespace HR.PDO.Application.Services.PDO
             return new PDOKumpulanPerkhidmatan
             {
                 Id = dto.Id,
-                Kod = dto.Kod,
-                Nama = dto.Nama,
-                Keterangan = dto.Keterangan,
+                Kod = dto.Kod.Trim(),
+                Nama = dto.Nama.Trim(),
+                Keterangan = dto.Keterangan.Trim(),
                 IndikatorSkim = dto.IndikatorSkim,
                 IndikatorTanpaSkim = dto.IndikatorTanpaSkim,
                 //ButiranKemaskini =JsonConvert.SerializeObject( dto.ButiranKemaskini),
@@ -765,8 +765,8 @@ namespace HR.PDO.Application.Services.PDO
                                     select new KumpulanPerkhidmatanStatusDto
                                     {
                                         Id = a.Id,
-                                        Kod = a.Kod,
-                                        Nama = a.Nama,
+                                        Kod = a.Kod.Trim(),
+                                        Nama = a.Nama.Trim(),
                                         Keterangan = a.Keterangan,
                                         StatusAktif = a.StatusAktif ?? false,
                                         KodRujStatusPermohonan = b.KodRujStatusPermohonan,

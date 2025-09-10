@@ -37,8 +37,8 @@ namespace HR.Application.Services.PDO
                 .Where(p => p.StatusAktif== true)
                 .Select(p => new RujJenisSaraanDto
                 {
-                    Kod = p.Kod,                                                                                                                                                        
-                    Nama = p.Nama,
+                    Kod = p.Kod.Trim(),                                                                                                                                                        
+                    Nama = p.Nama.Trim(),
                     Keterangan = p.Keterangan
                 })
                 .ToListAsync();

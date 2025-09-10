@@ -121,7 +121,7 @@ namespace HR.PDO.Application.DTOs.PDO
 
     public class AgensiWithSkimDto
     {
-        public int AgensiId { get; set; }
+        public int? AgensiId { get; set; }
         public string Kod { get; set; }
         public string Agensi { get; set; }
         public List<SkimPerkhidmatanDataDto> SkimList { get; set; } = new List<SkimPerkhidmatanDataDto>();
@@ -146,7 +146,7 @@ namespace HR.PDO.Application.DTOs.PDO
     }
     public class UnitOrganisasiDataDto
     {
-        public int IdUnitOrganisasi { get; set; }
+        public int? IdUnitOrganisasi { get; set; }
         public string Kod { get; set; }
         public string Agensi { get; set; }
         public List<JawatanDto> JawatanList { get; set; }

@@ -45,8 +45,8 @@ namespace HR.PDO.Application.Services.PDO
                 var result = await (from pparpbb in _context.PPARujPangkatBadanBeruniform
                                     select new DropDownDto
                                     {
-                                        Kod = pparpbb.Kod,
-                                        Nama = pparpbb.Nama
+                                        Kod = pparpbb.Kod.Trim(),
+                                        Nama = pparpbb.Nama.Trim()
                                     }
                 ).ToListAsync();
 

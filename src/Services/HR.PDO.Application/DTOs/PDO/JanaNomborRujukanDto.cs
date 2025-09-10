@@ -14,7 +14,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Required. Identifier of the organizational unit.
         /// </summary>
-        public int IdUnitOrganisasi { get; set; }
+        public int? IdUnitOrganisasi { get; set; }
 
         /// <summary>
         /// Required. Generated reference number.

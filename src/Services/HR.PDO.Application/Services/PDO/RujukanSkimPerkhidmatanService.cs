@@ -63,8 +63,8 @@ namespace HR.Application.Services.PDO
                                     select new DropDownDto
                                     {
                                         Id = pdosp.Id,
-                                        Kod = pdosp.Kod,
-                                        Nama = pdosp.Nama
+                                        Kod = pdosp.Kod.Trim(),
+                                        Nama = pdosp.Nama.Trim()
                                     }
                                    ).ToListAsync();
 
@@ -98,8 +98,8 @@ namespace HR.Application.Services.PDO
                                     select new DropDownDto
                                     {
                                         Id = pdosp.Id,
-                                        Kod = pdosp.Kod,
-                                        Nama = pdosp.Nama
+                                        Kod = pdosp.Kod.Trim(),
+                                        Nama = pdosp.Nama.Trim()
                                     }
                                    ).ToListAsync();
 
@@ -139,8 +139,8 @@ namespace HR.Application.Services.PDO
                                     select new DropDownDto
                                     {
                                         Id = pdosp.Id,
-                                        Kod = pdosp.Kod,
-                                        Nama = pdosp.Nama
+                                        Kod = pdosp.Kod.Trim(),
+                                        Nama = pdosp.Nama.Trim()
                                     }).ToListAsync();
 
                 return result;
@@ -182,8 +182,8 @@ namespace HR.Application.Services.PDO
                                     select new DropDownDto
                                     {
                                         Id = pdosp.Id,
-                                        Kod = pdosp.Kod,
-                                        Nama = pdosp.Nama
+                                        Kod = pdosp.Kod.Trim(),
+                                        Nama = pdosp.Nama.Trim()
                                     }).ToListAsync();
 
                 return result;

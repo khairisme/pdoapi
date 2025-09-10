@@ -40,7 +40,7 @@ namespace HR.Application.Services.PDO
                     select new UnitOrganisasiFormDisplayDto{
                          JenisAgensi = pdorja.Nama.Trim(),
                          Keterangan = pdouo.Keterangan,
-                         KodUnitOrganisasi = pdouo.Kod,
+                         KodUnitOrganisasi = pdouo.Kod.Trim(),
                          NamUnitOrganisasi = pdouo.Nama.Trim(),
                          Tahap = pdouo.Tahap,
                          UnitOrganisasiInduk = pdouo.Nama.Trim()
@@ -115,7 +115,7 @@ namespace HR.Application.Services.PDO
                          IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
                          IdPinda = pdoao.IdPinda,
                          Keterangan = pdoao.Keterangan,
-                         Kod = pdoao.Kod,
+                         Kod = pdoao.Kod.Trim(),
                          KodCartaAktiviti = pdoao.KodCartaAktiviti,
                          KodProgram = pdoao.KodProgram,
                          KodRujKategoriAktivitiOrganisasi = pdoao.KodRujKategoriAktivitiOrganisasi,

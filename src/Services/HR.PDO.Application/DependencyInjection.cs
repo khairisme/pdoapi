@@ -96,8 +96,9 @@ public static class DependencyInjection
         services.AddScoped<IRujukanAgensiExt, RujukanAgensiExtService>();
         services.AddScoped<IRujukanJenisAgensiExt, RujukanJenisAgensiExtService>();
         services.AddScoped<IRujukanPasukanPerundingExt, RujukanPasukanPerundingExtService>();
-        
+        services.AddScoped<IRujJenisPermohonanExt, RujJenisPermohonanExtService>();
 
+        
 
         return services;
     }

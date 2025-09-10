@@ -1,4 +1,6 @@
+using HR.PDO.Core.Entities.PDO;
 using System;
+using System.Threading.Tasks;
 namespace HR.PDO.Application.DTOs
 {
     /// <summary>
@@ -8,48 +10,28 @@ namespace HR.PDO.Application.DTOs
     /// <remarks>
     /// Author      : Khairi bin Abu Bakar
     /// Created On  : 2025-08-31
-    /// Purpose     : Used to transfer job application data from the system to clients.
+    /// Purpose     : Used to transfer job application data from the system to clients,
+    ///               including metadata such as references, titles, descriptions,
+    ///               dates, and related organizational information.
     /// </remarks>
     public class BacaPermohonanJawatanDto
     {
-        /// <summary>
-        /// Required. Internal record ID of the job application.
-        /// </summary>
         public int Id { get; set; }
+        public int IdUnitOrganisasi { get; set; }
+        public int IdAgensi { get; set; }
+        public string KodRujJenisPermohonan { get; set; }
+        public string KodRujJenisPermohonanJPA { get; set; }
+        public string NomborRujukan { get; set; }
+        public string Tajuk { get; set; }
+        public string Keterangan { get; set; }
+        public string KodRujPasukanPerunding { get; set; }
+        public string NoWaranPerjawatan { get; set; }
+        public DateTime? TarikhPermohonan { get; set; }
+        public DateTime? TarikhCadanganWaran { get; set; }
+        public DateTime? TarikhWaranDiluluskan { get; set; }
+        public Guid? IdCipta { get; set; }
+        public DateTime? TarikhCipta { get; set; }
 
-        /// <summary>
-        /// Optional. Name of the organizational unit related to the application.
-        /// </summary>
-        public string? UnitOrganisasi { get; set; }
-
-        /// <summary>
-        /// Optional. Name of the agency related to the application.
-        /// </summary>
-        public string? Agensi { get; set; }
-
-        /// <summary>
-        /// Optional. Title of the job application.
-        /// </summary>
-        public string? TajukPermohonan { get; set; }
-
-        /// <summary>
-        /// Optional. Description or additional notes related to the application.
-        /// </summary>
-        public string? Keterangan { get; set; }
-
-        /// <summary>
-        /// Optional. Reference number of the application.
-        /// </summary>
-        public string? NomborRujukan { get; set; }
-
-        /// <summary>
-        /// Optional. Ministry code associated with the application.
-        /// </summary>
-        public string? KodKementerian { get; set; }
-
-        /// <summary>
-        /// Optional. Department code associated with the application.
-        /// </summary>
-        public string? KodJabatan { get; set; }
+        public PDOStatusPermohonanJawatan StatusPermohonanJawatan { get; set;}
     }
 }
