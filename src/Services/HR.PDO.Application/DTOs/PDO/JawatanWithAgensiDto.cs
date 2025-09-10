@@ -19,7 +19,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Required. Unique identifier of the job position.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Required. Code of the job position.
@@ -79,7 +79,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the job position.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code representing the job position.
@@ -164,7 +164,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the job position.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the job position.
@@ -245,7 +245,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the job position record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the job position.
@@ -287,7 +287,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the head of service.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Name of the head of service.
@@ -308,7 +308,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the head of service.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code associated with the head of service.

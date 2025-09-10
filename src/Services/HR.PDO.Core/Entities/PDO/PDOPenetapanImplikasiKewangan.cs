@@ -11,8 +11,8 @@ namespace HR.PDO.Core.Entities.PDO
     public class PDOPenetapanImplikasiKewangan : PDOBaseEntity
     {
         public int Id { get; set; }
-        public int IdGred { get; set; }
-        public int IdSkimPerkhidmatan { get; set; }
+        public int? IdGred { get; set; }
+        public int? IdSkimPerkhidmatan { get; set; }
         public bool? IndikatorTBK1_2 { get; set; }
         public bool? IndikatorTBK2 { get; set; }
         public decimal? GajiPertengahan { get; set; }

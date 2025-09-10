@@ -1,0 +1,6 @@
+@HR.PDO.InterAgencyAPI_HostAddress = http://localhost:5075
+
+GET {{HR.PDO.InterAgencyAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

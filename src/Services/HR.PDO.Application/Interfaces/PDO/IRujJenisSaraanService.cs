@@ -12,6 +12,6 @@ namespace HR.PDO.Application.Interfaces.PDO
         /// <summary>
         /// Get all RujStatusPermohonan
         /// </summary>
-        Task<IEnumerable<RujJenisSaraanDto>> GetAllAsync();
+        public Task<IEnumerable<RujJenisSaraanDto>> GetAllAsync();
     }
 }

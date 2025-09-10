@@ -10,8 +10,8 @@ namespace HR.PDO.Core.Entities.PDO
     [Table("PDO_ButiranPermohonan")]
     public class PDOButiranPermohonan : PDOBaseEntity
     {
-        public int IdPermohonanJawatan { get; set; }
-        public int IdAktivitiOrganisasi { get; set; }
+        public int? IdPermohonanJawatan { get; set; }
+        public int? IdAktivitiOrganisasi { get; set; }
         public string? KodRujStatusJawatan { get; set; }
         public DateTime? TarikhMula { get; set; }
         public DateTime? TarikhTamat { get; set; }
@@ -25,13 +25,13 @@ namespace HR.PDO.Core.Entities.PDO
         public string? NoButiran { get; set; }
         public string? AnggaranTajukJawatan { get; set; }
         public string? ButirPerubahan { get; set; }
-        public int BilanganJawatan { get; set; }
+        public int? BilanganJawatan { get; set; }
         public short? TahunButiran { get; set; }
         public bool? IndikatorTBK { get; set; }
         public bool? IndikatorHBS { get; set; }
         public decimal? JumlahKosSebulan { get; set; }
         public decimal? JumlahKosSetahun { get; set; }
-        public int IndikatorPemohon { get; set; }
+        public int? IndikatorPemohon { get; set; }
         public string? KodRujUrusanPerkhidmatan { get; set; }
         public int? IdButiranPermohonanLama { get; set; }
         public Guid? IdPemilikKompetensi { get; set; }
@@ -40,5 +40,7 @@ namespace HR.PDO.Core.Entities.PDO
         public int? IdSkimPerkhidmatanPemilikKompetensi { get; set; }
         public int? IdGredPemilikKompetensi { get; set; }
         public string? KodRujTujuanTambahSentara { get; set; }
+        public int? IndikatorRekod { get; set; }
+        public string? ButiranKemaskini { get; set; }
     }
 }

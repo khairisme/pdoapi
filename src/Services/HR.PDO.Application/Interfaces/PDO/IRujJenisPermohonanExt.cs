@@ -1,9 +1,11 @@
+using HR.PDO.Application.DTOs;
+using Shared.Contracts.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Shared.Contracts.DTOs;
 namespace HR.PDO.Application.Interfaces.PDO
 {
     public interface IRujJenisPermohonanExt
     {
+        public Task<List<DropDownDto>> RujukanJenisPermohonan();
     }
 }

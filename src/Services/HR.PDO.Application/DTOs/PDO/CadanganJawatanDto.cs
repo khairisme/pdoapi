@@ -14,12 +14,12 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Required. ID of the associated organizational activity.
         /// </summary>
-        public int IdAktivitiOrganisasi { get; set; }
+        public int? IdAktivitiOrganisasi { get; set; }
 
         /// <summary>
         /// Required. ID of the detailed job application record.
         /// </summary>
-        public int IdButiranPermohonan { get; set; }
+        public int? IdButiranPermohonan { get; set; }
 
         /// <summary>
         /// Required. ID of the organizational unit where the position is suggested.

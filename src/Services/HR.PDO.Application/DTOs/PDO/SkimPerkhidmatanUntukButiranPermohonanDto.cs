@@ -5,7 +5,7 @@ namespace HR.PDO.Application.DTOs
     {
         public decimal? ImplikasiKosSebulan { get; set; }
         public decimal? ImplikasiKosSetahun { get; set; }
-        public int BilanganJawatan { get; set; }
+        public int? BilanganJawatan { get; set; }
         public string Gred { get; set; }
         public string SkimPerkhidmatan { get; set; }
     }

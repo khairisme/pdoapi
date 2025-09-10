@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data.SqlTypes;
+using HR.PDO.Core.Entities;
 
 
 namespace HR.PDO.Infrastructure.Data.EntityFramework
@@ -71,9 +72,10 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
         public DbSet<PDORujStatusJawatan> PDORujStatusJawatan { get; set; }
         public DbSet<PDOCadanganJawatan> PDOCadanganJawatan { get; set; }
         public DbSet<PDORujKategoriJawatan> PDORujKategoriJawatan { get; set; }
-        public DbSet<PPAProfilPemilikKompetensi> PPAProfilPemilikKompetensi { get; set; }
+        public DbSet<ProfilPemilikKompetensi> PPAProfilPemilikKompetensi { get; set; }
+        public DbSet<PDOImplikasiPermohonanJawatan> PDOImplikasiPermohonanJawatan { get; set; }
+        public DbSet<ONBSandangan> ONBSandangan { get; set; }
         
-
 
 
 
@@ -83,6 +85,17 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<ProfilPemilikKompetensi>(entity =>
+            {
+                entity.ToTable("PPA_ProfilPemilikKompetensi");
+                entity.HasNoKey();
+            });
+            modelBuilder.Entity<PDOButiranPermohonanJawatan>(entity =>
+            {
+                entity.ToTable("PDO_ButiranPermohonanJawatan");
+                entity.HasKey(b => new { b.IdButiranPermohonan, b.IdJawatan });
+                //entity.Ignore(e => e.Id); // Don't map base Id
+            });
             modelBuilder.Entity<PDORujJenisDokumen>(entity =>
             {
                 entity.ToTable("PDO_RujJenisDokumen"); 
@@ -276,6 +289,10 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
                 entity.Property(x => x.IdButiranPermohonanLama).IsRequired(false);
                 entity.Property(x => x.IdSkimPerkhidmatanPemilikKompetensi).IsRequired(false);
                 entity.Property(x => x.IdGredPemilikKompetensi).IsRequired(false);
+
+                entity.Ignore(e => e.StatusAktif); // Don't map base Id
+                entity.Ignore(nameof(PDOBaseEntity.StatusAktif)); // Don't map base Id
+
             });
             modelBuilder.Entity<PDORujPasukanPerunding>(entity =>
             {

@@ -395,6 +395,62 @@ namespace HR.Application.Services.PDO
 
         }
 
+        public async Task KemaskiniUlasanPermohonanJawatan(UlasanRequestDto request)
+        {
+
+            try
+
+            {
+                var recordPermohonan = (from pdopj in _context.PDOPermohonanJawatan
+                              where pdopj.Id == request.IdPermohonanJawatan
+                              select pdopj).FirstOrDefault();
+
+
+                var record = (from pdospj in _context.PDOStatusPermohonanJawatan
+                              where pdospj.IdPermohonanJawatan == request.IdPermohonanJawatan
+                              && pdospj.StatusAktif == true
+                              select pdospj).FirstOrDefault();
+
+                if (record != null)
+                {
+                    await _unitOfWork.BeginTransactionAsync();
+                    record.StatusAktif = false;
+                    record.IdHapus = request.UserId;
+                    record.TarikhHapus = DateTime.Now;
+                    _context.PDOStatusPermohonanJawatan.Update(record);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+                }
+
+                var newStatusPermohonanJawatan = new PDOStatusPermohonanJawatan()
+                {
+                    IdPermohonanJawatan = request.IdPermohonanJawatan,
+                    TarikhStatusPermohonan = DateTime.Now,
+                    Ulasan = request.Ulasan,
+                    IdCipta = request.UserId,
+                    TarikhCipta = DateTime.Now,
+                    KodRujStatusPermohonanJawatan = request.KodRujStatusPermohonanJawatan,
+                    StatusAktif = true
+                };
+
+                await _unitOfWork.BeginTransactionAsync();
+
+                await _context.PDOStatusPermohonanJawatan.AddAsync(newStatusPermohonanJawatan);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in DaftarPermohonanJawatan");
+
+                throw;
+            }
+
+        }
 
 
     }

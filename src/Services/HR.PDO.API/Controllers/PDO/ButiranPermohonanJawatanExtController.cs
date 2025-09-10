@@ -18,13 +18,13 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpPost("tambah")]
-        public async Task<ActionResult> TambahButiranPermohonanJawatan([FromQuery] Guid UserId, TambahButiranPermohonanJawatanDto request)
+        public async Task<ActionResult> TambahButiranPermohonanJawatan(TambahButiranPermohonanJawatanDto request)
         {
             _logger.LogInformation("Calling TambahButiranPermohonanJawatan");
             try
             {
-                await _butiranpermohonanjawatanext.TambahButiranPermohonanJawatan(UserId,request);
-                return CreatedAtAction(nameof(TambahButiranPermohonanJawatan), new {UserId, request }, null);
+                await _butiranpermohonanjawatanext.TambahButiranPermohonanJawatan(request);
+                return CreatedAtAction(nameof(TambahButiranPermohonanJawatan), new {request }, null);
             }
             catch (Exception ex)
             {
@@ -63,13 +63,18 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpGet("baca/{id}")]
-        public async Task<ActionResult<ButiranPermohonanJawatanDto>> BacaButiranPermohonanJawatan(int Id)
+        [HttpPost("baca")]
+        public async Task<ActionResult<ButiranPermohonanJawatanDto>> BacaButiranPermohonanJawatan(AddButiranPermohonanJawatanRequestDto request)
         {
             _logger.LogInformation("Calling BacaButiranPermohonanJawatan");
             try
             {
-                var data = await _butiranpermohonanjawatanext.BacaButiranPermohonanJawatan(Id);
+                var data = await _butiranpermohonanjawatanext.BacaButiranPermohonanJawatan(request);
+                if (data == null)
+                {
+                    return NotFound(new { message = "Tiada rekod" });
+
+                }
                 return Ok(data);
             }
             catch (Exception ex)
@@ -87,13 +92,13 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpDelete("hapus-terus/{id}")]
-        public async Task<ActionResult> HapusTerusButiranPermohonanJawatan([FromQuery] Guid UserId, int Id)
+        public async Task<ActionResult> HapusTerusButiranPermohonanJawatan([FromQuery] AddButiranPermohonanJawatanRequestDto request)
         {
             _logger.LogInformation("Calling HapusTerusButiranPermohonanJawatan");
             try
             {
-                await _butiranpermohonanjawatanext.HapusTerusPermohonanJawatan(UserId,Id);
-                return CreatedAtAction(nameof(HapusTerusButiranPermohonanJawatan), new {UserId, Id }, null);
+                await _butiranpermohonanjawatanext.HapusTerusPermohonanJawatan(request);
+                return CreatedAtAction(nameof(HapusTerusButiranPermohonanJawatan), new { request }, null);
             }
             catch (Exception ex)
             {

@@ -78,7 +78,7 @@ public static class DependencyInjection
         // Register unit of work
         services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddScoped<EfUnitOfWork>();
-        services.AddScoped<IPNSUnitOfWork, EfPNSUnitOfWork>();
+        //services.AddScoped<IPNSUnitOfWork, EfPNSUnitOfWork>();
         services.AddScoped<EfPNSUnitOfWork>();
 
         services.AddScoped<IPDOUnitOfWork, EfPDOUnitOfWork>();

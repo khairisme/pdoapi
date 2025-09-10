@@ -57,4 +57,10 @@ namespace HR.PDO.Application.DTOs
         /// </summary>
         public int IdJawatan { get; set; }
     }
+    public class AddButiranPermohonanJawatanRequestDto
+    {
+        public Guid UserId { get; set; }
+        public int IdJawatan { get; set; }
+        public int IdButiranPermohonan { get; set; }
+    }
 }

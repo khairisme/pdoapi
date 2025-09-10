@@ -1,0 +1,6 @@
+@HR.PDO.ExternalModules_HostAddress = http://localhost:5258
+
+GET {{HR.PDO.ExternalModules_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

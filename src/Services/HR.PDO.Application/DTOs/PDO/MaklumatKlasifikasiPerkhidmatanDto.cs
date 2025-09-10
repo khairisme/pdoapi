@@ -97,7 +97,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the classification record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code representing the classification.
@@ -148,7 +148,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the classification record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code representing the classification.
@@ -265,7 +265,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the service classification.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the service classification.
@@ -368,7 +368,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the service classification record.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code of the service classification.

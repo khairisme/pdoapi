@@ -19,7 +19,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the service group.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code associated with the service group.
@@ -90,7 +90,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Unique identifier of the service group.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Code associated with the service group.
@@ -237,7 +237,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Required. Unique identifier of the service group.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Required. Code of the service group.
@@ -357,7 +357,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Required. Unique identifier of the service group.
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Required. Code of the service group.

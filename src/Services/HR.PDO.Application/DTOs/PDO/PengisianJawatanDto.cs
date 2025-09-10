@@ -70,7 +70,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Gets or sets the Id Pengisian Jawatan ID (a.Id from PDO_PengisianJawatan).
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Gets or sets the Pengisian Jawatan ID (a.Id from PDO_PengisianJawatan).
@@ -137,7 +137,7 @@ namespace HR.PDO.Application.DTOs.PDO
     }
     public class SenaraiJawatanPengisianDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string KodJawatan { get; set; }
         public string NamaJawatan { get; set; }
         public string UnitOrganisasi { get; set; }

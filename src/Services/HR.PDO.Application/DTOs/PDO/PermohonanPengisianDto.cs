@@ -15,7 +15,7 @@ namespace HR.PDO.Application.DTOs.PDO
     public class PermohonanPOAFilterResponseDto
     {
         public int Bil { get; set; }
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string NomborRujukan { get; set; }
         public string Tajuk { get; set; }
         public DateTime TarikhPermohonan { get; set; }
@@ -67,7 +67,7 @@ namespace HR.PDO.Application.DTOs.PDO
     public class PermohonanPOAIFilterResponseDto
     {
 
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string NomborRujukan { get; set; }
         public string Agensi { get; set; }
         public string Tajuk { get; set; }
@@ -83,7 +83,7 @@ namespace HR.PDO.Application.DTOs.PDO
     public class PermohonanPengisianJawatanResponseDto
     {
         public int Bil { get; set; }
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Kementerian { get; set; }
         public int BilanganPengisian { get; set; }
         public DateTime TarikhPermohonan { get; set; }
@@ -113,7 +113,7 @@ namespace HR.PDO.Application.DTOs.PDO
     public class PermohonanPengisianJawatanWithAgensiResponseDto
     {
         public int Bil { get; set; }
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string KodJawatan { get; set; }
         public string NamaJawatan { get; set; }
         public string Gred { get; set; }
@@ -210,7 +210,7 @@ namespace HR.PDO.Application.DTOs.PDO
     //Amar
     public class BilanganPermohonanPengisianMaklumatPermohonanResponseDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string KodSkim { get; set; } = String.Empty;
         public string NamaSkimPerkhidmatan { get; set; } = String.Empty;
         public int BilanganPermohonanPengisian { get; set; }
@@ -333,7 +333,7 @@ namespace HR.PDO.Application.DTOs.PDO
     }
     public class PermohonanSkimDetailDto
     {
-        public int RecordId { get; set; }
+        public int? RecordId { get; set; }
         public string KodSkim { get; set; }
         public string NamaSkimPerkhidmatan { get; set; }
         public int BilanganPengisian { get; set; }
@@ -367,7 +367,7 @@ namespace HR.PDO.Application.DTOs.PDO
 
     public class SkimUpdateDto
     {
-        public int Id { get; set; }  // ppps.Id
+        public int? Id { get; set; }  // ppps.Id
         public int BilanganHadSiling { get; set; }
         public string Ulasan { get; set; }
     }
@@ -423,7 +423,7 @@ namespace HR.PDO.Application.DTOs.PDO
     {
         public int RecordId { get; set; }
         public string Nama { get; set; }               // Unit Organisasi
-        public int BilanganPermohonanPengisian { get; set; }
+        public int? BilanganPermohonanPengisian { get; set; }
         public DateTime? TarikhPermohonan { get; set; }
         public string Status { get; set; }
     }
@@ -436,7 +436,7 @@ namespace HR.PDO.Application.DTOs.PDO
     }
     public class BilanganPermohonanResponseDto
     {
-        public int RecordId { get; set; }
+        public int? RecordId { get; set; }
         public string KodSkim { get; set; }
         public string NamaSkimPerkhidmatan { get; set; }
         public int Bilangan { get; set; }

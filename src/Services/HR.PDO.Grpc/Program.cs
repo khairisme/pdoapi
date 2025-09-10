@@ -1,6 +1,5 @@
 using HR.PDO.Application;
 using HR.PDO.Infrastructure;
-using HR.Grpc.Services;
 using Shared.Messaging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +12,6 @@ builder.Services.AddGrpc();
 
 // Add application and infrastructure services
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add RabbitMQ message bus
 builder.Services.AddRabbitMQMessageBus(

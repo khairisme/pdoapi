@@ -287,13 +287,13 @@ namespace HR.PDO.API.Controllers.PDO
         }
 
         [HttpDelete("mansuh/{Id}")]
-        public async Task<ActionResult> MansuhUnitOrganisasi([FromQuery] Guid UserId, int Id)
+        public async Task<ActionResult> MansuhUnitOrganisasi([FromBody] MansuhUnitOrganisasiRequestDto request) //
         {
             _logger.LogInformation("Calling MansuhAktivitiOrganisasi");
             try
             {
-                await _unitorganisasiext.MansuhUnitOrganisasi(UserId, Id);
-                return CreatedAtAction(nameof(MansuhUnitOrganisasi), new { UserId, Id }, null);
+                await _unitorganisasiext.MansuhUnitOrganisasi(request);
+                return CreatedAtAction(nameof(MansuhUnitOrganisasi), new { request }, null);
             }
             catch (Exception ex)
             {

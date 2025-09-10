@@ -38,12 +38,12 @@ namespace HR.Application.Services.PDO
                     join pdorja in _context.PDORujJenisAgensi on pdouo.KodRujJenisAgensi equals pdorja.Kod
                     where pdouo.Id == Id
                     select new UnitOrganisasiFormDisplayDto{
-                         JenisAgensi = pdorja.Nama,
+                         JenisAgensi = pdorja.Nama.Trim(),
                          Keterangan = pdouo.Keterangan,
                          KodUnitOrganisasi = pdouo.Kod,
-                         NamUnitOrganisasi = pdouo.Nama,
+                         NamUnitOrganisasi = pdouo.Nama.Trim(),
                          Tahap = pdouo.Tahap,
-                         UnitOrganisasiInduk = pdouo.Nama
+                         UnitOrganisasiInduk = pdouo.Nama.Trim()
                     }
                 ).FirstOrDefaultAsync();
                 return result;
@@ -74,7 +74,7 @@ namespace HR.Application.Services.PDO
                 entity.IdCipta = UserId;
                 entity.KodRujJenisAgensi = request.KodRujJenisAgensi;
                 entity.Kod = request.Kod;
-                entity.Nama = request.Nama;
+                entity.Nama = request.Nama.Trim();
                 entity.Tahap = request.Tahap;
                 entity.Keterangan = request.Keterangan;
                 await _context.PDOUnitOrganisasi.AddAsync(entity); 
@@ -106,8 +106,8 @@ namespace HR.Application.Services.PDO
                     join paoparent in _context.PDOAktivitiOrganisasi on pdoao.IdIndukAktivitiOrganisasi equals paoparent.Id
                     where pdoao.Id == Id
                     select new AktivitiOrganisasiDto{
-                         AktiviOrganisasi = pdoao.Nama,
-                         AktivitiOrganisasiInduk = paoparent.Nama,
+                         AktiviOrganisasi = pdoao.Nama.Trim(),
+                         AktivitiOrganisasiInduk = paoparent.Nama.Trim(),
                          ButiranKemaskini = pdoao.ButiranKemaskini,
                          Id = pdoao.Id,
                          IdCipta = pdoao.IdCipta,
