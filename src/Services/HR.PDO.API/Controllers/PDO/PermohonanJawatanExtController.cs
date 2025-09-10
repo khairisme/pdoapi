@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using  Shared.Contracts.DTOs;
 using Microsoft.Extensions.Logging;
-using HR.PDO.Application.Interfaces.PDO;using HR.PDO.Application.DTOs;
+using HR.PDO.Application.Interfaces.PDO;
+using HR.PDO.Application.DTOs;
+using HR.PDO.Application.DTOs.PDO;
 namespace HR.PDO.API.Controllers.PDO {
     [ApiController]
     [Route("api/pdo/v1/permohonan-jawatan")]
@@ -41,7 +43,7 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpGet("muat/{IdUnitOrganisasi}")]
-        public async Task<ActionResult<BacaPermohonanJawatanDto>> MuatPermohonanJawatan(int IdUnitOrganisasi)
+        public async Task<ActionResult<MuatPermohonanJawatanOutputDto>> MuatPermohonanJawatan(int IdUnitOrganisasi)
         {
             _logger.LogInformation("Calling MuatPermohonanJawatan");
             try
@@ -65,13 +67,13 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
         [HttpPost("tambah")]
-        public async Task<ActionResult> TambahPermohonanJawatanBaru([FromQuery] Guid UserId, int IdAgensi, string? NomborRujukan, string? Tajuk, string? Keterangan, string? KodRujJenisPermohonan)
+        public async Task<ActionResult> TambahPermohonanJawatanBaru([FromBody] TambahPermohonanJawatanBaruDto request)
         {
             _logger.LogInformation("Calling TambahPermohonanJawatanBaru");
             try
             {
-                await _permohonanjawatanext.TambahPermohonanJawatanBaru(UserId, IdAgensi, NomborRujukan, Tajuk,Keterangan,KodRujJenisPermohonan);
-                return CreatedAtAction(nameof(TambahPermohonanJawatanBaru), new {UserId, IdAgensi, NomborRujukan, Tajuk,Keterangan,KodRujJenisPermohonan }, null);
+                var result = await _permohonanjawatanext.TambahPermohonanJawatanBaru(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -229,6 +231,30 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
+        [HttpPatch("Ulasan-status")]
+        public async Task<ActionResult> KemaskiniUlasanStatusPermohonanJawatan([FromBody] UlasanRequestDto request)
+        {
+            _logger.LogInformation("Calling DaftarPermohonanJawatan");
+            try
+            {
+                await _permohonanjawatanext.KemaskiniUlasanPermohonanJawatan(request);
+                return CreatedAtAction(nameof(KemaskiniUlasanPermohonanJawatan), new { request }, null);
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in KemaskiniUlasanPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, ex.Message + "-" + err);
+            }
+        }
         [HttpPatch("Ulasan")]
         public async Task<ActionResult> KemaskiniUlasanPermohonanJawatan([FromBody] UlasanRequestDto request)
         {

@@ -36,7 +36,7 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdog in _context.PDOGred
                     where pdog.IdKlasifikasiPerkhidmatan == IdKlasifikasiPerkhidmatan && pdog.IdKumpulanPerkhidmatan == IdKumpulanPerkhidmatan
                     select new DropDownDto{
-                         Kod = pdog.Kod,
+                         Kod = pdog.Kod.Trim(),
                          Nama = pdog.Nama.Trim()
                     }
                 )
@@ -68,7 +68,7 @@ namespace HR.Application.Services.PDO
                                     select new DropDownDto
                                     {
                                         Id = pdog.Id,
-                                        Kod = pdog.Kod,
+                                        Kod = pdog.Kod.Trim(),
                                         Nama = pdog.Nama.Trim()
                                     }
                 ).ToListAsync();

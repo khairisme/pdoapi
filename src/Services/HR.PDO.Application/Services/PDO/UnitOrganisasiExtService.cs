@@ -56,8 +56,17 @@ namespace HR.Application.Services.PDO
 
                 foreach (var item in result)
                 {
-                    item.Children = StrukturUnitOrganisasiGetChildren(item.Id).Result;
-                    if (item.Children.Count() > 0) item.HasChildren = true;
+                    var butiranPermohonan = await (from pdobp in _context.PDOButiranPermohonan
+                                                   where pdobp.IdPermohonanJawatan == request.IdPermohonanJawatan 
+                                                   && pdobp.IdAktivitiOrganisasi == request.IdAktivitiOrganisasi
+                                                   
+                                                   select pdobp).ToListAsync();
+                    item.ButiranPermohonan = butiranPermohonan;
+                    item.Children = StrukturUnitOrganisasiGetChildren(item.Id, request).Result;
+                    var count = (from pdouo in _context.PDOUnitOrganisasi
+                                 where pdouo.IdIndukUnitOrganisasi == item.Id
+                                 select pdouo.Id).Count();
+                    if (count > 0) item.HasChildren = true;
                 }
 
 
@@ -116,10 +125,10 @@ namespace HR.Application.Services.PDO
             }
 
         }
-        public async Task<List<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasiGetParent(int Id, List<StrukturUnitOrganisasiDto> child)
+        public async Task<List<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasiGetParent(int? Id, List<StrukturUnitOrganisasiDto> child)
         {
             bool rootparent = false;
-            int newParentId = 0;
+            int? newParentId = 0;
             var result = await (from pdouo in _context.PDOUnitOrganisasi
                                 join pdorkuo in _context.PDORujKategoriUnitOrganisasi on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
                                 where pdouo.Id == Id
@@ -156,7 +165,7 @@ namespace HR.Application.Services.PDO
             }
         }
 
-        public async Task<List<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasiGetChildren(int Id)
+        public async Task<List<StrukturUnitOrganisasiDto>> StrukturUnitOrganisasiGetChildren(int? Id, StrukturUnitOrganisasiRequestDto request)
         {
             bool rootparent = false;
             int newParentId = 0;
@@ -177,22 +186,18 @@ namespace HR.Application.Services.PDO
             ).ToListAsync();
             foreach(var item in result)
             {
-               item.Children = await (from pdouo in _context.PDOUnitOrganisasi
+
+                var butiranPermohonan = await (from pdobp in _context.PDOButiranPermohonan
+                                               where pdobp.IdPermohonanJawatan == request.IdPermohonanJawatan
+                                               && pdobp.IdAktivitiOrganisasi == request.IdAktivitiOrganisasi
+
+                                               select pdobp).ToListAsync();
+                item.ButiranPermohonan = butiranPermohonan;
+                var count = await (from pdouo in _context.PDOUnitOrganisasi
                                        join pdorkuo in _context.PDORujKategoriUnitOrganisasi on pdouo.KodRujKategoriUnitOrganisasi equals pdorkuo.Kod
                                        where pdouo.IdIndukUnitOrganisasi == item.Id
-                                      select new StrukturUnitOrganisasiDto
-                                       {
-                                           HasChildren = false,
-                                           Id = pdouo.Id,
-                                           IdIndukUnitOrganisasi = pdouo.IdIndukUnitOrganisasi,
-                                           KategoriUnitOrganisasi = pdorkuo.Nama,
-                                           Kod = pdorkuo.Kod,
-                                           Tahap = pdouo.Tahap,
-                                           UnitOrganisasi = pdouo.Nama
-
-                                       }
-                                ).ToListAsync();
-                if (item.Children.Count() > 0) item.HasChildren = true;
+                                   select pdouo.Id).CountAsync();
+                if (count > 0) item.HasChildren = true;
             }
 
             return result;
@@ -314,8 +319,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdouo in _context.PDOUnitOrganisasi
                     select new DropDownDto{
-                         Kod = pdouo.Kod,
-                         Nama = pdouo.Nama
+                         Kod = pdouo.Kod.Trim(),
+                         Nama = pdouo.Nama.Trim()
                     }
                 ).ToListAsync();
 

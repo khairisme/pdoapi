@@ -1,4 +1,8 @@
+using HR.PDO.Application.DTOs;
+using HR.PDO.Application.DTOs.PDO;
 using HR.PDO.Application.Interfaces.PDO;
+using HR.PDO.Application.Services.PDO;
+using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HR.PDO.Application.Services.PDO;
-using HR.PDO.Core.Entities.PDO;
-using HR.PDO.Application.DTOs;
 
 namespace HR.Application.Services.PDO
 {
@@ -26,27 +27,48 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task TambahPermohonanJawatanBaru(Guid UserId, int IdAgensi, string? NomborRujukan, string? Tajuk, string? Keterangan, string? KodRujJenisPermohonan)
+        public async Task<BacaPermohonanJawatanDto> TambahPermohonanJawatanBaru(TambahPermohonanJawatanBaruDto request)
         {
 
             try
 
             {
+
+                var UnitOrganisasi = (from pdouo in _context.PDOUnitOrganisasi
+                                      where pdouo.Id == request.IdUnitOrganisasi
+                                      select pdouo).FirstOrDefault();
                 await _unitOfWork.BeginTransactionAsync();
 
-                var entity = new PDOPermohonanJawatan();
-                entity.IdUnitOrganisasi = IdAgensi;
-                entity.NomborRujukan = NomborRujukan;
-                entity.Tajuk = Tajuk;
-                entity.Keterangan = Keterangan;
-                entity.KodRujJenisPermohonan= KodRujJenisPermohonan;
-                entity.IdCipta = UserId;
-                entity.TarikhCipta = DateTime.Now;
-                await _context.PDOPermohonanJawatan.AddAsync(entity); 
+                var PermohonanJawatan = new PDOPermohonanJawatan();
+                PermohonanJawatan.IdUnitOrganisasi = request.IdUnitOrganisasi;
+                PermohonanJawatan.NomborRujukan = request.NomborRujukan;
+                PermohonanJawatan.Tajuk = request.Tajuk;
+                PermohonanJawatan.Keterangan = request.Keterangan;
+                PermohonanJawatan.KodRujJenisPermohonan= request.KodRujJenisPermohonan;
+                PermohonanJawatan.IdCipta = request.UserId;
+                PermohonanJawatan.TarikhCipta = DateTime.Now;
+                await _context.PDOPermohonanJawatan.AddAsync(PermohonanJawatan); 
                 await _context.SaveChangesAsync(); 
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.BeginTransactionAsync();
+
+                var StatusPermohonanJawatan = new PDOStatusPermohonanJawatan();
+                StatusPermohonanJawatan.IdPermohonanJawatan = PermohonanJawatan.Id;
+                StatusPermohonanJawatan.KodRujStatusPermohonanJawatan = "01";
+                StatusPermohonanJawatan.TarikhStatusPermohonan = DateTime.Now;
+                StatusPermohonanJawatan.StatusAktif = true;
+                StatusPermohonanJawatan.IdCipta = request.UserId;
+                StatusPermohonanJawatan.TarikhCipta = DateTime.Now;
+                await _context.PDOStatusPermohonanJawatan.AddAsync(StatusPermohonanJawatan);
+                await _context.SaveChangesAsync();
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+                return await BacaPermohonanJawatan(PermohonanJawatan.Id);
             }
 
             catch (Exception ex)
@@ -68,13 +90,41 @@ namespace HR.Application.Services.PDO
 
             {
 
-                var result = await (from pdopj in _context.PDOPermohonanJawatan
+                var PermohonanJawatan = await (from pdopj in _context.PDOPermohonanJawatan
                     where pdopj.Id == Id
                     select new BacaPermohonanJawatanDto{
-                         Id = pdopj.Id
+                        Id = pdopj.Id,
+                        IdUnitOrganisasi = pdopj.IdUnitOrganisasi,
+                        IdAgensi = pdopj.IdAgensi,
+                        KodRujJenisPermohonan = pdopj.KodRujJenisPermohonan,
+                        KodRujJenisPermohonanJPA = pdopj.KodRujJenisPermohonanJPA,
+                        NomborRujukan = pdopj.NomborRujukan,
+                        Tajuk = pdopj.Tajuk,
+                        Keterangan = pdopj.Keterangan,
+                        KodRujPasukanPerunding = pdopj.KodRujPasukanPerunding,
+                        NoWaranPerjawatan = pdopj.NoWaranPerjawatan,
+                        TarikhPermohonan = pdopj.TarikhPermohonan,
+                        TarikhCadanganWaran = pdopj.TarikhCadanganWaran,
+                        TarikhWaranDiluluskan = pdopj.TarikhWaranDiluluskan,
+                        IdCipta = pdopj.IdCipta
                     }
                 ).FirstOrDefaultAsync();
-                return result;
+                if (PermohonanJawatan == null)
+                {
+                    throw new Exception("Permohonan Jawatan not found.");
+                }
+                var StatusPermohonanJawatan = await (from pdospj in _context.PDOStatusPermohonanJawatan
+                                    where pdospj.IdPermohonanJawatan == PermohonanJawatan.Id
+                                    select pdospj
+                ).FirstOrDefaultAsync();
+
+                if (StatusPermohonanJawatan == null)
+                {
+                    throw new Exception("Status Permohonan Jawatan not found.");
+                }
+
+                PermohonanJawatan.StatusPermohonanJawatan = StatusPermohonanJawatan;
+                return PermohonanJawatan;
 
             }
 
@@ -88,30 +138,32 @@ namespace HR.Application.Services.PDO
             }
 
         }
-        public async Task<BacaPermohonanJawatanDto> MuatPermohonanJawatan(int IdUnitOrganisasi)
+        public async Task<MuatPermohonanJawatanOutputDto> MuatPermohonanJawatan(int IdUnitOrganisasi)
         {
             try
-
             {
-                var resultUnitOrganisasi = await (from pdouo in _context.PDOUnitOrganisasi
-                                    join pdorja in _context.PDORujJenisAgensi on pdouo.KodRujJenisAgensi equals pdorja.Kod
-                                                  where pdouo.Id == IdUnitOrganisasi
-                                    select new BacaPermohonanJawatanDto
-                                    {
-                                        UnitOrganisasi = pdouo.Nama,
-                                        Agensi = "No field related",
-                                        NomborRujukan = pdouo.KodRujJenisAgensi+"/"+ pdouo.KodKementerian+"/"+pdouo.KodJabatan+"/"+DateTime.Now.Year,
-                                        KodKementerian = pdouo.KodKementerian,
-                                        KodJabatan = pdouo.KodJabatan,
-                                    }
-                ).FirstOrDefaultAsync();
+                var UnitOrganisasi = (from pdouo in _context.PDOUnitOrganisasi
+                                      where pdouo.Id == IdUnitOrganisasi
+                                      select pdouo).FirstOrDefault();
+                if (UnitOrganisasi == null)
+                {
+                    throw new Exception("Unit Organisasi not found.");
+                }
+                var newNomborRujukan = UnitOrganisasi.KodRujJenisAgensi + "/" + UnitOrganisasi.KodKementerian + "/" + UnitOrganisasi.KodJabatan + "/" + DateTime.Now.Year;
 
                 int count = await _context.PDOPermohonanJawatan
-                    .CountAsync(p => p.NomborRujukan != null &&
-                                     p.NomborRujukan.StartsWith(resultUnitOrganisasi.NomborRujukan));
+                    .CountAsync(p => p.NomborRujukan.StartsWith(newNomborRujukan));
                 count++;
-                resultUnitOrganisasi.NomborRujukan = resultUnitOrganisasi.NomborRujukan + "/"+count.ToString("D7");
-                return resultUnitOrganisasi;
+                newNomborRujukan = newNomborRujukan + "/" + count.ToString("D3");
+
+                var MuatPermohonanJawatanOutput = new MuatPermohonanJawatanOutputDto
+                {
+                    IdUnitOrganisasi = UnitOrganisasi.Id,
+                    UnitOrganisasi = UnitOrganisasi.Nama ?? string.Empty,
+                    NomborRujukan = newNomborRujukan
+                };
+
+                return MuatPermohonanJawatanOutput;
 
             }
 
@@ -395,7 +447,7 @@ namespace HR.Application.Services.PDO
 
         }
 
-        public async Task KemaskiniUlasanPermohonanJawatan(UlasanRequestDto request)
+        public async Task KemaskiniUlasanStatusPermohonanJawatan(UlasanRequestDto request)
         {
 
             try
@@ -452,6 +504,61 @@ namespace HR.Application.Services.PDO
 
         }
 
+        public async Task KemaskiniUlasanPermohonanJawatan(UlasanRequestDto request)
+        {
+
+            try
+
+            {
+                var recordPermohonan = (from pdopj in _context.PDOPermohonanJawatan
+                                        where pdopj.Id == request.IdPermohonanJawatan
+                                        select pdopj).FirstOrDefault();
+
+
+                var record = (from pdospj in _context.PDOStatusPermohonanJawatan
+                              where pdospj.IdPermohonanJawatan == request.IdPermohonanJawatan
+                              && pdospj.StatusAktif == true
+                              select pdospj).FirstOrDefault();
+
+                if (record != null)
+                {
+                    await _unitOfWork.BeginTransactionAsync();
+                    record.StatusAktif = false;
+                    record.IdHapus = request.UserId;
+                    record.TarikhHapus = DateTime.Now;
+                    _context.PDOStatusPermohonanJawatan.Update(record);
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+                }
+
+                var newStatusPermohonanJawatan = new PDOStatusPermohonanJawatan()
+                {
+                    IdPermohonanJawatan = request.IdPermohonanJawatan,
+                    TarikhStatusPermohonan = DateTime.Now,
+                    Ulasan = request.Ulasan,
+                    IdCipta = request.UserId,
+                    TarikhCipta = DateTime.Now,
+                    StatusAktif = true
+                };
+
+                await _unitOfWork.BeginTransactionAsync();
+
+                await _context.PDOStatusPermohonanJawatan.AddAsync(newStatusPermohonanJawatan);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in DaftarPermohonanJawatan");
+
+                throw;
+            }
+
+        }
 
     }
 

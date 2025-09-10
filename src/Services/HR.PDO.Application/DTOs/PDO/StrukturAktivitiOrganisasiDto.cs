@@ -1,4 +1,6 @@
+using HR.PDO.Core.Entities.PDO;
 using System;
+using System.ComponentModel;
 namespace HR.PDO.Application.DTOs
 {
     /// <summary>
@@ -52,9 +54,12 @@ namespace HR.PDO.Application.DTOs
         /// </summary>
         public List<StrukturAktivitiOrganisasiDto> Children { get; set; } = new List<StrukturAktivitiOrganisasiDto>();
 
+        public List<PDOButiranPermohonan> ButiranPermohonan { get; set; }
+
         /// <summary>
         /// Indicates if the activity has child nodes.
         /// </summary>
+
         public bool HasChildren { get; set; }
     }
 
@@ -70,39 +75,63 @@ namespace HR.PDO.Application.DTOs
     public class StrukturAktivitiOrganisasiRequestDto
     {
         /// <summary>
-        /// Optional. Code of the organizational chart to filter activities.
+        /// Identifier of the related job application (Permohonan Jawatan).
+        /// Used to scope the requested organizational activities to a specific application.
         /// </summary>
+        public int IdPermohonanJawatan { get; set; }
+
+        /// <summary>
+        /// Identifier of the related job application detail (Butiran Permohonan).
+        /// Provides finer control to request activities tied to a specific detail within the application.
+        /// </summary>
+        public int IdButiranPermohonan { get; set; }        /// <summary>
+                                                            /// Optional. Code of the organizational chart to filter activities.
+                                                            /// </summary>
+                                                            /// 
+        /// <summary>
+        /// Unique identifier of the organizational activity (Aktiviti Organisasi).
+        /// Used to reference a specific activity within the hierarchy.
+        /// </summary>
+        public int IdAktivitiOrganisasi { get; set; }
+
+        [DefaultValue("0100")]
         public string? KodCartaAktiviti { get; set; }
 
         /// <summary>
         /// Optional. Parent activity ID to start building the tree. Default is 0 (root).
         /// </summary>
-        public int parentId { get; set; } = 0;
+        [DefaultValue(0)]
+        public int parentId { get; set; }
 
         /// <summary>
         /// Optional. Page number for pagination. Default is 1.
         /// </summary>
+        [DefaultValue(1)] 
         public int page { get; set; } = 1;
 
         /// <summary>
         /// Optional. Number of items per page for pagination. Default is 50.
         /// </summary>
+        [DefaultValue(50)]
         public int pageSize { get; set; } = 50;
 
         /// <summary>
         /// Optional. Keyword for filtering activities by name or code. Default is null (no filtering).
         /// </summary>
+        [DefaultValue("")]
         public string? keyword { get; set; } = null;
 
         /// <summary>
         /// Optional. Field to sort the results by. Default is "UnitOrganisasi".
         /// </summary>
-        public string? sortBy { get; set; } = "UnitOrganisasi";
+        [DefaultValue("AktivitiOrganisasi")]
+        public string? sortBy { get; set; }
 
         /// <summary>
         /// Optional. Indicates if the sorting should be descending. Default is false (ascending).
         /// </summary>
-        public bool desc { get; set; } = false;
+        [DefaultValue(false)]
+        public bool desc { get; set; }
     }
     /// <summary>
     /// DTO for creating a new AktivitiOrganisasi (Organizational Activity).

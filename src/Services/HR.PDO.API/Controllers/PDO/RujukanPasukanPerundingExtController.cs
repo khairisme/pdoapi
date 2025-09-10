@@ -16,6 +16,20 @@ namespace HR.PDO.API.Controllers.PDO {
             _rujpasukanperundingext = rujpasukanperundingext;
             _logger = logger;
         }
+        [HttpGet]
+        public async Task<IActionResult> RujukanPasukanPerunding()
+        {
+            _logger.LogInformation("Getting all RujJenisSaraan");
+
+            var result = await _rujpasukanperundingext.RujukanPasukanPerunding();
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Sucess" : "Failed",
+                items = result
+
+            });
+        }
 
     }
 }

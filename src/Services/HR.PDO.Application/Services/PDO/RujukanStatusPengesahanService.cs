@@ -36,8 +36,8 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdorsp in _context.PDORujStatusPermohonan
                     where new[] { "04", "05" }.Contains(pdorsp.Kod)
                     select new DropDownDto{
-                         Kod = pdorsp.Kod,
-                         Nama = pdorsp.Nama
+                         Kod = pdorsp.Kod.Trim(),
+                         Nama = pdorsp.Nama.Trim()
                     }
                 ).ToListAsync();
 

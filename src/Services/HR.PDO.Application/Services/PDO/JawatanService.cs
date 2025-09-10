@@ -37,7 +37,7 @@ namespace HR.PDO.Application.Services.PDO
                         select new JawatanWithAgensiDto
                         {
                             Id = a.Id,
-                            Kod = a.Kod,
+                            Kod = a.Kod.Trim(),
                             Nama = a.Nama.Trim(),
                             Agensi = b.Nama.Trim()
                         };
@@ -72,9 +72,9 @@ namespace HR.PDO.Application.Services.PDO
                             {
                                 a.Id,
                                 a.Kod,
-                                NamaJawatan = a.Nama,
-                                UnitOrganisasi = f.Nama,
-                                StatusPengisian = e2.Nama,
+                                NamaJawatan = a.Nama.Trim(),
+                                UnitOrganisasi = f.Nama.Trim(),
+                                StatusPengisian = e2.Nama.Trim(),
                                 e.TarikhStatusKekosongan,
                                 TickCheckBox = ppj != null
                             };
@@ -134,10 +134,10 @@ namespace HR.PDO.Application.Services.PDO
                             select new
                             {
                                 a.Id,
-                                a.Kod,
-                                NamaJawatan = a.Nama,
-                                UnitOrganisasi = f.Nama,
-                                StatusPengisian = e2.Nama,
+                                Kod=a.Kod.Trim(),
+                                NamaJawatan = a.Nama.Trim(),
+                                UnitOrganisasi = f.Nama.Trim(),
+                                StatusPengisian = e2.Nama.Trim(),
                                 e.TarikhStatusKekosongan,
                                 TickCheckBox = ppj != null
                             };

@@ -121,7 +121,7 @@ namespace HR.PDO.Application.DTOs.PDO
     }
     public class AgensiWithJawatanDto
     {
-        public int AgensiId { get; set; }
+        public int? AgensiId { get; set; }
         public string Kod { get; set; }
         public string NamaAgensi { get; set; }
         public List<PermohonanPengisianJawatanWithAgensiResponseDto> Data { get; set; }
@@ -232,7 +232,7 @@ namespace HR.PDO.Application.DTOs.PDO
     //Amar
     public class SenaraiJawatanSebenarGroupedAgencyResponseDto
     {
-        public int IdUnitOrganisasi { get; set; }
+        public int? IdUnitOrganisasi { get; set; }
         public string Kod { get; set; } = String.Empty;
         public string Agensi { get; set; } = String.Empty;
         public List<SenaraiJawatanSebenarAgencyDetailDto> SenaraiJawatan { get; set; } = new List<SenaraiJawatanSebenarAgencyDetailDto>();

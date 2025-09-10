@@ -36,8 +36,8 @@ namespace HR.Application.Services.PDO
                                     where new[] { "10", "11" }.Contains(pdorspj.Kod)
                                     select new DropDownDto
                                     {
-                                        Kod = pdorspj.Kod,
-                                        Nama = pdorspj.Nama
+                                        Kod = pdorspj.Kod.Trim(),
+                                        Nama = pdorspj.Nama.Trim()
                                     }
                 ).ToListAsync();
 

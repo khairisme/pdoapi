@@ -3,7 +3,7 @@ namespace HR.PDO.Application.DTOs
 {
     public class UnitOrganisasiFormDisplayDto
     {
-        public int Tahap { get; set; }
+        public int? Tahap { get; set; }
         public string JenisAgensi { get; set; }
         public string Keterangan { get; set; }
         public string KodUnitOrganisasi { get; set; }

@@ -35,8 +35,8 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdorja in _context.PDORujJenisAgensi
                                     select new DropDownDto
                                     {
-                                        Kod = pdorja.Kod,
-                                        Nama = pdorja.Nama
+                                        Kod = pdorja.Kod.Trim(),
+                                        Nama = pdorja.Nama.Trim()
                                     }
                 ).ToListAsync();
 

@@ -400,12 +400,7 @@ namespace HR.Application.Services.PDO
         public async Task<ButiranPermohonanLoadOutputDto>MuatButiranPermohonan()
         {
             var newOutput = new ButiranPermohonanLoadOutputDto();
-            newOutput.StatusJawatanList = await _rujstatusjawatanExt.RujukanStatusJawatan();
-            newOutput.JenisJawatanList = await _rujjenisjawatanExt.RujukanJenisJawatan();
-            newOutput.KumpulanPerkhidmatanList = await _kumpulanperkhidmatanext.RujukanKumpulanPerkhidmatan();
-            newOutput.KlasifikasiPerkhidmatanList = await _klasifikasiperkhidmatanext.RujukanKlasifikasiPerKhidmatan();
-            newOutput.GelaranjawatanList = await _rujGelaranJawatanExt.RujukanGelaranJawatan();
-            newOutput.pangkatList = await _rujpangkatbadanberuniformext.GetPangkatAsync();
+
 
             return newOutput;
         }

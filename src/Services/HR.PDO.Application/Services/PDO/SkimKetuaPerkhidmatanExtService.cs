@@ -37,8 +37,8 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdoj in _context.PDOJawatan
                     join pdoskp in _context.PDOSkimKetuaPerkhidmatan on pdoj.Id equals pdoskp.IdKetuaPerkhidmatan
                     select new DropDownDto{
-                         Kod = pdoj.Kod,
-                         Nama = pdoj.Nama
+                         Kod = pdoj.Kod.Trim(),
+                         Nama = pdoj.Nama.Trim()
                     }
                 ).ToListAsync();
 

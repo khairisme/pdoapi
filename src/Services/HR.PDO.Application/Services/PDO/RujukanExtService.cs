@@ -36,8 +36,8 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdorspj in _context.PDORujStatusPermohonanJawatan
                     where new[] { "03", "05", "14" }.Contains(pdorspj.Kod)
                     select new DropDownDto{
-                         Kod = pdorspj.Kod,
-                         Nama = pdorspj.Nama
+                         Kod = pdorspj.Kod.Trim(),
+                         Nama = pdorspj.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -76,8 +76,8 @@ namespace HR.Application.Services.PDO
                                     where new[] { "01", "12", "13" }.Contains(pdorspj.Kod)
                                     select new DropDownDto
                                     {
-                                        Kod = pdorspj.Kod,
-                                        Nama = pdorspj.Nama
+                                        Kod = pdorspj.Kod.Trim(),
+                                        Nama = pdorspj.Nama.Trim()
                                     }
                 ).ToListAsync();
 
@@ -109,8 +109,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pparpbb in _context.PPARujPangkatBadanBeruniform
                     select new DropDownDto{
-                         Kod = pparpbb.Kod,
-                         Nama = pparpbb.Nama
+                         Kod = pparpbb.Kod.Trim(),
+                         Nama = pparpbb.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -139,8 +139,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorgj in _context.PDORujGelaranJawatan
                     select new DropDownDto{
-                         Kod = pdorgj.Kod,
-                         Nama = pdorgj.Nama
+                         Kod = pdorgj.Kod.Trim(),
+                         Nama = pdorgj.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -169,8 +169,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorup in _context.PDORujUrusanPerkhidmatan
                     select new DropDownDto{
-                         Kod = pdorup.Kod,
-                         Nama = pdorup.Nama
+                         Kod = pdorup.Kod.Trim(),
+                         Nama = pdorup.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -199,8 +199,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorjm in _context.PDORujJenisMesyuarat
                     select new DropDownDto{
-                         Kod = pdorjm.Kod,
-                         Nama = pdorjm.Nama
+                         Kod = pdorjm.Kod.Trim(),
+                         Nama = pdorjm.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -229,8 +229,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorkuo in _context.PDORujKategoriUnitOrganisasi
                     select new DropDownDto{
-                         Kod = pdorkuo.Kod,
-                         Nama = pdorkuo.Nama
+                         Kod = pdorkuo.Kod.Trim(),
+                         Nama = pdorkuo.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -259,8 +259,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorjw in _context.PDORujJenisJawatan
                     select new DropDownDto{
-                         Kod = pdorjw.Kod,
-                         Nama = pdorjw.Nama
+                         Kod = pdorjw.Kod.Trim(),
+                         Nama = pdorjw.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -290,8 +290,8 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdoj in _context.PDOJawatan
                     join pdoskp in _context.PDOSkimKetuaPerkhidmatan on pdoj.Id equals pdoskp.IdKetuaPerkhidmatan
                     select new DropDownDto{
-                         Kod = pdoj.Kod,
-                         Nama = pdoj.Nama
+                         Kod = pdoj.Kod.Trim(),
+                         Nama = pdoj.Nama.Trim()
                     }
                 ).ToListAsync();
 
@@ -320,8 +320,8 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdokp in _context.PDOKumpulanPerkhidmatan
                     select new DropDownDto{
-                         Kod = pdokp.Kod,
-                         Nama = pdokp.Nama
+                         Kod = pdokp.Kod.Trim(),
+                         Nama = pdokp.Nama.Trim()
                     }
                 ).ToListAsync();
 

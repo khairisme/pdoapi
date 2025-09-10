@@ -57,7 +57,7 @@ namespace HR.PDO.Application.Services.PDO
                                 select new AktivitiOrganisasiResponseDto
                                 {
                                    AktivitOrganisasiInduk=a.Nama.Trim(),
-                                    KodAktivitiOrganisasi=a.Kod,
+                                    KodAktivitiOrganisasi=a.Kod.Trim(),
                                     KategoriProgramAktiviti = b.Nama.Trim()
                                 }).ToListAsync();
 
@@ -80,7 +80,7 @@ namespace HR.PDO.Application.Services.PDO
                 // Auto-generate KodProgram
                 var childKodPrograms = await _context.PDOAktivitiOrganisasi
                  .Where(x => x.IdIndukAktivitiOrganisasi == request.IdAktivitiOrganisasi && x.KodProgram.Contains("."))
-                 .Select(x => x.KodProgram)
+                 .Select(x => x.KodProgram.Trim())
                  .ToListAsync();
 
                 string? lastKodProgram = childKodPrograms
@@ -94,7 +94,7 @@ namespace HR.PDO.Application.Services.PDO
                 {
                     string? parentKodProgram = await _context.PDOAktivitiOrganisasi
                         .Where(x => x.Id == request.IdAktivitiOrganisasi)
-                        .Select(x => x.KodProgram)
+                        .Select(x => x.KodProgram.Trim())
                         .FirstOrDefaultAsync();
 
                     newKodProgram = parentKodProgram + ".1";
@@ -116,14 +116,14 @@ namespace HR.PDO.Application.Services.PDO
 
                 var newEntity = new PDOAktivitiOrganisasi
                 {
-                    KodRujKategoriAktivitiOrganisasi = request.KodRujKategoriAktivitiOrganisasi,
+                    KodRujKategoriAktivitiOrganisasi = request.KodRujKategoriAktivitiOrganisasi.Trim(),
                     IdIndukAktivitiOrganisasi = request.IdAktivitiOrganisasi,
-                    Kod = request.Kod,
+                    Kod = request.Kod.Trim(),
                     Nama = request.Nama.Trim(),
-                    Keterangan = request.Keterangan,
-                    KodProgram = newKodProgram,
+                    Keterangan = request.Keterangan.Trim(),
+                    KodProgram = newKodProgram.Trim(),
                     Tahap = newTahap,
-                    KodCartaAktiviti = request.KodCartaAktiviti,
+                    KodCartaAktiviti = request.KodCartaAktiviti.Trim(),
                     ButiranKemaskini = butiranKemaskini,
                     StatusAktif = false
                 };
@@ -323,7 +323,7 @@ namespace HR.PDO.Application.Services.PDO
                     .Where(pao => pao.Id == IdIndukAktivitiOrganisasi)
                     .Select(pao => new
                     {
-                        KodAktivitiOrganisasi = pao.Kod,
+                        KodAktivitiOrganisasi = pao.Kod.Trim(),
                         NamaAktivitiOrganisasi = pao.Nama.Trim()
                     })
                     .FirstOrDefaultAsync();
@@ -507,7 +507,7 @@ namespace HR.PDO.Application.Services.PDO
                 {
                     Id = x.Id,
                     IdIndukAktivitiOrganisasi = x.IdIndukAktivitiOrganisasi,
-                    KodProgram = x.KodProgram ?? String.Empty,
+                    KodProgram = (x.KodProgram ?? String.Empty).Trim(),
                     Nama = (x.Nama ?? String.Empty).Trim(),
                     Tahap = x.Tahap
                 }).ToList();

@@ -3,6 +3,7 @@ namespace HR.PDO.Application.DTOs
 {
     public class UnitOrganisasiDto
     {
+        public int? Id { get; set; }
         public string? UnitOrganisasiInduk { get; set; }
         public bool? IndikatorAgensi { get; set; }
         public bool? IndikatorAgensiRasmi { get; set; }
@@ -18,7 +19,6 @@ namespace HR.PDO.Application.DTOs
         public Guid? IdCipta { get; set; }
         public Guid? IdHapus { get; set; }
         public Guid? IdPinda { get; set; }
-        public int Id { get; set; }
         public int IdAsal { get; set; }
         public int IdIndukUnitOrganisasi { get; set; }
         public int Tahap { get; set; }
