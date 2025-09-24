@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Contracts.DTOs;
-namespace HR.PDO.Application.Interfaces.PPA
+using HR.PDO.Application.DTOs;
+namespace HR.PDO.Application.Interfaces.PDO
 {
     public interface IRujNegaraExt
     {
+        public Task<List<DropDownNegaraDto>> SenaraiNegara();
     }
 }

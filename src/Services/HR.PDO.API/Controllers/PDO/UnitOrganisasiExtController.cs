@@ -47,7 +47,12 @@ namespace HR.PDO.API.Controllers.PDO
             try
             {
                 var data = await _unitorganisasiext.StrukturUnitOrganisasi(request);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -80,8 +85,7 @@ namespace HR.PDO.API.Controllers.PDO
         [HttpPut("kemaskini")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> KemaskiniUnitOrganisasi(
-            [FromBody] UnitOrganisasiDaftarDto request)
+        public async Task<ActionResult> KemaskiniUnitOrganisasi([FromBody] UnitOrganisasiDaftarDto request)
         {
             _logger.LogInformation("Calling KemaskiniUnitOrganisasi with request: {@Request}", request);
 
@@ -89,11 +93,29 @@ namespace HR.PDO.API.Controllers.PDO
             {
                 await _unitorganisasiext.KemaskiniUnitOrganisasi(request);
 
-                return CreatedAtAction(
-                    nameof(KemaskiniUnitOrganisasi),
-                    new { request },
-                    null
-                );
+                return Ok(new { message = "Berjaya Kemaskini Unit Organisasi" });
+            }
+            catch (Exception ex)
+            {
+                var err = ex.InnerException?.Message ?? string.Empty;
+                _logger.LogError(ex, "Error in KemaskiniUnitOrganisasi with request: {@Request}", request);
+
+                return StatusCode(500, ex.Message + " - " + err);
+            }
+        }
+
+        [HttpPut("kemaskini-semak")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> KemaskiniSemakUnitOrganisasi([FromBody] KemaskiniSemakUnitOrganisasiRequestDto request)
+        {
+            _logger.LogInformation("Calling KemaskiniSemakUnitOrganisasi with request: {@Request}", request);
+
+            try
+            {
+                await _unitorganisasiext.KemaskiniSemakUnitOrganisasi(request);
+
+                return Ok(new { message = "Berjaya Kemaskini Semak Unit Organisasi" });
             }
             catch (Exception ex)
             {
@@ -164,15 +186,20 @@ namespace HR.PDO.API.Controllers.PDO
         [HttpPost("carian")]
         [ProducesResponseType(typeof(IEnumerable<UnitOrganisasiDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<UnitOrganisasiDto>>> CarianUnitOrganisasi(
-            [FromBody] UnitOrganisasiCarianDto request)
+        public async Task<ActionResult<IEnumerable<CarianUnitOrganisasiDto>>> CarianUnitOrganisasi(
+            [FromBody] UnitOrganisasiCarianRequestDto request)
         {
             _logger.LogInformation("Calling CarianUnitOrganisasi with request: {@Request}", request);
 
             try
             {
                 var data = await _unitorganisasiext.CarianUnitOrganisasi(request);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -203,7 +230,12 @@ namespace HR.PDO.API.Controllers.PDO
             try
             {
                 var data = await _unitorganisasiext.RujukanUnitOrganisasi();
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -235,7 +267,12 @@ namespace HR.PDO.API.Controllers.PDO
             try
             {
                 var data = await _unitorganisasiext.SenaraiUnitOrganisasi(request);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -293,7 +330,7 @@ namespace HR.PDO.API.Controllers.PDO
             try
             {
                 await _unitorganisasiext.MansuhUnitOrganisasi(request);
-                return CreatedAtAction(nameof(MansuhUnitOrganisasi), new { request }, null);
+                return Ok(new { message = "Berjaya Mansuh Unit Organisasi" });
             }
             catch (Exception ex)
             {
@@ -307,7 +344,7 @@ namespace HR.PDO.API.Controllers.PDO
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 
@@ -319,7 +356,12 @@ namespace HR.PDO.API.Controllers.PDO
             try
             {
                 var data = await _unitorganisasiext.BacaUnitOrganisasi(Id);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -333,18 +375,53 @@ namespace HR.PDO.API.Controllers.PDO
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
+            }
+        }
+
+        [HttpGet("Muat")]
+        public async Task<ActionResult<object>> MuatUnitOrganisasi()
+        {
+            _logger.LogInformation("Calling BacaUnitOrganisasi");
+            try
+            {
+                var data = await _unitorganisasiext.MuatUnitOrganisasi();
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in BacaUnitOrganisasi");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 
         [HttpPost("wujud")]
-        public async Task<ActionResult> WujudUnitOrganisasiBaru([FromQuery] Guid UserId, UnitOrganisasiWujudDto request)
+        public async Task<ActionResult> WujudUnitOrganisasiBaru([FromBody] UnitOrganisasiWujudDto request)
         {
             _logger.LogInformation("Calling WujudUnitOrganisasiBaru");
             try
             {
-                await _unitorganisasiext.WujudUnitOrganisasiBaru(UserId, request);
-                return CreatedAtAction(nameof(WujudUnitOrganisasiBaru), new { UserId, request }, null);
+                var data = await _unitorganisasiext.WujudUnitOrganisasiBaru(request);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -358,8 +435,70 @@ namespace HR.PDO.API.Controllers.PDO
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
+        }
+
+        [HttpGet("jana-kod-agensi")]
+        public async Task<ActionResult> JanaKodAgensi([FromQuery] JanaKodAgensiRequestDto request)
+        {
+            _logger.LogInformation("Calling JanaKodAgensi");
+            try
+            {
+                var data = await _unitorganisasiext.JanaKodAgensi(request);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in JanaKodAgensi");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
+            }
+
+        }
+
+        [HttpGet("baca-nama")]
+        public async Task<ActionResult> BacaNamaUnitOrganisasi(int IdUnitOrganisasi)
+        {
+            _logger.LogInformation("Calling JanaKodAgensi");
+            try
+            {
+                var data = await _unitorganisasiext.BacaNamaUnitOrganisasi(IdUnitOrganisasi);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in JanaKodAgensi");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
+            }
+
         }
 
     }

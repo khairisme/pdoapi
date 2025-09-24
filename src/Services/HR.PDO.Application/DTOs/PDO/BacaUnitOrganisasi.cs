@@ -113,16 +113,6 @@ namespace HR.PDO.Application.DTOs
         public bool SejarahPenubuhan { get; set; }
 
         /// <summary>
-        /// Date when the last structural reorganization was made.
-        /// </summary>
-        public DateTime TarikhAkhirPenyusunan { get; set; }
-
-        /// <summary>
-        /// Date when the last structural strengthening was made.
-        /// </summary>
-        public DateTime TarikhAkhirPengukuhan { get; set; }
-
-        /// <summary>
         /// Indicator whether update details are recorded for this unit.
         /// </summary>
         public bool ButiranKemaskini { get; set; }
@@ -135,6 +125,6 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Identifier of the creator (user) associated with the unit.
         /// </summary>
-        public Guid IdCipta { get; set; }
+        public Guid UserId { get; set; }
     }
 }

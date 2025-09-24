@@ -39,18 +39,14 @@ namespace HR.Application.Services.PDO
                     where pdodp.IdPermohonanJawatan==IdPermohonanJawatan
                     select new RujJenisDokumenLinkDto
                     {
+                        Id = pdodp.Id,
                         StatusAktif = pdodp.StatusAktif ?? false,
-                        TarikhCipta = pdodp.TarikhCipta,
-                        TarikhHapus  = pdodp.TarikhHapus,
-                        TarikhPinda = pdodp.TarikhPinda,
-                        IdCipta = pdodp.IdCipta,
-                        IdHapus = pdodp.IdHapus,
-                        IdPinda = pdodp.IdPinda,
                         FormatDokumen = pdorjd.Nama,
                         JenisDokumen = pdodp.KodRujJenisDokumen,
                         PautanDokumen = pdodp.PautanDokumen,
                         IdPermohonanJawatan = pdodp.IdPermohonanJawatan,
-                        NamaDokumen = pdodp.NamaDokumen.Trim()
+                        NamaDokumen = pdodp.NamaDokumen.Trim(),
+                        Saiz = pdodp.Saiz
 
                     }
                 ).ToListAsync();
@@ -69,10 +65,36 @@ namespace HR.Application.Services.PDO
             }
 
         }
+        public async Task<PDODokumenPermohonan> BacaDokumenPermohonan(long? Id)
+        {
+            try
+
+            {
+
+                var result = await (from pdodp in _context.PDODokumenPermohonan
+                                    join pdorjd in _context.PDORujJenisDokumen on pdodp.KodRujJenisDokumen equals pdorjd.Kod
+                                    where pdodp.IdPermohonanJawatan == Id
+                                    select pdodp
+                ).FirstOrDefaultAsync();
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in SenaraiDokumenPermohonan");
+
+                throw;
+            }
+
+        }
 
 
 
-        public async Task WujudDokumenPermohonanBaru(Guid UserId, int IdPermohonanJawatan, string? KodRujJenisDokumen, string? NamaDokumen, string? PautanDokumen, string? FormatDokumen, int Saiz)
+        public async Task<PDODokumenPermohonan> WujudDokumenPermohonanBaru(WujudDokumenPermohonanRequestDto request)
         {
 
             try
@@ -80,19 +102,21 @@ namespace HR.Application.Services.PDO
             {
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDODokumenPermohonan();
-                entity.IdPermohonanJawatan = IdPermohonanJawatan;
-                entity.KodRujJenisDokumen = KodRujJenisDokumen;
-                entity.NamaDokumen = NamaDokumen.Trim();
-                entity.PautanDokumen = PautanDokumen;
-                entity.FormatDokumen = FormatDokumen;
-                entity.Saiz = Saiz;
-                entity.IdCipta = UserId;
+                entity.IdPermohonanJawatan = request.IdPermohonanJawatan;
+                entity.KodRujJenisDokumen = request.KodRujJenisDokumen;
+                entity.NamaDokumen = request.NamaDokumen.Trim();
+                entity.PautanDokumen = request.PautanDokumen;
+                entity.FormatDokumen = request.FormatDokumen;
+                entity.Saiz = request.Saiz;
+                entity.IdCipta = request.UserId;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDODokumenPermohonan.AddAsync(entity); 
                 await _context.SaveChangesAsync(); 
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+
+                return await BacaDokumenPermohonan(entity.Id);
             }
 
             catch (Exception ex)
@@ -108,25 +132,34 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task HapusTerusDokumenPermohonan(Guid UserId, int Id)
+        public async Task<string?> HapusTerusDokumenPermohonan(HapusTerusDokumenPermohonanRequest request)
         {
 
             try
 
             {
+                var statusAktif = await (from pdospj in _context.PDOStatusPermohonanJawatan
+                                        where pdospj.IdPermohonanJawatan == request.IdPermohonanJawatan
+                                        select pdospj.StatusAktif).FirstOrDefaultAsync();
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = await (from pdodp in _context.PDODokumenPermohonan
-                             where pdodp.Id == Id 
+                             where pdodp.Id == request.IdDokumenPermhonan 
                              select pdodp
                               ).FirstOrDefaultAsync();
+                if (statusAktif==true)
+                {
+                    throw new Exception("Permohonan Jawatan telah dilulukan (StatusAktif=1). Tidak boleh hapus terus rekod ini.");
+                }
                 if (entity == null)
                 {
-                    throw new Exception("PDODokumenPermohonan not found.");
+                    throw new Exception("Dokumen Permohonan tiada rekod berkaitan.");
                 }
                 _context.PDODokumenPermohonan.Remove(entity);
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+
+                return "Dokumen Permohonan {request.IdDokumenPermhonan} berjaya dihapus terus.";
             }
 
             catch (Exception ex)

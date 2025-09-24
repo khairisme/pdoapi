@@ -13,4 +13,11 @@ namespace HR.PDO.Application.DTOs
         public string KodKementerian { get; set; }
         public string KodRujJenisAgensi { get; set; }
     }
+    public class MuatUnitOrganisasiDto
+    {
+        public List<DropDownDto>? AgensiList { get; set; }
+        public List<DropDownDto>? JenisAgensiList { get; set; }
+        public List<DropDownDto>? KlusterList { get; set; }
+        public string KodAgensi { get; set; }
+    }
 }

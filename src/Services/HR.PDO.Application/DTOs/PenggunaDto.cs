@@ -31,12 +31,6 @@ namespace HR.PDO.Application.DTOs
         public string PautanPengesahanEmel { get; set; }
         public string KataLaluanSementara { get; set; }
         public bool? StatusAktif { get; set; }
-        public Guid IdCipta { get; set; }
-        public DateTime? TarikhCipta { get; set; }
-        public Guid IdPinda { get; set; }
-        public DateTime? TarikhPinda { get; set; }
-        public Guid IdHapus { get; set; }
-        public DateTime? TarikhHapus { get; set; }
     }
     public class TetapkanKataLaluanDto
     {

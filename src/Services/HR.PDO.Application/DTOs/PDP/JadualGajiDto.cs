@@ -16,7 +16,7 @@ namespace HR.PDO.Application.DTOs.PDP
         public int Id { get; set; }
         public string? KodJenisSaraan { get; set; }
         public int? IdGred { get; set; }
-        public int? NomborGred { get; set; }
+        public string? NomborGred { get; set; }
         public decimal? GajiMinimum { get; set; }
         public decimal? GajiMaksimum { get; set; }
         public decimal? KadarKGT { get; set; }

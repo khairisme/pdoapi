@@ -6,6 +6,7 @@ namespace HR.PDO.Application.Interfaces.PDO
 {
     public interface IPenetapanImplikasiKewanganExt
     {
-        public Task<List<PenetapanImplikasiKewanganDto>> SenaraiImplikasiKewangan(int IdPermohonanJawatan);
+        public Task<ImplikasiKewanganDto> KosImplikasiKewangan(ImplikasiKewanganRequestDto request);
+        public Task<SenaraiImplikasiKewanganOutputDto> SenaraiImplikasiKewangan(SenaraiImplikasiKewanganRequestDto request);
     }
 }

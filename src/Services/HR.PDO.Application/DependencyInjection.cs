@@ -7,7 +7,7 @@ using HR.PDO.Application.Services.PDO;
 using HR.PDO.Application.Services.PDP;
 using HR.Application.Services.PDO;
 using Microsoft.Extensions.DependencyInjection;
-using HR.PDO.Application.Interfaces.PPA;
+using HR.PDO.Application.Interfaces.PDO;
 using HR.Application.Services.PPA;
 using Microsoft.EntityFrameworkCore;
 using HR.PDO.Shared.Interfaces;
@@ -97,9 +97,18 @@ public static class DependencyInjection
         services.AddScoped<IRujukanJenisAgensiExt, RujukanJenisAgensiExtService>();
         services.AddScoped<IRujukanPasukanPerundingExt, RujukanPasukanPerundingExtService>();
         services.AddScoped<IRujJenisPermohonanExt, RujJenisPermohonanExtService>();
-
+        services.AddScoped<IImplikasiPermohonanJawatanExt, ImplikasiPermohonanJawatanExtService>();
+        services.AddScoped<IRujNegaraExt, RujNegaraExtService>();
+        services.AddScoped<IRujNegeriExt, RujNegeriExtService>();
+        services.AddScoped<IRujBandarExt, RujBandarExtService>();
+        services.AddScoped<IAlamatUnitOrganisasiExt, AlamatUnitOrganisasiExtService>();
+        services.AddScoped<IRujukanKlusterExt, RujukanKlusterExtService>();
+        services.AddScoped<IRujukanBidangPengkhususanExt, RujukanBidangPengkhusanExtService>();
+        services.AddScoped<IRujukanLaluanKemajuanKerjayaExt, RujukanLaluanKemajuanKerjayaExtService>();
+        services.AddScoped<IRujUrusanPerkhidmatanExt, RujUrusanPerkhidmatanExtService>();
+        services.AddScoped<IAktivitiOrganisasiPasukanPerundingExt, AktivitiOrganisasiPasukanPerundingExtService>();
+        services.AddScoped<IRujTujuanTambahSentaraExt, RujTujuanTambahSentaraExtService>();
         
-
         return services;
     }
 }

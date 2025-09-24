@@ -12,7 +12,7 @@ namespace HR.PDO.Application.DTOs
         public decimal? KadarKGT { get; set; }
         public int Id { get; set; }
         public int? IdGred { get; set; }
-        public int? NomborGred { get; set; }
+        public string? NomborGred { get; set; }
         public int? PeringkatMataGaji { get; set; }
         public int? TingkatMataGaji { get; set; }
         public string? ButiranKemasKini { get; set; }

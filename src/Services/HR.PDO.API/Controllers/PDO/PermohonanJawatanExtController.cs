@@ -26,7 +26,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _permohonanjawatanext.BacaPermohonanJawatan(Id);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -42,14 +47,49 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpGet("muat/{IdUnitOrganisasi}")]
-        public async Task<ActionResult<MuatPermohonanJawatanOutputDto>> MuatPermohonanJawatan(int IdUnitOrganisasi)
+        [HttpGet("semak/{Id}")]
+        public async Task<ActionResult<SemakPermohonanJawatanDto>> SemakPermohonanJawatan(int Id)
+        {
+            _logger.LogInformation("Calling BacaPermohonanJawatan");
+            try
+            {
+                var data = await _permohonanjawatanext.SemakPermohonanJawatan(Id);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in BacaPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
+            }
+        }
+
+        [HttpGet("muat")]
+        public async Task<ActionResult<MuatPermohonanJawatanOutputDto>> MuatPermohonanJawatan(int IdUnitOrganisasi, string? NomborRujukanPrefix)
         {
             _logger.LogInformation("Calling MuatPermohonanJawatan");
             try
             {
-                var data = await _permohonanjawatanext.MuatPermohonanJawatan(IdUnitOrganisasi);
-                return Ok(data);
+                var data = await _permohonanjawatanext.MuatPermohonanJawatan(IdUnitOrganisasi, NomborRujukanPrefix);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -63,7 +103,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
         [HttpPost("tambah")]
@@ -89,14 +129,14 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpPut("kemaskini-permohonan-jawatan/{Id}")]
-        public async Task<ActionResult> KemaskiniPermohonanJawatan([FromQuery] Guid UserId, int Id, PermohonanJawatanDaftarDto filter)
+        [HttpPut("kemaskini-semak")]
+        public async Task<ActionResult> KemaskiniSemakPermohonanJawatan([FromBody] SemakPermohonanJawatanRequestDto request)
         {
-            _logger.LogInformation("Calling KemaskiniPermohonanJawatan");
+            _logger.LogInformation("Calling KemaskiniSemakPermohonanJawatan");
             try
             {
-                await _permohonanjawatanext.KemaskiniPermohonanJawatan(UserId,Id,filter);
-                return CreatedAtAction(nameof(KemaskiniPermohonanJawatan), new {UserId, Id,filter }, null);
+                await _permohonanjawatanext.KemaskiniSemakPermohonanJawatan(request);
+                return Ok(new { message = "Berjaya Semak Permohonan jawatan" });
             }
             catch (Exception ex)
             {
@@ -112,14 +152,39 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpDelete("hapus-terus/{Id}")]
-        public async Task<ActionResult> HapusTerusPermohonanJawatan([FromQuery] Guid UserId, int Id)
+        [HttpPut("kemaskini-permohonan-jawatan")]
+        public async Task<ActionResult> KemaskiniPermohonanJawatan([FromBody] PermohonanJawatanDaftarDto request)
+        {
+            _logger.LogInformation("Calling KemaskiniPermohonanJawatan");
+            try
+            {
+                await _permohonanjawatanext.KemaskiniPermohonanJawatan(request);
+                return Ok(new { message = "Berjaya Kemaskini Permohonan jawatan" });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in KemaskiniPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
+            }
+        }
+
+        [HttpDelete("hapus-terus")]
+        public async Task<ActionResult> HapusTerusPermohonanJawatan([FromQuery] int IdPermohonanJawatan)
         {
             _logger.LogInformation("Calling HapusTerusPermohonanJawatan");
             try
             {
-                await _permohonanjawatanext.HapusTerusPermohonanJawatan(UserId,Id);
-                return CreatedAtAction(nameof(HapusTerusPermohonanJawatan), new {UserId, Id }, null);
+                await _permohonanjawatanext.HapusTerusPermohonanJawatan(IdPermohonanJawatan);
+                return CreatedAtAction(nameof(HapusTerusPermohonanJawatan), new { IdPermohonanJawatan }, null);
             }
             catch (Exception ex)
             {
@@ -147,8 +212,21 @@ namespace HR.PDO.API.Controllers.PDO {
             _logger.LogInformation("Calling CarianPermohonanJawatan");
             try
             {
+                if (request.KodRujStatusPermohonanJawatan == "")
+                    request.KodRujStatusPermohonanJawatan = null;
+                if (request.TajukPermohonan == "")
+                    request.TajukPermohonan = null;
+                if (request.NomborRujukan == "")
+                    request.NomborRujukan = null;
+                if (request.KodRujJenisPermohonan == "")
+                    request.KodRujJenisPermohonan = null;
                 var data = await _permohonanjawatanext.CarianPermohonanJawatan(request);
-                return Ok(data); // empty list => 200 OK
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -181,7 +259,7 @@ namespace HR.PDO.API.Controllers.PDO {
         //            }
         //        }
 
-        //        return StatusCode(500, ex.Message + "-" + err);
+        //        return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         //    }
         //}
 
@@ -192,7 +270,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _permohonanjawatanext.SenaraiPermohonanJawatan(request);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -215,7 +298,7 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 await _permohonanjawatanext.DaftarPermohonanJawatan(request);
-                return CreatedAtAction(nameof(DaftarPermohonanJawatan), new {request }, null);
+                return Ok(new { message = "Berjaya Daftar Permohonan Jawatan" });
             }
             catch (Exception ex)
             {
@@ -231,7 +314,7 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
-        [HttpPatch("Ulasan-status")]
+        [HttpPatch("ulasan-status")]
         public async Task<ActionResult> KemaskiniUlasanStatusPermohonanJawatan([FromBody] UlasanRequestDto request)
         {
             _logger.LogInformation("Calling DaftarPermohonanJawatan");
@@ -252,7 +335,83 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
+            }
+        }
+        [HttpPatch("hantar")]
+        public async Task<ActionResult> HantarPermohonanJawatan([FromBody] HantarRequestDto request)
+        {
+            _logger.LogInformation("Calling HantarPermohonanJawatan");
+            try
+            {
+                await _permohonanjawatanext.HantarPermohonanJawatan(request);
+                return CreatedAtAction(nameof(HantarPermohonanJawatan), new { request }, null);
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in HantarPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new { status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : "" });
+            }
+        }
+        [HttpPatch("Ulasan-status-jenis")]
+        public async Task<ActionResult> KemaskiniUlasanStatusJenisPermohonanJawatan([FromBody] UlasanStatusJenisRequestDto request)
+        {
+            _logger.LogInformation("Calling DaftarPermohonanJawatan");
+            try
+            {
+                await _permohonanjawatanext.KemaskiniUlasanStatusJenisPermohonanJawatan(request);
+                return CreatedAtAction(nameof(KemaskiniUlasanStatusJenisPermohonanJawatan), new { request }, null);
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in KemaskiniUlasanPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
+            }
+        }
+        [HttpPatch("Ulasan-status-keputusan")]
+        public async Task<ActionResult> KemaskiniUlasanStatusKeputusanPermohonanJawatan([FromBody] UlasanStatusKeputusanRequestDto request)
+        {
+            _logger.LogInformation("Calling DaftarPermohonanJawatan");
+            try
+            {
+                var status = await _permohonanjawatanext.KemaskiniUlasanStatusKeputusanPermohonanJawatan(request);
+                return Ok(new
+                {
+                    status = status == true ? "Berjaya":"Gagal",
+                    message = status == true ? "Berjaya Kemaskini Ulasan Status Keputusan Permohonan Jawatan" : "Gagal Kemaskini Ulasan Status Keputusan Permohonan Jawatan"
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in KemaskiniUlasanStatusKeputusanPermohonanJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new { status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : "" });
             }
         }
         [HttpPatch("Ulasan")]
@@ -276,7 +435,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
     }

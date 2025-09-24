@@ -1,4 +1,3 @@
-using HR.PDO.Application.Interfaces.PPA;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +51,6 @@ namespace HR.PDO.Application.Services.PDO
                                         IdJawatan = onbs.IdJawatan,
                                         TarikhMulaSandangan = onbs.TarikhMulaSandangan,
                                         TarikhTamatSandangan = onbs.TarikhTamatSandangan,
-                                        IdCipta = onbs.IdCipta,
                                     }
                                     ).ToListAsync();
                 return result;

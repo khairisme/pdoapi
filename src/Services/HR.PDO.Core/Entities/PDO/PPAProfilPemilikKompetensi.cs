@@ -32,9 +32,9 @@ namespace HR.PDO.Core.Entities.PDO
         public int? IdIndukUnitOrganisasi { get; set; }
         public int? TahapUnitOrganisasi { get; set; }
         public string? HierarkiUnitOrganisasi { get; set; }
-        public string? KodKategoriUnitOrganisasi { get; set; }
+        //public string? KodKategoriUnitOrganisasi { get; set; }
         public string? KodUnitOrganisasi { get; set; }
-        public string? KodCartaUnit { get; set; }
+        //public string? KodCartaUnit { get; set; }
         public int? IdAgensi { get; set; }
         public string? NamaAgensi { get; set; }
         public string? KodCartaAgensi { get; set; }
@@ -100,7 +100,7 @@ namespace HR.PDO.Core.Entities.PDO
         public int? StatusGaji { get; set; }
         public string? NamaJenisSaraan { get; set; }
         public string? GredJawatan { get; set; }
-        public int? NomborGred { get; set; }
+        public string? NomborGred { get; set; }
         public int? IdGred { get; set; }
         public string? KodGred { get; set; }
         public int? TurutanGred { get; set; }

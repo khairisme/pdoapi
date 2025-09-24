@@ -34,7 +34,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -57,7 +57,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = isSuccess ? "Sucess" : "Failed",
+                status = isSuccess ? "Berjaya" : "Gagal",
                 items = isSuccess
 
             });
@@ -82,7 +82,7 @@ namespace HR.PDO.API.Controllers.PDO
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception during creation");
-                return StatusCode(500, ex.InnerException.Message.ToString());
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 
@@ -164,7 +164,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = isSuccess ? "Sucess" : "Failed",
+                status = isSuccess ? "Berjaya" : "Gagal",
                 items = isSuccess
             });
 
@@ -184,7 +184,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -208,7 +208,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = isSuccess ? "Sucess" : "Failed",
+                status = isSuccess ? "Berjaya" : "Gagal",
                 items = isSuccess
             });
 
@@ -227,7 +227,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -282,7 +282,7 @@ namespace HR.PDO.API.Controllers.PDO
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception during DeleteOrUpdate");
-                return StatusCode(500, ex.InnerException.Message.ToString());
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
     }

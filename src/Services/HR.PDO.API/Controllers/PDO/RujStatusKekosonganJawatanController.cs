@@ -42,7 +42,7 @@ namespace HR.PDO.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = data.Count() > 0 ? "Success" : "Failed",
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
                     items = data
                 });
             }

@@ -35,7 +35,7 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdouo in _context.PDOUnitOrganisasi
                     where pdouo.IndikatorAgensi == true && pdouo.Nama.Contains(NamaAgensi)
-                                    select new DropDownDto{
+                        select new DropDownDto{
                          Kod = pdouo.Kod.Trim(),
                          Nama = pdouo.Nama.Trim()
                                     }

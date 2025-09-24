@@ -1,16 +1,17 @@
-﻿using HR.PDO.Core.Entities.PDO;
+﻿using HR.PDO.Core.Entities;
+using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Core.Entities.PDP;
+using HR.PDO.Core.Entities.PPA;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Options;
-using System.Data.SqlTypes;
-
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Options;
 using System.Data.SqlTypes;
-using HR.PDO.Core.Entities;
+using System.Data.SqlTypes;
+using HR.PDO.Core.Entities.PDO;
 
 
 namespace HR.PDO.Infrastructure.Data.EntityFramework
@@ -75,16 +76,48 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
         public DbSet<ProfilPemilikKompetensi> PPAProfilPemilikKompetensi { get; set; }
         public DbSet<PDOImplikasiPermohonanJawatan> PDOImplikasiPermohonanJawatan { get; set; }
         public DbSet<ONBSandangan> ONBSandangan { get; set; }
+        public DbSet<PPARujNegara> PPARujNegara { get; set; }
+        public DbSet<PPARujNegeri> PPARujNegeri { get; set; }
+        public DbSet<PPARujBandar> PPARujBandar { get; set; }
+        public DbSet<PDOAlamatUnitOrganisasi> PDOAlamatUnitOrganisasi { get; set; }
+        public DbSet<PDORujLaluanKemajuanKerjaya> PDORujLaluanKemajuanKerjaya { get; set; }
+        public DbSet<PDPBidangPengkhususan> PDPBidangPengkhususan { get; set; }
+        public DbSet<PDOAktivitiOrganisasiRujPasukanPerunding> PDOAktivitiOrganisasiRujPasukanPerunding { get; set; }
+        public DbSet<PDOKeputusanPermohonanJawatan> PDOKeputusanPermohonanJawatan { get; set; }
+        public DbSet<PDORujTujuanTambahSentara> PDORujTujuanTambahSentara { get; set; }
         
-
-
-
-
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
+             modelBuilder.Entity<PDOImplikasiPermohonanJawatan>(entity =>
+             {
+                 entity.ToTable("PDO_ImplikasiPermohonanJawatan");
+                 entity.HasKey(b => b.Id);
+                 entity.Ignore(b => b.StatusAktif);
+             });
+            modelBuilder.Entity<PDOAktivitiOrganisasiRujPasukanPerunding>(entity =>
+             {
+                 entity.ToTable("PDO_AktivitiOrganisasiRujPasukanPerunding");
+                 entity.HasKey(b => new {b.IdAktivitiOrganisasi, b.KodRujPasukanPerunding});
+             });
 
+            modelBuilder.Entity<PDORujUrusanPerkhidmatan>(entity =>
+             {
+                 entity.ToTable("PDO_RujUrusanPerkhidmatan");
+                 entity.HasKey(e => e.Kod); // Set Kod as the PK
+                 entity.Ignore(e => e.Id); // Don't map base Id
+             });
+            modelBuilder.Entity<PDOCadanganJawatan>(entity =>
+            {
+                entity.ToTable("PDO_CadanganJawatan");
+                entity.HasKey(e => e.Id);
+            });
+            modelBuilder.Entity<PDORujGelaranJawatan>(entity =>
+            {
+                entity.ToTable("PDO_RujGelaranJawatan");
+                entity.Ignore(e=>e.Id);
+                entity.HasKey(e=> e.Kod);
+            });
             modelBuilder.Entity<ProfilPemilikKompetensi>(entity =>
             {
                 entity.ToTable("PPA_ProfilPemilikKompetensi");
@@ -291,7 +324,9 @@ namespace HR.PDO.Infrastructure.Data.EntityFramework
                 entity.Property(x => x.IdGredPemilikKompetensi).IsRequired(false);
 
                 entity.Ignore(e => e.StatusAktif); // Don't map base Id
-                entity.Ignore(nameof(PDOBaseEntity.StatusAktif)); // Don't map base Id
+                entity.Property(x => x.TarikhMula).IsRequired(false);
+                entity.Property(x => x.TarikhTamat).IsRequired(false);
+
 
             });
             modelBuilder.Entity<PDORujPasukanPerunding>(entity =>

@@ -36,7 +36,7 @@ public class RujJenisSaraanController : ControllerBase
 
         return Ok(new
         {
-            status = result.Count() > 0 ? "Sucess" : "Failed",
+            status = result.Count() > 0 ? "Berjaya" : "Gagal",
             items = result
 
         });

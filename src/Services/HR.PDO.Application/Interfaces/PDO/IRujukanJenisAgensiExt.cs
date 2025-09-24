@@ -6,6 +6,6 @@ namespace HR.PDO.Application.Interfaces.PDO
 {
     public interface IRujukanJenisAgensiExt
     {
-        public Task<List<DropDownDto>> RujukanJenisAgensi();
+        public Task<List<DropDownDto>>? RujukanJenisAgensi();
     }
 }

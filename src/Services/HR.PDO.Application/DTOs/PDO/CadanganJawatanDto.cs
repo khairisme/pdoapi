@@ -1,6 +1,14 @@
 using System;
 namespace HR.PDO.Application.DTOs
 {
+
+    public class ButiranCadanganJawatanDto
+    {
+        public int? Id { get; set; }
+        public string? NamaJawatan { get; set; }
+        public int? IdUnitOrganisasi { get; set; }
+        public string? NamaUnitOrganisasi { get; set; }
+    }
     /// <summary>
     /// DTO for returning suggested positions (Cadangan Jawatan) for a job application or organizational activity.
     /// </summary>
@@ -24,7 +32,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Required. ID of the organizational unit where the position is suggested.
         /// </summary>
-        public int IdUnitOrganisasi { get; set; }
+        public int? IdUnitOrganisasi { get; set; }
 
         /// <summary>
         /// Optional. Job title (Gelaran Jawatan).
@@ -40,6 +48,8 @@ namespace HR.PDO.Application.DTOs
         /// Optional. Reference code for job type.
         /// </summary>
         public string? KodRujJenisJawatan { get; set; }
+        public string? KodRujPangkatBadanBeruniform { get; set; }
+        
 
         /// <summary>
         /// Optional. Reference code for job title.
@@ -87,6 +97,7 @@ namespace HR.PDO.Application.DTOs
     /// </remarks>
     public class CadanganJawatanRequestDto
     {
+        public Guid UserId { get; set; }
         /// <summary>
         /// Required. ID of the associated organizational activity.
         /// </summary>
@@ -146,5 +157,59 @@ namespace HR.PDO.Application.DTOs
         /// Optional. Number of positions requested.
         /// </summary>
         public int? BilanganJawatan { get; set; }
+    }
+
+    public class SenaraiCadanganJawatanRequestDto
+    {
+        public Guid? UserId { get; set; }
+        public int? IdAktivitiOrganisasi { get; set; }
+        public int IdUnitOrganisasi { get; set; }
+        public int IdButiranPermohonan { get; set; }
+        
+        public int IdKumpulanPerkhidmatan { get; set; }
+
+        public int BilanganJawatan { get; set; }
+        public string? AnggaranBerkenaanTajukJawatan { get; set; }
+        public string? KodRujJenisJawatan { get; set; }
+        public string? KodRujStatusJawatan { get; set; }
+        public string? KodRujStatusBekalan { get; set; }
+
+        
+        public string? KodRujGelaranJawatan { get; set; }
+        public List<SkimPerkhidmatanList> SkimPerkhidmatanList { get; set; }
+    }
+    public class SkimPerkhidmatanList
+    {
+        public int IdKlasifikasiPerkhidmatan { get; set; }
+        public int IdSkimPerkhidmatan { get; set; }
+        public string? IdGredList { get; set; }
+        public int IdKetuaPerkhidmatan { get; set; }
+        public string? KodBidangPengkhususan { get; set; }
+        public string? KodRujLaluanKemajuanKerjaya { get; set; }
+    }
+
+    public class KemaskiniCadanganJawatanRequestDto
+    {
+        public Guid UserId { get; set; }
+        /// <summary>
+        /// Required. ID of the detailed job application record.
+        /// </summary>
+        public int IdButiranPermohonan { get; set; }
+        public int IdCadanganJawatan { get; set; }
+        /// <summary>
+        /// Required. ID of the organizational unit where the position is suggested.
+        /// </summary>
+        public int IdUnitOrganisasi { get; set; }
+    }
+    public class KemaskiniUnitOrganisasiCadanganJawatanRequestDto
+    {
+        public int? IdCadanganJawatan { get; set; }
+        public Guid UserId { get; set; }
+
+        /// <summary>
+        /// Required. ID of the organizational unit where the position is suggested.
+        /// </summary>
+        public int IdUnitOrganisasi { get; set; }
+
     }
 }

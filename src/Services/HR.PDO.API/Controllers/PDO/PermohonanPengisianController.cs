@@ -47,7 +47,7 @@ public class PermohonanPengisianController : ControllerBase
         var data = await _service.GetPermohonanListPOAAsync(filter);
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -71,14 +71,14 @@ public class PermohonanPengisianController : ControllerBase
             var kod = await _service.CreateAsync(savePermohonanPengisianPOA);
 
             if (string.IsNullOrEmpty(kod))
-                return StatusCode(500, "Failed to create the record.");
+                return StatusCode(500, new {status="Gagal", message="Rekod gagal diwujudkan"});
 
             return Ok("Created successfully : "+ kod);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during creation : " + ex.InnerException.ToString());
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>
@@ -100,7 +100,7 @@ public class PermohonanPengisianController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during creation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 
@@ -133,7 +133,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = "Success" ,
+                status = "Berjaya" ,
                 items = data
             });
         }
@@ -176,7 +176,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -211,14 +211,14 @@ public class PermohonanPengisianController : ControllerBase
             var isSuccess = await _service.UpdateAsync(dto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500, new { status = "Gagal", message = "Gagal kemaskini rekod" });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>
@@ -235,7 +235,7 @@ public class PermohonanPengisianController : ControllerBase
         var data = await _service.GetPermohonanListPOAIAsync(filter);
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -255,7 +255,7 @@ public class PermohonanPengisianController : ControllerBase
         var data = await _service.GetFilteredPermohonanJawatanAsync(filter);
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -287,7 +287,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result.IdSkimPerkhidmatan > 0 ? "Sucess" : "Failed",
+                status = result.IdSkimPerkhidmatan > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -329,7 +329,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -358,7 +358,7 @@ public class PermohonanPengisianController : ControllerBase
             var result = await _service.GetSimulasiByPermohonanIdAsync(idPermohonan);
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -401,7 +401,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -448,7 +448,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -495,7 +495,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -538,7 +538,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -604,7 +604,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = updateResult ? "Success" : "No Data Updated",
+                status = updateResult ? "Berjaya" : "Tiada data dikemaskini",
                 message = updateResult ? "All records updated successfully" : "No records were updated"
             });
         }
@@ -654,7 +654,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -698,7 +698,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -729,7 +729,7 @@ public class PermohonanPengisianController : ControllerBase
             var result = await _service.GetPaparMaklumatPermohonanPengisiaAgensiIdAndNoRujukanAsync(request);
             return Ok(new
             {
-                status = result.Count > 0 ? "Success" : "Failed",
+                status = result.Count > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }
@@ -759,7 +759,7 @@ public class PermohonanPengisianController : ControllerBase
         var result = await _service.GetPaparMaklumatPermohonanPengisianResponseByIdAsync(idskimperkhidmatan);
         return  Ok(new
         {
-            status = result.Count > 0 ? "Success" : "Failed",
+            status = result.Count > 0 ? "Berjaya" : "Gagal",
             items = result
         });
     }
@@ -777,7 +777,7 @@ public class PermohonanPengisianController : ControllerBase
         var result = await _service.SearchAsync(request);
          return Ok(new
         {
-            status = result.Count > 0 ? "Success" : "Failed",
+            status = result.Count > 0 ? "Berjaya" : "Gagal",
             items = result
         });
     }
@@ -794,7 +794,7 @@ public class PermohonanPengisianController : ControllerBase
         var result = await _service.GetMaklumatAsync(request);
         return Ok(new
         {
-            status = result.Count > 0 ? "Success" : "Failed",
+            status = result.Count > 0 ? "Berjaya" : "Gagal",
             items = result
         });
     }
@@ -822,7 +822,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result != null ? "Sucess" : "Failed",
+                status = result != null ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -856,7 +856,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result.Any() ? "Success" : "No Data",
+                status = result.Any() ? "Berjaya" : "Tiada Data",
                 items = result
             });
         }
@@ -890,7 +890,7 @@ public class PermohonanPengisianController : ControllerBase
             var result = await _service.GetMaklumatPermohananData(idPermohonanPengisian);
             return Ok(new
             {
-                status = result != null ? "Success" : "Not Found",
+                status = result != null ? "Berjaya" : "Tidak dijumpai",
                 item = result
             });
         }
@@ -925,7 +925,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                 items = result
             });
         }
@@ -953,7 +953,7 @@ public class PermohonanPengisianController : ControllerBase
             var result = await _service.SimpanPermohonanDanSkimAsync(request);
             return Ok(new
             {
-                status = result ? "Success" : "Failed"
+                status = result ? "Berjaya" : "Gagal"
             });
         }
         catch (Exception ex)
@@ -981,7 +981,7 @@ public class PermohonanPengisianController : ControllerBase
             var result = await _service.GetJawatanKekosonganAsync(filter);
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                 items = result
             });
         }
@@ -1015,7 +1015,7 @@ public class PermohonanPengisianController : ControllerBase
             var result = await _service.GetMaklumatPermohonanAsync(filter);
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                 items = result
             });
         }
@@ -1054,7 +1054,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = "Success",
+                status = "Berjaya",
                 item = result
             });
         }
@@ -1087,7 +1087,7 @@ public class PermohonanPengisianController : ControllerBase
 
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                 items = result
             });
         }
@@ -1117,7 +1117,7 @@ public class PermohonanPengisianController : ControllerBase
             var result = await _service.GetBilanganPermohonanPengisianListAsync(filter);
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                 items = result
             });
         }

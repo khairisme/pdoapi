@@ -63,12 +63,47 @@ namespace HR.PDO.API.Controllers.PDO {
                     return NotFound($"AktivitiOrganisasi with Id {Id} not found.");
                 }
 
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data!=null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
                 var err = ex.InnerException?.Message ?? string.Empty;
                 _logger.LogError(ex, "Error in BacaAktivitiOrganisasi for Id {Id}", Id);
+
+                return StatusCode(500, ex.Message + " - " + err);
+            }
+        }
+        [HttpGet("baca-alamat-induk")]
+        public async Task<ActionResult<AktivitiOrganisasiDto>> BacaAktivitiOrganisasiAlamatInduk([FromQuery] int IdUnitOrganisasi)
+        {
+            _logger.LogInformation("Calling BacaAktivitiOrganisasi with Id: {Id}", IdUnitOrganisasi);
+
+            try
+            {
+                var data = await _aktivitiorganisasiext.BacaAktivitiOrganisasiAlamatInduk(IdUnitOrganisasi);
+
+                if (data == null)
+                {
+                    _logger.LogWarning("AktivitiOrganisasi with Id {Id} not found", IdUnitOrganisasi);
+                    return NotFound($"Alamat Unit Organisasi Induk dengan IdUnitOrganisasi {IdUnitOrganisasi} not found.");
+                }
+
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                var err = ex.InnerException?.Message ?? string.Empty;
+                _logger.LogError(ex, "Error in BacaAktivitiOrganisasi for Id {Id}", IdUnitOrganisasi);
 
                 return StatusCode(500, ex.Message + " - " + err);
             }
@@ -88,12 +123,17 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 // Call the service/extension layer to handle the actual business logic
-                await _aktivitiorganisasiext.WujudAktivitiOrganisasiBaru(request);
+                var data = await _aktivitiorganisasiext.WujudAktivitiOrganisasiBaru(request);
 
                 // Best practice: return 201 Created for POST requests
                 // CreatedAtAction should point to a GET method that can retrieve the created resource.
                 // If such a GET endpoint does not exist, consider returning Ok() or a custom response.
-                return CreatedAtAction(nameof(WujudAktivitiOrganisasiBaru), new { request }, null);
+                return Ok(new
+                {
+                    status = data!=null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -110,7 +150,7 @@ namespace HR.PDO.API.Controllers.PDO {
                 // Best practice: avoid leaking sensitive exception details directly to the client.
                 // Instead, return a standard error response object (e.g., { status, message }) 
                 // while logging the internal exception details for troubleshooting.
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
         /// <summary>
@@ -146,7 +186,7 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 await _aktivitiorganisasiext.PenjenamaanAktivitiOrganisasi(request);
-                return CreatedAtAction(nameof(PenjenamaanAktivitiOrganisasi), new { request }, null);
+                return Ok(new { message = "Berjaya Penjenamaan Aktiviti Organisasi" });
             }
             catch (Exception ex)
             {
@@ -160,7 +200,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 
@@ -199,7 +239,7 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 await _aktivitiorganisasiext.PindahAktivitiOrganisasi(request);
-                return CreatedAtAction(nameof(PindahAktivitiOrganisasi), new { request }, null);
+                return Ok(new { message = "Berjaya Pindah Aktiviti Organisasi" });
             }
             catch (Exception ex)
             {
@@ -213,7 +253,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 
@@ -229,7 +269,7 @@ namespace HR.PDO.API.Controllers.PDO {
         /// Created On  : 2025-09-03  
         /// Purpose     : Marks an AktivitiOrganisasi entity as inactive (soft delete) instead of 
         ///               permanently removing it. Provides safer handling for audit trail.  
-        /// </remarks>
+        /// </remarks>        
         [HttpDelete("mansuh")]
         public async Task<ActionResult> MansuhAktivitiOrganisasi([FromBody] MansuhAktivitiOrganisasiRequestDto request)
         {
@@ -239,20 +279,21 @@ namespace HR.PDO.API.Controllers.PDO {
             {
                 await _aktivitiorganisasiext.MansuhAktivitiOrganisasi(request);
 
-                return CreatedAtAction(
-                    nameof(MansuhAktivitiOrganisasi),
-                    new { request },
-                    null
-                );
+                return Ok(new { message = "Berjaya Mansuh AktivitiOrganisasi." });
             }
             catch (Exception ex)
             {
                 string err = ex.InnerException?.Message ?? "";
                 _logger.LogError(ex, "Error in MansuhAktivitiOrganisasi");
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new
+                {
+                    status = "Gagal",
+                    message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""
+                });
             }
         }
+
 
         /// <summary>
         /// Permanently deletes an AktivitiOrganisasi entity.  
@@ -290,7 +331,7 @@ namespace HR.PDO.API.Controllers.PDO {
         /// <param name="parentId">Optional parent node ID to filter the structure.</param>
         /// <param name="includeInactive">Whether to include inactive activities.</param>
         /// <returns>A structured list of AktivitiOrganisasi nodes.</returns>
-        [HttpPost("struktur")]
+        [HttpPost("struktur-tanpa-butiran")]
         [ProducesResponseType(typeof(IEnumerable<StrukturAktivitiOrganisasiDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<StrukturAktivitiOrganisasiDto>>> StrukturAktivitiOrganisasi(
@@ -302,7 +343,12 @@ namespace HR.PDO.API.Controllers.PDO {
             {
 
                 var data = await _aktivitiorganisasiext.StrukturAktivitiOrganisasi(request);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data !=null? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -313,5 +359,32 @@ namespace HR.PDO.API.Controllers.PDO {
             }
         }
 
+        [HttpPost("struktur")]
+        [ProducesResponseType(typeof(IEnumerable<StrukturAktivitiOrganisasiDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<StrukturAktivitiOrganisasiDto>>> StrukturButiranAktivitiOrganisasi(
+           [FromBody] StrukturAktivitiOrganisasiRequestDto request)
+        {
+            _logger.LogInformation("Calling StrukturAktivitiOrganisasi with ParentId={ParentId}", request.parentId);
+
+            try
+            {
+
+                var data = await _aktivitiorganisasiext.StrukturButiranAktivitiOrganisasi(request);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                var err = ex.InnerException?.Message ?? string.Empty;
+                _logger.LogError(ex, "Error in StrukturAktivitiOrganisasi");
+
+                return StatusCode(500, ex.Message + " - " + err);
+            }
+        }
     }
 }

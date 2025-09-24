@@ -26,7 +26,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _skimketuaperkhidmatanext.RujukanKetuaPerkhidmatan(IdSkimPerkhidmatan);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -43,13 +48,18 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpPost("tambah")]
-        public async Task<ActionResult> TambahKetuaPerkhidmatan([FromQuery] Guid UserId,[FromBody] SkimKetuaPerkhidmatanRequestDto request)
+        public async Task<ActionResult> TambahKetuaPerkhidmatan([FromBody] SkimKetuaPerkhidmatanRequestDto request)
         {
             _logger.LogInformation("Calling RujukanKetuaPerkhidmatan");
             try
             {
-                await _skimketuaperkhidmatanext.TambahKetuaPerkhidmatan(UserId, request);
-                return CreatedAtAction(nameof(TambahKetuaPerkhidmatan), new { UserId, request }, null);
+                var data = await _skimketuaperkhidmatanext.TambahKetuaPerkhidmatan(request);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -63,7 +73,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 

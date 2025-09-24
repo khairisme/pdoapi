@@ -1,3 +1,4 @@
+using HR.PDO.Core.Entities.PDO;
 using System;
 namespace HR.PDO.Application.DTOs
 {
@@ -6,7 +7,7 @@ namespace HR.PDO.Application.DTOs
         public int Id { get; set; }
         public string? NomborRujukan { get; set; }
         public string? TajukPermohonan { get; set; }
-        public DateTime? TarikhPermohonan { get; set; }
+        public string? TarikhPermohonan { get; set; }
         public string? Status { get; set; }
         public int IdAgensi { get; set; }
         public int IdUnitOrganisasi { get; set; }
@@ -14,5 +15,6 @@ namespace HR.PDO.Application.DTOs
         public string? JenisPermohonan { get; set; }
         public string? Keterangan { get; set; }
         public string? PasukanPerunding { get; set; }
+        public PDOStatusPermohonanJawatan StatusPermohonanJawatan { get; set; }
     }
 }

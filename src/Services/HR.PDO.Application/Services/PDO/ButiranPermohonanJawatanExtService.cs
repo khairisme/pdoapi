@@ -36,7 +36,6 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdobpj in _context.PDOButiranPermohonanJawatan
                     select new ButiranPermohonanJawatanDto{
                          IdButiranPermohonan = pdobpj.IdButiranPermohonan,
-                         IdCipta = pdobpj.IdCipta,
                          IdHapus = pdobpj.IdHapus,
                          IdJawatan = pdobpj.IdJawatan,
                          IdPinda = pdobpj.IdPinda,
@@ -76,7 +75,6 @@ namespace HR.Application.Services.PDO
                     && pdobpj.IdJawatan == request.IdJawatan
                     select new ButiranPermohonanJawatanDto{
                          IdButiranPermohonan = pdobpj.IdButiranPermohonan,
-                         IdCipta = pdobpj.IdCipta,
                          IdHapus = pdobpj.IdHapus,
                          IdJawatan = pdobpj.IdJawatan,
                          IdPinda = pdobpj.IdPinda,
@@ -102,6 +100,41 @@ namespace HR.Application.Services.PDO
         }
 
 
+        public async Task<ButiranPermohonanJawatanDto> BacaButiranPermohonanJawatan(int? IdButiranPermohonan, int? IdJawatan)
+        {
+            try
+
+            {
+
+                var result = await (from pdobpj in _context.PDOButiranPermohonanJawatan
+                                    where pdobpj.IdButiranPermohonan == IdButiranPermohonan
+                                    && pdobpj.IdJawatan == IdJawatan
+                                    select new ButiranPermohonanJawatanDto
+                                    {
+                                        IdButiranPermohonan = pdobpj.IdButiranPermohonan,
+                                        IdHapus = pdobpj.IdHapus,
+                                        IdJawatan = pdobpj.IdJawatan,
+                                        IdPinda = pdobpj.IdPinda,
+                                        StatusAktif = pdobpj.StatusAktif ?? false,
+                                        TarikhCipta = pdobpj.TarikhCipta,
+                                        TarikhHapus = pdobpj.TarikhHapus,
+                                        TarikhPinda = pdobpj.TarikhPinda
+                                    }
+                ).FirstOrDefaultAsync();
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in BacaButiranPermohonanJawatan");
+
+                throw;
+            }
+
+        }
 
         public async Task HapusTerusPermohonanJawatan(AddButiranPermohonanJawatanRequestDto request)
         {
@@ -138,7 +171,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task TambahButiranPermohonanJawatan(TambahButiranPermohonanJawatanDto request)
+        public async Task<ButiranPermohonanJawatanDto> TambahButiranPermohonanJawatan(TambahButiranPermohonanJawatanDto request)
         {
             try
             {
@@ -156,6 +189,7 @@ namespace HR.Application.Services.PDO
 
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+                return await BacaButiranPermohonanJawatan(entity.IdButiranPermohonan, entity.IdJawatan);
             }
             catch (Exception ex)
             {

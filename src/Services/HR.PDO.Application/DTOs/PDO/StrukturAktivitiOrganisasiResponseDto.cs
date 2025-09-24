@@ -4,12 +4,7 @@ namespace HR.PDO.Application.DTOs
     public class StrukturAktivitiOrganisasiResponseDto
     {
         public bool? StatusAktif { get; set; }
-        public DateTime? TarikhCipta { get; set; }
-        public DateTime? TarikhHapus { get; set; }
-        public DateTime? TarikhPinda { get; set; }
-        public Guid IdCipta { get; set; }
-        public Guid IdHapus { get; set; }
-        public Guid IdPinda { get; set; }
+        public Guid UserId { get; set; }
         public int Id { get; set; }
         public int IdAsal { get; set; }
         public int IdIndukAktivitiOrganisasi { get; set; }

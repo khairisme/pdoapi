@@ -35,17 +35,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Optional. The GUID of the user who created this record.
         /// </summary>
-        public Guid? IdCipta { get; set; }
-
-        /// <summary>
-        /// Optional. The GUID of the user who deleted this record.
-        /// </summary>
-        public Guid? IdHapus { get; set; }
-
-        /// <summary>
-        /// Optional. The GUID of the user who last modified this record.
-        /// </summary>
-        public Guid? IdPinda { get; set; }
+        public Guid? UserId { get; set; }
 
         /// <summary>
         /// Optional. Internal record ID.
@@ -65,7 +55,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Optional. Level or depth of the activity in the hierarchy.
         /// </summary>
-        public int Tahap { get; set; }
+        public int? Tahap { get; set; }
 
         /// <summary>
         /// Optional. Additional details about updates made to this record.

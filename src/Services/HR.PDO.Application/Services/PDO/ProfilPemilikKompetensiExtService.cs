@@ -1,6 +1,5 @@
 using HR.PDO.Application.DTOs;
 using HR.PDO.Application.Interfaces.PDO;
-using HR.PDO.Application.Interfaces.PPA;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data.EntityFramework;
@@ -55,14 +54,15 @@ namespace HR.Application.Services.PPA
                              && (filter.NamaPemilikKompetensi!=null && pdoppk.NamaPemilikKompetensi.Contains(filter.NamaPemilikKompetensi) || filter.NamaPemilikKompetensi==null)
                              select new ProfilPemilikKompetensiDisplayDto
                              {
-                                 NomborKadPengenalan=pdoppk.NomborKadPengenalan,
+                                 IdSkimPerkhidmatan = pdoppk.IdSkimPerkhidmatan,
+                                 NomborKadPengenalan =pdoppk.NomborKadPengenalan,
                                  NamaPemilikKompetensi = pdoppk.NamaPemilikKompetensi,
                                  NamaSkimPerkhidmatan = pdoppk.NamaSkimPerkhidmatan,
                                  Gred = pdog.Nama
                              }).ToList();
 
 
-                return result;
+                return result!=null? result : new List<ProfilPemilikKompetensiDisplayDto>();
 
             }
 

@@ -29,8 +29,6 @@ namespace HR.PDO.Core.Entities.PDO
         public bool? IndikatorJabatanDiKerajaanNegeri { get; set; }
         public DateTime? TarikhPenubuhan { get; set; }
         public string? SejarahPenubuhan { get; set; }
-        public DateTime? TarikhAkhirPenyusunan { get; set; }
-        public DateTime? TarikhAkhirPengukuhan { get; set; }
         public string? ButiranKemaskini { get; set; }
         public bool? StatusAktif { get; set; }
         public Guid? IdCipta { get; set; }

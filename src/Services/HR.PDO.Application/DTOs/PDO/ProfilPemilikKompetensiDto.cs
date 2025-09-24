@@ -47,7 +47,7 @@ namespace HR.PDO.Application.DTOs
         public int? IdUnitOrganisasi { get; set; }
         public int? IndikatorAgensiUnitOrganisasi { get; set; }
         public int? KodUmurBersara { get; set; }
-        public int? NomborGred { get; set; }
+        public string? NomborGred { get; set; }
         public int? StatusGaji { get; set; }
         public int? TahapUnitOrganisasi { get; set; }
         public int? TurutanGred { get; set; }
@@ -128,6 +128,7 @@ namespace HR.PDO.Application.DTOs
     }
     public class ProfilPemilikKompetensiDisplayDto
     {
+        public int? IdSkimPerkhidmatan { get; set; }
         public int IdPemilikKompetensi { get; set; }
         public string NomborKadPengenalan { get; set; }
         public string NamaPemilikKompetensi { get; set; }
@@ -174,7 +175,7 @@ namespace HR.PDO.Application.DTOs
         public int IdUnitOrganisasi { get; set; }
         public int IndikatorAgensiUnitOrganisasi { get; set; }
         public int KodUmurBersara { get; set; }
-        public int NomborGred { get; set; }
+        public string NomborGred { get; set; }
         public int StatusGaji { get; set; }
         public int TahapUnitOrganisasi { get; set; }
         public int TurutanGred { get; set; }

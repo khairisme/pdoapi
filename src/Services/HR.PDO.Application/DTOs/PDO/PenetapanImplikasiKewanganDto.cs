@@ -36,4 +36,15 @@ namespace HR.PDO.Application.DTOs
         /// </summary>
         public string? SkimPerkhidmatan { get; set; }
     }
+
+    public class  ImplikasiKewanganDto
+    {
+        public decimal? TotalKosSebulan { get; set; }
+        public decimal? TotalKosSetahun { get; set; }
+    }
+    public class GredDto
+    {
+        public int? Id { get; set; }
+        public string? code { get; set; }
+    }
 }

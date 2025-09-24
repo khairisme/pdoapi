@@ -27,7 +27,12 @@ namespace HR.PDO.ModuleAPI.Controllers {
             try
             {
                 var data = await _klasifikasiperkhidmatanext.RujukanKlasifikasiPerKhidmatan();
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {

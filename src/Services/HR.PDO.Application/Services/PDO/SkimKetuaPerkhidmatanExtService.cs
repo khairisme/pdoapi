@@ -36,8 +36,12 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdoj in _context.PDOJawatan
                     join pdoskp in _context.PDOSkimKetuaPerkhidmatan on pdoj.Id equals pdoskp.IdKetuaPerkhidmatan
+                    join pdosp in _context.PDOSkimPerkhidmatan on pdoskp.IdSkimPerkhidmatan equals pdosp.Id
+                    where pdoskp.IdSkimPerkhidmatan == IdSkimPerkhidmatan 
+                    && pdoj.StatusAktif == true
                     select new DropDownDto{
-                         Kod = pdoj.Kod.Trim(),
+                         Id = pdoj.Id,
+                        Kod = pdoj.Kod.Trim(),
                          Nama = pdoj.Nama.Trim()
                     }
                 ).ToListAsync();
@@ -57,7 +61,7 @@ namespace HR.Application.Services.PDO
 
         }
 
-        public async Task TambahKetuaPerkhidmatan(Guid UserId, SkimKetuaPerkhidmatanRequestDto request)
+        public async Task<PDOSkimKetuaPerkhidmatan> TambahKetuaPerkhidmatan(SkimKetuaPerkhidmatanRequestDto request)
         {
            try
             {
@@ -65,12 +69,14 @@ namespace HR.Application.Services.PDO
                 var entity = new PDOSkimKetuaPerkhidmatan();
                 entity.IdSkimPerkhidmatan = request.IdSkimPerkhidmatan;
                 entity.IdKetuaPerkhidmatan = request.IdKetuaPerkhidmatan;
-                entity.IdCipta = UserId;
+                entity.IdCipta = request.UserId;
                 entity.TarikhCipta = DateTime.Now;
                 entity.StatusAktif = true;
                 await _context.PDOSkimKetuaPerkhidmatan.AddAsync(entity);
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+
+                return entity;
             }
 
             catch (Exception ex)

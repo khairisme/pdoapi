@@ -1,6 +1,8 @@
 using HR.PDO.Core.Entities.PDO;
 using System;
 using System.ComponentModel;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace HR.PDO.Application.DTOs
 {
     /// <summary>
@@ -33,6 +35,7 @@ namespace HR.PDO.Application.DTOs
         /// Optional. Name of the activity.
         /// </summary>
         public string? AktivitiOrganisasi { get; set; }
+        public string? AktivitiOrganisasiInduk { get; set; }
 
         /// <summary>
         /// Optional. Code assigned to the activity.
@@ -48,19 +51,34 @@ namespace HR.PDO.Application.DTOs
         /// Optional. Program code associated with this activity.
         /// </summary>
         public string? KodProgram { get; set; }
+        public string? ButiranKemaskiniJson { get; set; }
 
+        public string? NamaPenjenamaan { get; set; }
+        public int? IndikatorRekod { get; set; }
+        //public List<ButiranKemaskiniDto>? ButiranKemaskini { get; set; }
         /// <summary>
         /// List of child nodes in the activity hierarchy.
         /// </summary>
         public List<StrukturAktivitiOrganisasiDto> Children { get; set; } = new List<StrukturAktivitiOrganisasiDto>();
 
-        public List<PDOButiranPermohonan> ButiranPermohonan { get; set; }
+        public List<ButiranPermohonanDetailDto> ButiranPermohonan { get; set; }
 
         /// <summary>
         /// Indicates if the activity has child nodes.
         /// </summary>
 
+        public bool? StatusAktif { get; set; }
+        public string? StatusAktivitiOrganisasi { get; set; }
         public bool HasChildren { get; set; }
+    }
+
+    public class ButiranPermohonanDetailDto
+    {
+        public int? IndikatorRekod { get; set; }
+        public string? StatusAktivitiOrganisasi { get; set; }
+        public int? Id { get; set; }
+        public string? NamaButiran { get; set; }
+        public string? NamaAktivitiOrganisasi { get; set; }
     }
 
     /// <summary>
@@ -93,8 +111,11 @@ namespace HR.PDO.Application.DTOs
         /// Used to reference a specific activity within the hierarchy.
         /// </summary>
         public int IdAktivitiOrganisasi { get; set; }
+        [DefaultValue(false)]
+        [SwaggerSchema("Value false if you want to include the parent in the result. Or True if you want to have child only")]
+        public bool ResultChild { get; set; }
 
-        [DefaultValue("0100")]
+        [DefaultValue("01A00208")]
         public string? KodCartaAktiviti { get; set; }
 
         /// <summary>

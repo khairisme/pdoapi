@@ -38,7 +38,7 @@ public class JawatanController : ControllerBase
         var data = await _jawatanService.GetJawatanWithAgensiAsync(namaJwtn ?? "", kodCartaOrganisasi ?? "");
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -69,7 +69,7 @@ public class JawatanController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -112,7 +112,7 @@ public class JawatanController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -154,7 +154,7 @@ public class JawatanController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -198,7 +198,7 @@ public class JawatanController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }
@@ -240,7 +240,7 @@ public class JawatanController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }

@@ -1,4 +1,3 @@
-using HR.PDO.Application.Interfaces.PPA;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;

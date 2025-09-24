@@ -39,7 +39,7 @@ public class UnitOrganisasiController : ControllerBase
         var data = await _unitOrganisasiService.GetAllAsync();
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -54,7 +54,7 @@ public class UnitOrganisasiController : ControllerBase
         var data = await _unitOrganisasiService.GetUnitOrganisasiByKategoriAsync();
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -73,7 +73,7 @@ public class UnitOrganisasiController : ControllerBase
         var result = await _unitOrganisasiService.SearchUnitOrganisasiAsync(keyword);
         return Ok(new
         {
-            status = result.Count() > 0 ? "Sucess" : "Failed",
+            status = result.Count() > 0 ? "Berjaya" : "Gagal",
             items = result
 
         });
@@ -102,7 +102,7 @@ public class UnitOrganisasiController : ControllerBase
             var result = await _unitOrganisasiService.GetNamaUnitOrganisasi(IdUnitOrganisasi);
             return Ok(new
             {
-                status = !string.IsNullOrEmpty(result) ? "Success" : "Failed",
+                status = !string.IsNullOrEmpty(result) ? "Berjaya" : "Gagal",
                 data = result
             });
         }
@@ -141,14 +141,14 @@ public class UnitOrganisasiController : ControllerBase
             var isSuccess = await _unitOrganisasiService.SetPenjenamaanSemula(penjenamaanSemulaRequestDto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500, new { status = "Gagal", message = "Gagal kemaskini rekod" });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     //End
@@ -166,7 +166,7 @@ public class UnitOrganisasiController : ControllerBase
 
             return Ok(new
             {
-                status = data.Count > 0 ? "Success" : "Failed",
+                status = data.Count > 0 ? "Berjaya" : "Gagal",
                 items = data
             });
         }

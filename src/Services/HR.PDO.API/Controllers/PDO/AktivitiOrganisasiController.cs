@@ -13,20 +13,34 @@ using Shared.Contracts.DTOs;
 using System.Diagnostics;
 
 namespace HR.PDO.API.Controllers.PDO;
+/// <summary>
+/// Created By: Khairi Abu Bakar  
+/// Date: 19/09/2025  
+/// Purpose: API controller for managing Aktiviti Organisasi endpoints under PDO module.  
+///          Handles routing, request validation, and delegates business logic to service layer.
+/// </summary>
 //[Authorize]
 [ApiController]
 [Route("api/pdo/v1/[controller]")]
 public class AktivitiOrganisasiController : ControllerBase
 {
+    // Created By: Khairi Abu Bakar  
+    // Date: 19/09/2025  
+    // Purpose: Injected dependencies for AktivitiOrganisasiController—handles business logic via IAktivitiOrganisasiService  
+    //          and logs operational events and errors using ILogger.
     private readonly IAktivitiOrganisasiService _aktivitiOrganisasiService;
     private readonly ILogger<AktivitiOrganisasiController> _logger;
-
+    /// <summary>
+    /// Created By: Khairi Abu Bakar  
+    /// Date: 19/09/2025  
+    /// Purpose: Initializes AktivitiOrganisasiController with required service and logging dependencies.  
+    ///          Injects IAktivitiOrganisasiService for business logic execution and ILogger for structured logging.
+    /// </summary>
     public AktivitiOrganisasiController(IAktivitiOrganisasiService aktivitiOrganisasiService, ILogger<AktivitiOrganisasiController> logger)
     {
         _aktivitiOrganisasiService = aktivitiOrganisasiService;
         _logger = logger;
     }
-
     /// <summary>
     /// Struktur Aktiviti Organisasi
     /// </summary>
@@ -37,7 +51,7 @@ public class AktivitiOrganisasiController : ControllerBase
         var data = await _aktivitiOrganisasiService.GetAktivitiOrganisasiAsync();
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -53,7 +67,7 @@ public class AktivitiOrganisasiController : ControllerBase
         var data = await _aktivitiOrganisasiService.GetAktivitiOrganisasibyIdAsync(id);
         return Ok(new
         {
-            status = data.Count() > 0 ? "Sucess" : "Failed",
+            status = data.Count() > 0 ? "Berjaya" : "Gagal",
             items = data
 
         });
@@ -63,15 +77,13 @@ public class AktivitiOrganisasiController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-
-
     [HttpPost("newWujudAktivitiOrganisasi")]
     public async Task<IActionResult> NewWujudAktivitiOrganisasi([FromBody] AktivitiOrganisasiCreateRequest request)
     {
         try
         {
             int newId = await _aktivitiOrganisasiService.SimpanAktivitiAsync(request);
-            return Ok(new { message = "Successfully saved", Id = newId });
+            return Ok(new { message = "Berjaya disimpan", Id = newId });
         }
         catch (Exception ex)
         {
@@ -102,7 +114,7 @@ public class AktivitiOrganisasiController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }
@@ -137,18 +149,14 @@ public class AktivitiOrganisasiController : ControllerBase
             var result = await _aktivitiOrganisasiService.GetNamaAktivitiOrganisasi(IdIndukAktivitiOrganisasi);
             return Ok(new
             {
-                status = !string.IsNullOrEmpty(result) ? "Success" : "Failed",
+                status = !string.IsNullOrEmpty(result) ? "Berjaya" : "Gagal",
                 data = result
             });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetNamaAktivitiOrganisasi");
-            return StatusCode(500, new
-            {
-                status = "Error",
-                data = string.Empty
-            });
+            return StatusCode(500, new { status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : "" });
         }
     }
 
@@ -176,14 +184,22 @@ public class AktivitiOrganisasiController : ControllerBase
             var isSuccess = await _aktivitiOrganisasiService.SetPenjenamaanSemula(penjenamaanSemulaRequestDto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500,new
+                {
+                    status = "Gagal",
+                    message = "Rekod gagal dikemaskini."
+                });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new
+            {
+                status = "Gagal",
+                message = ex.Message + " - " + ex.InnerException!= null ? ex.InnerException.Message.ToString():""
+            });
         }
     }
 
@@ -209,7 +225,7 @@ public class AktivitiOrganisasiController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }
@@ -244,7 +260,7 @@ public class AktivitiOrganisasiController : ControllerBase
             var result = await _aktivitiOrganisasiService.GetNamaKodAktivitiOrganisasi(IdIndukAktivitiOrganisasi);
             return Ok(new
             {
-                status = result != null ? "Success" : "Failed",
+                status = result != null ? "Berjaya" : "Gagal",
                 data = result
             });
         }
@@ -284,14 +300,22 @@ public class AktivitiOrganisasiController : ControllerBase
             var isSuccess = await _aktivitiOrganisasiService.SetAktivitiOrganisasi(aktivitiOrganisasiRequestDto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500, new
+                {
+                    status = "Gagal",
+                    message = "Gagal mengemaskini rekod."
+                });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new
+            {
+                status = "Gagal",
+                message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""
+            });
         }
     }
 
@@ -321,7 +345,7 @@ public class AktivitiOrganisasiController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }
@@ -360,14 +384,14 @@ public class AktivitiOrganisasiController : ControllerBase
             var isSuccess = await _aktivitiOrganisasiService.SetMansuhAktivitiOrganisasi(mansuhAktivitiOrganisasiRequestDto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500, new { status = "Gagal", Message = "Gagal kemaskini rekod" });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 
@@ -394,7 +418,7 @@ public class AktivitiOrganisasiController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }

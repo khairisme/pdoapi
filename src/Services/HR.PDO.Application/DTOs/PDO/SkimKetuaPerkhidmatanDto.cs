@@ -8,6 +8,7 @@ namespace HR.PDO.Application.DTOs.PDO
 {
     public class SkimKetuaPerkhidmatanRequestDto
     {
+        public Guid UserId { get; set; }
         public int IdSkimPerkhidmatan { get; set; }
         public int IdKetuaPerkhidmatan { get; set; }
     }

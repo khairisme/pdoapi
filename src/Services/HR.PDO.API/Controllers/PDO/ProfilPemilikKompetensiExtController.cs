@@ -58,7 +58,7 @@ namespace HR.PDO.API.Controllers.PDO
             try
             {
                 var data = await _profilpemilikkompetensiext.SenaraiProfilPemilikKompetensi(request);
-                return Ok(data); // empty list => 200 OK
+                return Ok(data);
             }
             catch (Exception ex)
             {

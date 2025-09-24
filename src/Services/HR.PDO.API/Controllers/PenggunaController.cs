@@ -105,7 +105,7 @@ public class PenggunaController : ControllerBase
 
         return Ok(new
         {
-            status = gambars.Count() > 0 ? "Sucess" : "Failed",
+            status = gambars.Count() > 0 ? "Berjaya" : "Gagal",
             Verfication_photos = gambars
            
         });

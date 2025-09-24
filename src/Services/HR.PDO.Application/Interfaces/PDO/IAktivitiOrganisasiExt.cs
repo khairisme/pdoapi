@@ -23,6 +23,8 @@ namespace HR.PDO.Application.Interfaces.PDO
         /// </remarks>
         public Task<PagedResult<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasi(StrukturAktivitiOrganisasiRequestDto request);
 
+        public Task<PagedResult<StrukturAktivitiOrganisasiDto>> StrukturButiranAktivitiOrganisasi(StrukturAktivitiOrganisasiRequestDto request);
+        
         /// <summary>
         /// Creates a new Aktiviti Organisasi record.
         /// </summary>
@@ -32,7 +34,7 @@ namespace HR.PDO.Application.Interfaces.PDO
         /// Created On  : 2025-09-03  
         /// Purpose     : Registers a new AktivitiOrganisasi entity with provided details.  
         /// </remarks>
-        public Task WujudAktivitiOrganisasiBaru(WujudAktivitiOrganisasiRequestDto request);
+        public Task<AktivitiOrganisasiDto> WujudAktivitiOrganisasiBaru(WujudAktivitiOrganisasiRequestDto request);
 
         /// <summary>
         /// Renames (rebrands) an existing Aktiviti Organisasi entity.
@@ -68,15 +70,16 @@ namespace HR.PDO.Application.Interfaces.PDO
         /// </remarks>
         public Task<AktivitiOrganisasiDto> BacaAktivitiOrganisasi(int Id);
 
-        /// <summary>
-        /// Retrieves a list of Aktiviti Organisasi for use in dropdowns or reference data.
-        /// </summary>
-        /// <returns>A list of DropDownDto objects containing code and name pairs.</returns>
-        /// <remarks>
-        /// Author      : Khairi bin Abu Bakar  
-        /// Created On  : 2025-09-03  
-        /// Purpose     : Provides simple lookup values for binding AktivitiOrganisasi in dropdowns and selection lists.  
-        /// </remarks>
+        public Task<AktivitiOrganisasiAlamatIndukDto> BacaAktivitiOrganisasiAlamatInduk(int IdUnitOrganisasi);
+         /// <summary>
+         /// Retrieves a list of Aktiviti Organisasi for use in dropdowns or reference data.
+         /// </summary>
+         /// <returns>A list of DropDownDto objects containing code and name pairs.</returns>
+         /// <remarks>
+         /// Author      : Khairi bin Abu Bakar  
+         /// Created On  : 2025-09-03  
+         /// Purpose     : Provides simple lookup values for binding AktivitiOrganisasi in dropdowns and selection lists.  
+         /// </remarks>
         public Task<List<DropDownDto>> RujukanAktivitiOrganisasi();
 
         /// <summary>

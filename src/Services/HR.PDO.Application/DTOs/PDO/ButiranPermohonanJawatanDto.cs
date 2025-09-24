@@ -35,7 +35,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Optional. GUID of the user who created the record.
         /// </summary>
-        public Guid? IdCipta { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Optional. GUID of the user who deleted the record.
