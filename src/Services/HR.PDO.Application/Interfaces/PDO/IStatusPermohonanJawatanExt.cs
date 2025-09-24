@@ -7,8 +7,8 @@ namespace HR.PDO.Application.Interfaces.PDO
     public interface IStatusPermohonanJawatanExt
     {
         public Task<List<DropDownDto>> RujukanStatusPermohonanJawatan(string KodRujPeranan);
-        public Task TambahStatusPermohonanJawatan(Guid UserId, TambahStatusPermohonanJawatanDto request);
-        public Task TambahStatusPermohonanJawatanDraft(Guid UserId, TambahStatusPermohonanJawatanDraftDto request);
-        public Task TambahStatusPermohonanJawatanBaharu(Guid UserId, TambahStatusPermohonanJawatanBaharuDto request);
+        public Task TambahStatusPermohonanJawatan(TambahStatusPermohonanJawatanDto request);
+        public Task TambahStatusPermohonanJawatanDraft(TambahStatusPermohonanJawatanDraftDto request);
+        public Task TambahStatusPermohonanJawatanBaharu(TambahStatusPermohonanJawatanBaharuDto request);
     }
 }

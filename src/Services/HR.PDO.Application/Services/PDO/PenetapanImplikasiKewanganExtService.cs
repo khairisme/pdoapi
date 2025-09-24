@@ -27,64 +27,37 @@ namespace HR.Application.Services.PDO
             _logger = logger;
         }
 
-        public async Task<List<PenetapanImplikasiKewanganDto>> SenaraiImplikasiKewangan(int IdPermohonanJawatan)
+        public async Task<ImplikasiKewanganDto> KosImplikasiKewangan(ImplikasiKewanganRequestDto request)
         {
             try
 
             {
+                var result = new ImplikasiKewanganDto
+                {
+                    TotalKosSebulan = 0,
+                    TotalKosSetahun = 0
+                };
+                foreach (var req in  request.ButiranPermohonanSkimGredList)
+                {
+                    var GredList = req.IdGredList
+                        .Split(",")
+                        .Select(s => int.TryParse(s.Trim(), out var val) ? val : 0)
+                        .ToList();
 
-                var result = await (
-                    from pdopj in _context.PDOPermohonanJawatan.AsNoTracking()
-                    join pdobp in _context.PDOButiranPermohonan.AsNoTracking()
-                        on pdopj.Id equals pdobp.IdPermohonanJawatan
-                    join pdobpsg in _context.PDOButiranPermohonanSkimGred.AsNoTracking()
-                        on pdobp.Id equals pdobpsg.IdButiranPermohonan
-                    join pdosp in _context.PDOSkimPerkhidmatan.AsNoTracking()
-                        on pdobpsg.IdSkimPerkhidmatan equals pdosp.Id
-                    join pdog in _context.PDOGred.AsNoTracking()
-                        on pdobpsg.IdGred equals pdog.Id
-                    where pdopj.Id == IdPermohonanJawatan
-                    select new PenetapanImplikasiKewanganDto
-                    {
-                        BilanganJawatan = pdobp.BilanganJawatan,
-                        Gred = pdog.Nama,                     // <-- fix (was TarikhCipta)
-                        ImplikasiKewanganSebulan = pdobp.JumlahKosSebulan,
-                        ImplikasiKewanganSetahun = pdobp.JumlahKosSetahun,
-                        SkimPerkhidmatan = pdosp.Nama
-                    }
-                ).ToListAsync();
-                //var result = await (
-                //    from pdopj in _context.PDOPermohonanJawatan.AsNoTracking()
-                //    where pdopj.Id == IdPermohonanJawatan
+                    var record = _context.PDOPenetapanImplikasiKewangan
+                        .Where(ppik => GredList.Contains((int)ppik.IdGred)
+                                    && ppik.IdSkimPerkhidmatan==req.IdSkimPerkhidmatan)
+                        .GroupBy(ppik => 1) // Grouping by a constant to allow aggregation
+                        .Select(g => new ImplikasiKewanganDto
+                        {
+                            TotalKosSebulan = g.Sum(ppik => ppik.ImplikasiKosSebulan),
+                            TotalKosSetahun = g.Sum(ppik => ppik.ImplikasiKosSetahun)
+                        })
+                        .FirstOrDefault();
 
-                //    // LEFT JOIN PDOButiranPermohonan
-                //    from pdobp in _context.PDOButiranPermohonan.AsNoTracking()
-                //        .Where(x => x.IdPermohonanJawatan == pdopj.Id)
-                //        .DefaultIfEmpty()
+                    result.TotalKosSebulan += (record?.TotalKosSebulan ?? 0) * request.BilanganJawatan;
+                }
 
-                //        // LEFT JOIN PDOButiranPermohonanSkimGred
-                //    from pdobpsg in _context.PDOButiranPermohonanSkimGred.AsNoTracking()
-                //        .Where(x => pdobp != null && x.IdButiranPermohonan == pdobp.Id)
-                //        .DefaultIfEmpty()
-
-                //        // LEFT JOIN PDOSkimPerkhidmatan
-                //    from pdosp in _context.PDOSkimPerkhidmatan.AsNoTracking()
-                //        .Where(x => pdobpsg != null && x.Id == pdobpsg.IdSkimPerkhidmatan)
-                //        .DefaultIfEmpty()
-
-                //        // LEFT JOIN PDOGred
-                //    from pdog in _context.PDOGred.AsNoTracking()
-                //        .Where(x => pdobpsg != null && x.Id == pdobpsg.IdGred)
-                //        .DefaultIfEmpty()
-                //    select new PenetapanImplikasiKewanganDto
-                //    {
-                //        BilanganJawatan = pdobp.BilanganJawatan,
-                //        Gred = pdog.Nama,                     // <-- fix (was TarikhCipta)
-                //        ImplikasiKewanganSebulan = pdobp.JumlahKosSebulan,
-                //        ImplikasiKewanganSetahun = pdobp.JumlahKosSetahun,
-                //        SkimPerkhidmatan = pdosp.Nama
-                //    }
-                //  ).ToListAsync();
                 return result;
 
             }
@@ -100,6 +73,107 @@ namespace HR.Application.Services.PDO
 
         }
 
+        public async Task<SenaraiImplikasiKewanganOutputDto> SenaraiImplikasiKewangan(SenaraiImplikasiKewanganRequestDto request)
+        {
+            try
+
+            {
+                var implikasi = new ImplikasiKewanganDto
+                {
+                    TotalKosSebulan = 0,
+                    TotalKosSetahun = 0
+                };
+                var result = new SenaraiImplikasiKewanganOutputDto();
+                var gredStr = "";
+                int highestId = 0;
+                foreach (var req in request.ButiranPermohonanSkimGredList)
+                {
+
+                    var GredList = req.IdGredList
+                      .Split(",")
+                      .Select(s => int.TryParse(s.Trim(), out var val) ? val : 0)
+                      .ToList();
+                    int cnt = 0;
+
+                    var GrdList = (from pdog in _context.PDOGred
+                               where GredList.Contains((int)pdog.Id)
+                               
+                               select new GredDto
+                               {
+                                   Id = pdog.Id,
+                                   code = pdog.Nama.Trim()
+                               }
+                            ).ToList();
+                    var highestItem = GrdList
+                        .OrderByDescending(x =>
+                            int.TryParse(x.code.Substring(1), out var num) ? num : 0)
+                        .FirstOrDefault();
+
+                    var highestCode = highestItem?.code;
+                    highestId = (int)highestItem?.Id;
+
+                    foreach (var g in GrdList)
+                    {
+                        if (gredStr == "")
+                        {
+                            gredStr = g.code;
+                        }
+                        else
+                        {
+                            gredStr = gredStr + "," + g.code.Trim();
+                        }
+                    }
+                    ++cnt;
+                    var highest = GrdList
+                        .OrderByDescending(code => int.Parse(code.code.Substring(1)))
+                        .First();
+
+                    if (cnt == GredList.Count())
+                    {
+                        gredStr = gredStr;
+                    }
+                    var newGred = gredStr.Replace(",", "/");
+                    var newAnggaran = request.AnggaranBerkenaanTajukJawatan.Replace(newGred, "");
+                    var record = _context.PDOPenetapanImplikasiKewangan
+                        .Where(ppik => ppik.IdGred == highestId
+                                    && ppik.IdSkimPerkhidmatan == req.IdSkimPerkhidmatan)
+                        .GroupBy(ppik => 1) // Grouping by a constant to allow aggregation
+                        .Select(g => new ImplikasiKewanganDto
+                        {
+                            TotalKosSebulan = g.Sum(ppik => ppik.ImplikasiKosSebulan),
+                            TotalKosSetahun = g.Sum(ppik => ppik.ImplikasiKosSetahun)
+                        })
+                        .FirstOrDefault();
+
+
+                    implikasi.TotalKosSebulan += (record?.TotalKosSebulan ?? 0) * request.BilanganJawatan;
+                    result = new SenaraiImplikasiKewanganOutputDto
+                    {
+                        SkimPerkhidmatan = newAnggaran,
+                        Gred = newGred,
+                        BilanganAJawatan = request.BilanganJawatan,
+                        ImplikasiKewanganSebulan = implikasi.TotalKosSebulan,
+                        JumlahKewanganSebulan = implikasi.TotalKosSebulan * request.BilanganJawatan,
+                        ImplikasiKewanganSetahun = implikasi.TotalKosSebulan * request.BilanganJawatan * 12
+                    };
+                }
+
+
+
+
+                return result;
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in SenaraiImplikasiKewangan");
+
+                throw;
+            }
+
+        }
 
 
     }

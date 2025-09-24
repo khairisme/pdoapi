@@ -58,7 +58,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task TambahStatusPermohonanJawatan(Guid UserId, TambahStatusPermohonanJawatanDto request)
+        public async Task TambahStatusPermohonanJawatan(TambahStatusPermohonanJawatanDto request)
         {
 
             try
@@ -66,13 +66,12 @@ namespace HR.Application.Services.PDO
             {
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOStatusPermohonanJawatan();
-                entity.IdCipta = UserId;
                 entity.IdPermohonanJawatan = request.IdPermohonanJawatan;
                 entity.KodRujStatusPermohonanJawatan = request.KodRujStatusPermohonanJawatan;
                 entity.TarikhStatusPermohonan = DateTime.Now;
                 entity.Ulasan = request.Ulasan;
                 entity.StatusAktif = request.StatusAktif;
-                entity.IdCipta = request.IdCipta;
+                entity.IdCipta = request.UserId;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDOStatusPermohonanJawatan.AddAsync(entity); 
 
@@ -93,7 +92,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task TambahStatusPermohonanJawatanDraft(Guid UserId, TambahStatusPermohonanJawatanDraftDto request)
+        public async Task TambahStatusPermohonanJawatanDraft(TambahStatusPermohonanJawatanDraftDto request)
         {
 
             try
@@ -101,13 +100,12 @@ namespace HR.Application.Services.PDO
             {
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOStatusPermohonanJawatan();
-                entity.IdCipta = UserId;
                 entity.IdPermohonanJawatan = request.IdPermohonanJawatan;
                 entity.KodRujStatusPermohonanJawatan = "01";
                 entity.TarikhStatusPermohonan = DateTime.Now;
                 entity.Ulasan = request.Ulasan;
                 entity.StatusAktif = request.StatusAktif;
-                entity.IdCipta = request.IdCipta;
+                entity.IdCipta = request.UserId;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDOStatusPermohonanJawatan.AddAsync(entity); 
 
@@ -128,7 +126,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task TambahStatusPermohonanJawatanBaharu(Guid UserId, TambahStatusPermohonanJawatanBaharuDto request)
+        public async Task TambahStatusPermohonanJawatanBaharu(TambahStatusPermohonanJawatanBaharuDto request)
         {
 
             try
@@ -136,13 +134,12 @@ namespace HR.Application.Services.PDO
             {
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOStatusPermohonanJawatan();
-                entity.IdCipta = UserId;
                 entity.IdPermohonanJawatan = request.IdPermohonanJawatan;
                 entity.KodRujStatusPermohonanJawatan = "02";
                 entity.TarikhStatusPermohonan = DateTime.Now;
                 entity.Ulasan = request.Ulasan;
                 entity.StatusAktif = request.StatusAktif;
-                entity.IdCipta = request.IdCipta;
+                entity.IdCipta = request.UserId;
                 entity.TarikhCipta = DateTime.Now;
                 await _context.PDOStatusPermohonanJawatan.AddAsync(entity); 
 

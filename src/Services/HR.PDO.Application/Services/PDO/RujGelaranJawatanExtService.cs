@@ -55,6 +55,36 @@ namespace HR.Application.Services.PDO
 
         }
 
+        public async Task<int?> TambahGelaranJawatan(TambahGelaranJawatanRequestDto request)
+        {
+            try
+
+            {
+                await _unitOfWork.BeginTransactionAsync();
+                var entity = new PDORujGelaranJawatan();
+                entity.Kod = request.Kod;
+                entity.Nama = request.Nama;
+                entity.Keterangan = request.Keterangan;
+                entity.IdCipta = request.UserId;
+                entity.TarikhCipta = DateTime.Now;
+                entity.StatusAktif = true;
+                await _context.PDORujGelaranJawatan.AddAsync(entity);
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+                return entity.Id;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in RujukanGelaranJawatan");
+
+                throw;
+            }
+        }
+
         public async Task<string?> BacaGelaranJawatan(string? KodRujGelaranJawatan)
         {
             try

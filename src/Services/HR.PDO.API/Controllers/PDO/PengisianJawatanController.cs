@@ -39,7 +39,7 @@ namespace HR.PDO.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = result.Count > 0 ? "Success" : "Failed",
+                    status = result.Count > 0 ? "Berjaya" : "Gagal",
                     items = result
                 });
             }
@@ -111,7 +111,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             var isSuccess = await _pengisianJawatanService.CreateAsync(pengisianJawatanDtos);
 
-            return Ok(new { status = isSuccess ? "Success" : "Failed", items = isSuccess });
+            return Ok(new { status = isSuccess ? "Berjaya" : "Gagal", items = isSuccess });
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace HR.PDO.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = result.Any() ? "Success" : "No Data",
+                    status = result.Any() ? "Berjaya" : "Tiada Data",
                     items = result
                 });
             }
@@ -163,7 +163,7 @@ namespace HR.PDO.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = result != null ? "Success" : "No Data",
+                    status = result != null ? "Berjaya" : "Tiada Data",
                     item = result
                 });
             }
@@ -190,7 +190,7 @@ namespace HR.PDO.API.Controllers.PDO
                 var result = await _pengisianJawatanService.GetSenaraiJawatanUntukPengisian(idSkimPerkhidmatan);
                 return Ok(new
                 {
-                    status = result.Any() ? "Success" : "Not Found",
+                    status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                     items = result
                 });
             }
@@ -217,7 +217,7 @@ namespace HR.PDO.API.Controllers.PDO
                 var result = await _pengisianJawatanService.GetSenaraiJawatanSebenarAsync();
                 return Ok(new
                 {
-                    status = result.Any() ? "Success" : "Not Found",
+                    status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                     items = result
                 });
             }

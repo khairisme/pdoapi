@@ -17,26 +17,60 @@ namespace HR.PDO.API.Controllers.PDO {
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>>SenaraiImplikasiKewangan(int IdPermohonanJawatan)
+        [HttpPost]
+        public async Task<ActionResult<IEnumerable<object>>>KosImplikasiKewangan([FromBody] ImplikasiKewanganRequestDto request)
         {
-            _logger.LogInformation("Calling SenaraiImplikasiKewangan");
+            _logger.LogInformation("Calling KosImplikasiKewangan");
             try
             {
-                var data = await _penetapanimplikasikewanganext.SenaraiImplikasiKewangan(IdPermohonanJawatan);
-                return Ok(data);
+                var data = await _penetapanimplikasikewanganext.KosImplikasiKewangan(request);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
                  String err = "";
                  if (ex != null) { 
-                     _logger.LogError(ex, "Error in SenaraiImplikasiKewangan");
+                     _logger.LogError(ex, "Error in KosImplikasiKewangan");
                      if (ex.InnerException!=null) {
                          err = ex.InnerException.Message.ToString();
                      }
                 }
                  
                 return StatusCode(500, ex.Message+"-"+err);
+            }
+        }
+        [HttpPost("senarai")]
+        public async Task<ActionResult<IEnumerable<object>>> SenaraiImplikasiKewangan([FromBody] SenaraiImplikasiKewanganRequestDto request)
+        {
+            _logger.LogInformation("Calling KosImplikasiKewangan");
+            try
+            {
+                var data = await _penetapanimplikasikewanganext.SenaraiImplikasiKewangan(request);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in KosImplikasiKewangan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 

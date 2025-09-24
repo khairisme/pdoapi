@@ -13,7 +13,7 @@ namespace HR.PDO.Core.Entities.PDP
     {
         public string? KodJenisSaraan { get; set; }
         public int? IdGred { get; set; }
-        public int? NomborGred { get; set; }
+        public string? NomborGred { get; set; }
         public decimal? GajiMinimum { get; set; }
         public decimal? GajiMaksimum { get; set; }
         public decimal? KadarKGT { get; set; }

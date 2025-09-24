@@ -46,14 +46,14 @@ public class SkimKetuaPerkhidmatanController : ControllerBase
             var isSuccess = await _skimKetuaPerkhidmatanService.CreateAsync(dto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to create the record.");
+                return StatusCode(500, new {status="Gagal", message="Rekod gagal diwujudkan"});
 
             return Ok("Created successfully");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during creation : " + ex.InnerException.ToString());
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>

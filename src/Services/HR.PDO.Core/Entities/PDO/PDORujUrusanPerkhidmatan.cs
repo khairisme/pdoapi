@@ -13,7 +13,7 @@ namespace HR.PDO.Core.Entities.PDO
         public string? Kod { get; set; }
         public string? Nama { get; set; }
         public string? Keterangan { get; set; }
-        public bool? StatusAktif { get; set; }
+        public bool StatusAktif { get; set; }
         public Guid? IdCipta { get; set; }
         public DateTime? TarikhCipta { get; set; }
         public Guid? IdPinda { get; set; }

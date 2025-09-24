@@ -13,11 +13,12 @@ namespace HR.PDO.Core.Entities.PDO
         public int Id { get; set; }
         public string? KodRujKategoriAktivitiOrganisasi { get; set; }
         public int? IdIndukAktivitiOrganisasi { get; set; }
+        public int? IndikatorRekod { get; set; }
         public string? Kod { get; set; }
         public string? Nama { get; set; }
         public string? Keterangan { get; set; }
         public string? KodProgram { get; set; }
-        public int Tahap { get; set; }
+        public int? Tahap { get; set; }
         public string? KodCartaAktiviti { get; set; }
         public string? ButiranKemaskini { get; set; }
         public bool? StatusAktif { get; set; }

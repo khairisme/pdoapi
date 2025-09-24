@@ -29,7 +29,7 @@ namespace HR.PDO.Application.DTOs
         public int IdStatusLantikan { get; set; }
         public int IndikatorAgensiUnitOrganisasi { get; set; }
         public int KodUmurBersara { get; set; }
-        public int NomborGred { get; set; }
+        public string NomborGred { get; set; }
         public int StatusGaji { get; set; }
         public int TahapUnitOrganisasi { get; set; }
         public int TurutanGred { get; set; }

@@ -29,7 +29,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _SandanganExt.GetSandanganAsync(request);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -43,7 +48,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
             //var client = httpClientFactory.CreateClient("PpaAPI");
 
@@ -73,7 +78,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _SandanganExt.SenaraiSandangan(request);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -87,7 +97,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 

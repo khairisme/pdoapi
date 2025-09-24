@@ -10,9 +10,9 @@ namespace HR.PDO.Core.Entities.PDO
     [Table("PDO_ImplikasiPermohonanJawatan")]
     public class PDOImplikasiPermohonanJawatan : PDOBaseEntity
     {
-        public DateTime TarikhCipta { get; set; }
-        public DateTime TarikhHapus { get; set; }
-        public DateTime TarikhPinda { get; set; }
+        public DateTime? TarikhCipta { get; set; } = null;
+        public DateTime? TarikhHapus { get; set; } = null;
+        public DateTime? TarikhPinda { get; set; } = null;
         public int Id { get; set; }
         public int IdPermohonanJawatan { get; set; }
         public decimal ImplikasiKewangan { get; set; }

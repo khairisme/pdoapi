@@ -34,7 +34,9 @@ namespace HR.Application.Services.PDO
             {
 
                 var result = await (from pdokp in _context.PDOKumpulanPerkhidmatan
-                    select new DropDownDto{
+                                    where pdokp.StatusAktif == true
+
+                                    select new DropDownDto{
                         Id = pdokp.Id,
                         Kod = pdokp.Kod.Trim(),
                         Nama = pdokp.Nama.Trim()

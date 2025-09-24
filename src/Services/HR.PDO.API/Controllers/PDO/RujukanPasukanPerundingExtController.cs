@@ -25,7 +25,7 @@ namespace HR.PDO.API.Controllers.PDO {
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });

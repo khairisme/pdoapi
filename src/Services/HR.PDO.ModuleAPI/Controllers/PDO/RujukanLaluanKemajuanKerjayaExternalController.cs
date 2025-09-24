@@ -9,12 +9,26 @@ namespace HR.PDO.API.Controllers.PDO {
     public class RujukanLaluanKemajuanKerjayaExternalController : ControllerBase
     {
         private readonly ILogger<RujukanLaluanKemajuanKerjayaExternalController> _logger;
-        private readonly IRujLaluanKemajuanKerjayaExt _rujlaluankemajuankerjayaext;
+        private readonly IRujukanLaluanKemajuanKerjayaExt _rujlaluankemajuankerjayaext;
 
-        public RujukanLaluanKemajuanKerjayaExternalController(IRujLaluanKemajuanKerjayaExt rujlaluankemajuankerjayaext, ILogger<RujukanLaluanKemajuanKerjayaExternalController> logger)
+        public RujukanLaluanKemajuanKerjayaExternalController(IRujukanLaluanKemajuanKerjayaExt rujlaluankemajuankerjayaext, ILogger<RujukanLaluanKemajuanKerjayaExternalController> logger)
         {
             _rujlaluankemajuankerjayaext = rujlaluankemajuankerjayaext;
             _logger = logger;
+        }
+        [HttpGet]
+        public async Task<IActionResult> getAll()
+        {
+            _logger.LogInformation("Getting all RujukanLaluanKemajuanKerja");
+
+            var result = await _rujlaluankemajuankerjayaext.RujukanLaluanKemajuanKerjaya();
+
+            return Ok(new
+            {
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
+                items = result
+
+            });
         }
 
     }

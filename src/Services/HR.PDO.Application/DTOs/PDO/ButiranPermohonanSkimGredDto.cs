@@ -12,6 +12,8 @@ namespace HR.PDO.Application.DTOs
     /// </remarks>
     public class ButiranPermohonanSkimGredDto
     {
+        public Guid UserId { get; set; }
+        public int Id { get; set; }
         /// <summary>
         /// Optional. The date and time when the record was created.
         /// </summary>
@@ -26,21 +28,6 @@ namespace HR.PDO.Application.DTOs
         /// Optional. The date and time when the record was last modified.
         /// </summary>
         public DateTime? TarikhPinda { get; set; }
-
-        /// <summary>
-        /// Optional. GUID of the user who created the record.
-        /// </summary>
-        public Guid? IdCipta { get; set; }
-
-        /// <summary>
-        /// Optional. GUID of the user who deleted the record.
-        /// </summary>
-        public Guid? IdHapus { get; set; }
-
-        /// <summary>
-        /// Optional. GUID of the user who last modified the record.
-        /// </summary>
-        public Guid? IdPinda { get; set; }
 
         /// <summary>
         /// Required. Internal ID of the detail record for this job application.

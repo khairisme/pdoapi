@@ -35,7 +35,7 @@ namespace HR.PDO.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = result.Count() > 0 ? "Sucess" : "Failed",
+                    status = result.Count() > 0 ? "Berjaya" : "Gagal",
                     items = result
                 });
             }
@@ -63,7 +63,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = id>0 ? "Success" : "Failed",
+                status = id>0 ? "Berjaya" : "Gagal",
                 id = id
 
             });
@@ -155,9 +155,9 @@ namespace HR.PDO.API.Controllers.PDO
                 var isSuccess = await _maklumatSkimPerkhidmatan.UpdateAsync(dto);
 
                 if (!isSuccess)
-                    return StatusCode(500, "Failed to update the record.");
+                    return StatusCode(500, new { status = "Gagal", message = "Gagal kemaskini rekod" });
 
-                return Ok("Updated successfully");
+                return Ok(new {status="Berjaya", message="Updated successfully"});
             }
             catch (Exception ex)
             {
@@ -220,7 +220,7 @@ namespace HR.PDO.API.Controllers.PDO
             var result = await _maklumatSkimPerkhidmatan.GetSkimWithJawatanAsync(id);
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -241,7 +241,7 @@ namespace HR.PDO.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = result.Count() > 0 ? "Sucess" : "Failed",
+                    status = result.Count() > 0 ? "Berjaya" : "Gagal",
                     items = result
                 });
             }
@@ -266,7 +266,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -284,14 +284,14 @@ namespace HR.PDO.API.Controllers.PDO
                 var result = await _maklumatSkimPerkhidmatan.KemaskiniStatusAsync(perkhidmatanDto);
 
                 if (!result)
-                    return StatusCode(500, "Failed to update the record.");
+                    return StatusCode(500, new { status = "Gagal", message = "Gagal kemaskini rekod" });
 
-                return Ok("Updated successfully");
+                return Ok(new {status="Berjaya", message="Updated successfully"});
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception during SetKemaskinistatus");
-                return StatusCode(500, ex.InnerException.Message.ToString());
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
         /// <summary>
@@ -314,7 +314,7 @@ namespace HR.PDO.API.Controllers.PDO
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception during GetMaklumatBaharu");
-                return StatusCode(500, ex.InnerException.Message.ToString());
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
         /// <summary>
@@ -337,7 +337,7 @@ namespace HR.PDO.API.Controllers.PDO
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception during DeleteOrUpdate");
-                return StatusCode(500, ex.InnerException.Message.ToString());
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
         /// <summary>
@@ -370,7 +370,7 @@ namespace HR.PDO.API.Controllers.PDO
             var data = await _maklumatSkimPerkhidmatan.GetSkimPerkhidmatanByIdAsync(id);
             return Ok(new
             {
-                status = data.Count() > 0 ? "Sucess" : "Failed",
+                status = data.Count() > 0 ? "Berjaya" : "Gagal",
                 items = data
 
             });

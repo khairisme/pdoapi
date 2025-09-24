@@ -24,7 +24,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _rujpasukanperundingext.RujukanPasukanPerunding();
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -38,7 +43,7 @@ namespace HR.PDO.API.Controllers.PDO {
                     }
                 }
 
-                return StatusCode(500, ex.Message + "-" + err);
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿using HR.PDO.Core.Entities.PDO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-
+using HR.PDO.Core.Entities.PPA;
 namespace HR.PDO.Infrastructure.Data.EntityFramework
 {
     public class PPADbContext : DbContext

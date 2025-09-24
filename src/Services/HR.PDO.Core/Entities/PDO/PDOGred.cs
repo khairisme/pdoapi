@@ -18,7 +18,7 @@ namespace HR.PDO.Core.Entities.PDO
         public string? Nama { get; set; }
         public int? TurutanGred { get; set; }
         public string? KodGred { get; set; }
-        public int? NomborGred { get; set; }
+        public string? NomborGred { get; set; }
         public string? Keterangan { get; set; }
         public bool? IndikatorGredLantikanTerus { get; set; }
         public bool? IndikatorGredLantikan { get; set; }

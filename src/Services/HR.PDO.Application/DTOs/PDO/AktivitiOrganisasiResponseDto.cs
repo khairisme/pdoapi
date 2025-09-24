@@ -36,17 +36,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Required. GUID of the user who created the record.
         /// </summary>
-        public Guid IdCipta { get; set; }
-
-        /// <summary>
-        /// Optional. GUID of the user who deleted the record.
-        /// </summary>
-        public Guid IdHapus { get; set; }
-
-        /// <summary>
-        /// Optional. GUID of the user who last modified the record.
-        /// </summary>
-        public Guid IdPinda { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Required. Internal record ID.

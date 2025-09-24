@@ -74,7 +74,7 @@ namespace HR.PDO.Application.Services.PDO
                 // Auto-generate Tahap
                 int newTahap = await _context.PDOAktivitiOrganisasi
                     .Where(x => x.Id == request.IdAktivitiOrganisasi)
-                    .Select(x => x.Tahap + 1)
+                    .Select(x => (int)x.Tahap + 1)
                     .FirstOrDefaultAsync();
 
                 // Auto-generate KodProgram

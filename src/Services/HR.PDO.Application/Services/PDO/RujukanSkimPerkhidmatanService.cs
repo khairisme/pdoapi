@@ -179,6 +179,7 @@ namespace HR.Application.Services.PDO
                 var result = await (from pdosp in _context.PDOSkimPerkhidmatan
                                     where pdosp.IdKlasifikasiPerkhidmatan == request.IdKlasifikasiPerkhidmatan
                                        && pdosp.IdKumpulanPerkhidmatan == request.IdKumpulanPerkhidmatan
+                                       && pdosp.KodRujJenisSaraan == request.KodRujJenisSaraan
                                     select new DropDownDto
                                     {
                                         Id = pdosp.Id,

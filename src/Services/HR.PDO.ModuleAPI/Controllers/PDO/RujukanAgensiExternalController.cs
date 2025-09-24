@@ -25,7 +25,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _rujukanagensiext.RujukanAgensi(NamaAgensi);
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {

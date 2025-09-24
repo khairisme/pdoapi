@@ -23,5 +23,6 @@ namespace HR.PDO.Application.DTOs
         /// Nullable to allow flexible filtering.
         /// </summary>
         public int? IdKumpulanPerkhidmatan { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
     }
 }

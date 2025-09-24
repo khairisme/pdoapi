@@ -8,6 +8,6 @@ namespace HR.PDO.Application.Interfaces.PDO
     {
         public Task<List<DropDownDto>> RujukanJenisDokumen();
         public Task DaftarRujJenisDokumen(RujJenisDokumenDaftarDto request);
-        public Task KemaskiniRujJenisDokumen(Guid UserId, RujJenisDokumenDaftarDto request);
+        public Task KemaskiniRujJenisDokumen(RujJenisDokumenDaftarDto request);
     }
 }

@@ -35,17 +35,10 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorjd in _context.PDORujJenisDokumen
                     select new RujJenisDokumenLinkDto{
-                         IdCipta = pdorjd.IdCipta,
-                         IdHapus = pdorjd.IdHapus,
-                         IdPinda = pdorjd.IdPinda,
                          Keterangan = pdorjd.Keterangan,
                          Kod = pdorjd.Kod,
                          Nama = pdorjd.Nama,
                          StatusAktif = pdorjd.StatusAktif ?? false,
-                         TarikhCipta = pdorjd.TarikhCipta,
-                         TarikhHapus = pdorjd.TarikhHapus,
-                         TarikhPinda = pdorjd.TarikhPinda
-
                     }
                 ).ToListAsync();
 
@@ -74,17 +67,10 @@ namespace HR.Application.Services.PDO
 
                 var result = await (from pdorjd in _context.PDORujJenisDokumen
                     select new RujJenisDokumenLinkDto{
-                         IdCipta = pdorjd.IdCipta,
-                         IdHapus = pdorjd.IdHapus,
-                         IdPinda = pdorjd.IdPinda,
                          Keterangan = pdorjd.Keterangan,
                          Kod = pdorjd.Kod,
                          Nama = pdorjd.Nama,
                          StatusAktif = pdorjd.StatusAktif ?? false,
-                         TarikhCipta = pdorjd.TarikhCipta,
-                         TarikhHapus = pdorjd.TarikhHapus,
-                         TarikhPinda = pdorjd.TarikhPinda
-
                     }
                 ).ToListAsync();
 
@@ -169,7 +155,7 @@ namespace HR.Application.Services.PDO
 
 
 
-        public async Task KemaskiniRujJenisDokumen(Guid UserId,RujJenisDokumenDaftarDto request)
+        public async Task KemaskiniRujJenisDokumen(RujJenisDokumenDaftarDto request)
         {
 
             try
@@ -184,7 +170,7 @@ namespace HR.Application.Services.PDO
                   data.Keterangan = request.Keterangan;
                   data.FormatDiterima = request.FormatDiterima;
                   data.StatusAktif = request.StatusAktif;
-                  data.IdPinda = request.IdPinda;
+                  data.IdPinda = request.UserId;
                   data.TarikhPinda = DateTime.Now;
                   data.TarikhHapus = request.TarikhHapus;
 

@@ -43,6 +43,19 @@ namespace HR.PDO.Application.DTOs.PDO
         /// </summary>
         public string? KodRujJenisSaraan { get; set; }
     }
+    public class GredSkimRequestDto
+    {
+        /// <summary>
+        /// Optional. ID of the service group (Kumpulan Perkhidmatan).
+        /// </summary>
+        public int? IdKumpulanPerkhidmatan { get; set; }
+        /// <summary>
+        /// Optional. ID of the service classification (Klasifikasi Perkhidmatan).
+        /// </summary>
+        public int? IdKlasifikasiPerkhidmatan { get; set; }
+        public int? IdSkimPerkhidmatan { get; set; }
+        public string? KodRujJenisSaraan { get; set; }
+    }
     /// <summary>
     /// DTO for returning Gred result details in a list or search result.
     /// </summary>
@@ -146,7 +159,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// <summary>
         /// Number associated with the Gred.
         /// </summary>
-        public int NomborGred { get; set; }
+        public string NomborGred { get; set; }
 
         /// <summary>
         /// Optional. Additional description or notes for the Gred.
@@ -272,7 +285,7 @@ namespace HR.PDO.Application.DTOs.PDO
         /// Gred number, serialized as a padded string (e.g., 08).
         /// </summary>
         [JsonConverter(typeof(IntToPaddedStringConverter))]
-        public int? NomborGred { get; set; }
+        public string? NomborGred { get; set; }
 
         /// <summary>
         /// Optional. Description or notes about the Gred.

@@ -13,6 +13,7 @@ namespace HR.PDO.Core.Entities.PDO
         public int? IdPermohonanJawatan { get; set; }
         public int? IdAktivitiOrganisasi { get; set; }
         public string? KodRujStatusJawatan { get; set; }
+        public string? KodRujStatusBekalan { get; set; }
         public DateTime? TarikhMula { get; set; }
         public DateTime? TarikhTamat { get; set; }
         public string? KodRujJenisJawatan { get; set; }
@@ -29,11 +30,16 @@ namespace HR.PDO.Core.Entities.PDO
         public short? TahunButiran { get; set; }
         public bool? IndikatorTBK { get; set; }
         public bool? IndikatorHBS { get; set; }
+        //public bool? IndikatorPermohonan { get; set; }
         public decimal? JumlahKosSebulan { get; set; }
         public decimal? JumlahKosSetahun { get; set; }
         public int? IndikatorPemohon { get; set; }
         public string? KodRujUrusanPerkhidmatan { get; set; }
+        //public string? KodBidangPengkhususan { get; set; }
+        //public string? KodRujLaluanKemajuanKerjaya { get; set; }
+        
         public int? IdButiranPermohonanLama { get; set; }
+        
         public Guid? IdPemilikKompetensi { get; set; }
         public string? NamaPemilikKompetensi { get; set; }
         public string? NoKadPengenalanPemilikKompetensi { get; set; }

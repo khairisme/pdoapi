@@ -1,6 +1,28 @@
+using HR.PDO.Core.Entities.PDO;
 using System;
 namespace HR.PDO.Application.DTOs
 {
+
+    public class ButiranKemaskiniDto
+    {
+        public int? Id { get; set; }
+        public int? IdAktivitiOrganisasi { get; set; }
+        public int? IdOldAktivitiOrganisasi { get; set; }
+        public int? IdPermohonanJawatan { get; set; }
+        public int? IdButiranPermohonan { get; set; }
+        public int? IdIndukAktivitiOrganisasi { get; set; }
+
+        public int? NewParentId { get; set; }
+
+        public int? OldParentId { get; set; }
+        public string? Nama { get; set; }
+        public Guid IdPinda { get; set; }
+        public DateTime TarikhPinda { get; set; }
+        public Guid IdHapus { get; set; }
+        public DateTime TarikhHapus { get; set; }
+        public bool? StatusAktif { get; set; }
+        public string? StatusTindakan { get; set; }
+    }
     /// <summary>
     /// DTO for representing an AktivitiOrganisasi (Organizational Activity) record.
     /// Includes details, hierarchy information, and auditing metadata.
@@ -36,17 +58,7 @@ namespace HR.PDO.Application.DTOs
         /// <summary>
         /// Optional. The GUID of the user who created this record.
         /// </summary>
-        public Guid? IdCipta { get; set; }
-
-        /// <summary>
-        /// Optional. The GUID of the user who deleted this record.
-        /// </summary>
-        public Guid? IdHapus { get; set; }
-
-        /// <summary>
-        /// Optional. The GUID of the user who last modified this record.
-        /// </summary>
-        public Guid? IdPinda { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Required. Internal record ID.
@@ -102,9 +114,26 @@ namespace HR.PDO.Application.DTOs
         /// Optional. Reference code for the activity category.
         /// </summary>
         public string? KodRujKategoriAktivitiOrganisasi { get; set; }
+
+        public string? KategoriAktivitiOrgansisasi { get; set; }
     }
 
+    public class AktivitiOrganisasiAlamatIndukDto
+    {
+        public int? Id { get; set; }
+        public int? IdUnitOrganisasi { get; set; }
+        public string? KodRujPoskod { get; set; }
+        public string? Alamat1 { get; set; }
+        public string? Alamat2 { get; set; }
+        public string? Alamat3 { get; set; }
+        public string? KodRujNegara { get; set; }
+        public string? KodRujNegeri { get; set; }
+        public string? KodRujBandar { get; set; }
+        public string? NomborTelefonPejabat { get; set; }
+        public string? NomborFaksPejabat { get; set; }
 
+        
+    }
     /// <summary> 
     /// DTO for renaming an existing AktivitiOrganisasi (Organizational Activity) record.
     /// Encapsulates the required details to update the name and audit the user performing the change.
@@ -163,6 +192,20 @@ namespace HR.PDO.Application.DTOs
         /// The identifier of the old parent node.
         /// </summary>
         public int OldParentId { get; set; }
+    }
+
+    public class PindahAktivitiOrganisasiDto
+    {
+        public int IdIndukAktivitiOrganisasi { get; set; }
+        public bool  StatusAktif { get; set; }
+        
+        public Guid IdPinda { get; set; }
+        public DateTime TarikhPinda { get; set; }
+
+        public int NewParentId { get; set; }
+
+        public int OldParentId { get; set; }
+
     }
 
 }

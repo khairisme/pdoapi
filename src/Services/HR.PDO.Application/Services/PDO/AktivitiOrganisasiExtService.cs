@@ -1,19 +1,21 @@
-﻿using HR.PDO.Application.Interfaces.PDO;
+﻿using Azure.Core;
+using Azure.Identity;
+using HR.PDO.Application.DTOs;
+using HR.PDO.Application.Interfaces.PDO;
+using HR.PDO.Application.Interfaces.PDO;
+using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Core.Interfaces;
 using HR.PDO.Infrastructure.Data.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+//using Newtonsoft.Json;
+using Shared.Contracts.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Shared.Contracts.DTOs;
-using HR.PDO.Application.Interfaces.PDO;
-using HR.PDO.Core.Entities.PDO;
-using HR.PDO.Application.DTOs;
 using System.Text.Json;
+using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Azure.Core;
 
 namespace HR.Application.Services.PDO
 {
@@ -29,53 +31,123 @@ namespace HR.Application.Services.PDO
             _context = dbContext;
             _logger = logger;
         }
-
+        private  List<ButiranKemaskiniDto> GetButiranKemaskiniObject(string? butiranKemaskiniJson)
+        {
+            if (string.IsNullOrEmpty(butiranKemaskiniJson))
+            {
+                return new List<ButiranKemaskiniDto>();
+            }
+            try
+            {
+                return JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(butiranKemaskiniJson) ?? new List<ButiranKemaskiniDto>();
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize ButiranKemaskini JSON.");
+                return new List<ButiranKemaskiniDto>();
+            }
+        }
         public async Task<PagedResult<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasi(StrukturAktivitiOrganisasiRequestDto request)
         {
             try
             {
-                //string? KodCartaAktiviti, int parentId = 0, int page = 1, int pageSize = 50, string? keyword = null, string? sortBy = "AktivitiOrganisasi", bool desc = false, CancellationToken ct = default
                 int? newParentId = 0;
                 bool rootparent = false;
                 request.page = request.page <= 0 ? 1 : request.page;
                 request.pageSize = request.pageSize <= 0 ? 50 : request.pageSize;
-                var result = await (from pdoao in _context.PDOAktivitiOrganisasi
-                    join pdorkao in _context.PDORujKategoriAktivitiOrganisasi  on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
-                    where (request.parentId != 0 ? pdoao.IdIndukAktivitiOrganisasi == request.parentId : pdoao.KodCartaAktiviti == request.KodCartaAktiviti)
-                    select new StrukturAktivitiOrganisasiDto{
-                         AktivitiOrganisasi = pdoao.Nama.Trim(),
-                         Id = pdoao.Id,
-                         IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
-                         Kod = pdoao.Kod.Trim(),
-                         KodCartaAktiviti = pdoao.KodCartaAktiviti.Trim(),
-                         KodProgram = pdorkao.Nama.Trim().ToUpper() + ' ' +pdoao.KodProgram.Trim(),
-                         Tahap = pdoao.Tahap
 
-                    }
-                ).ToListAsync();
+                var query = from pdoao in _context.PDOAktivitiOrganisasi
+                                    join pdorkao in _context.PDORujKategoriAktivitiOrganisasi
+                                    on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod 
+                            orderby pdoao.KodProgram
+                            select new { pdoao, pdorkao }
+
+                                    ;
+                if (!request.ResultChild)
+                {
+                    query = query.Where(x =>
+                        x.pdoao.KodCartaAktiviti == request.KodCartaAktiviti);
+                }
+                else
+                {
+                    query = query.Where(x =>
+                        x.pdoao.KodCartaAktiviti.StartsWith(request.KodCartaAktiviti) &&
+                        x.pdoao.KodCartaAktiviti.Length == request.KodCartaAktiviti.Length + 2 
+                        //&& x.pdoao.Tahap == x.pdorkao.Tahap
+                        );
+                }
+
+                var result = await query
+                    .Select(x => new StrukturAktivitiOrganisasiDto
+                    {
+                        Id = x.pdoao.Id,
+                        IdIndukAktivitiOrganisasi = x.pdoao.IdIndukAktivitiOrganisasi,
+                        Kod = x.pdoao.Kod!=null ? x.pdoao.Kod.Trim() : "",
+                        KodCartaAktiviti = x.pdoao.KodCartaAktiviti!=null? x.pdoao.KodCartaAktiviti.Trim() : "",
+                        KodProgram = (x.pdorkao.Nama ?? "").Trim().ToUpper() + " " + (x.pdoao.KodProgram ?? "").Trim(),
+                        AktivitiOrganisasi = (x.pdorkao.Nama ?? "").ToUpper() + " - " +
+                                             (x.pdoao.KodProgram ?? "").ToUpper() + " - " +
+                                             (x.pdoao.Nama ?? "").ToUpper().Trim(),
+                        ButiranKemaskiniJson = x.pdoao.ButiranKemaskini,
+                        Tahap = x.pdoao.Tahap,
+                        StatusAktif = x.pdoao.StatusAktif ?? false,
+                        StatusAktivitiOrganisasi = 
+                            x.pdoao.IndikatorRekod == 1 ? "WujudBaru" :
+                            x.pdoao.IndikatorRekod == 2 ? "JenamaSemula" :
+                            x.pdoao.IndikatorRekod == 3 ? "Kemaskini" :
+                            x.pdoao.IndikatorRekod == 4 ? "Mansuh" :
+                            "None"
+                    })
+                    .ToListAsync();
                 foreach (var item in result)
                 {
-                    item.Children = StrukturAktivitiOrganisasiGetChildren(item.Id, request).Result;
-                    if (item.Children.Count() > 0) item.HasChildren = true;
+
+                    item.Children = await StrukturAktivitiOrganisasiGetChildren(item.KodCartaAktiviti, request);
+
+                    #region StatusAktivitiOrganisasi Logic (Commented Out)
+                    #endregion
+                    var queryButiranPermohonan = from bp in _context.PDOButiranPermohonan
+                                                 where bp.IdPermohonanJawatan == request.IdPermohonanJawatan
+                                                 && bp.IdAktivitiOrganisasi == item.Id
+                                                 select new { bp };
+                //List<ButiranKemaskiniDto>;
+
+                    if (!string.IsNullOrWhiteSpace(item.ButiranKemaskiniJson))
+                    {
+                        var butirankemaskini = JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(item.ButiranKemaskiniJson);
+                        item.NamaPenjenamaan = butirankemaskini.LastOrDefault()?.Nama;
+                    }
+                    else
+                    {
+                        // Handle null or empty case
+                        var obj = new List<ButiranKemaskiniDto>(); // or null, depending on your logic
+                    }
+                    if (item.Children.Count() > 0)
+                    {
+                        item.HasChildren = true;
+                    } else
+                    {
+                        item.HasChildren = false;
+                    }
                 }
 
                 var total = result.Count();
                 var ordered = (request.sortBy ?? "AktivitiOrganisasi").Trim().ToLowerInvariant() switch
 
                 {
-                    "kod"     => request.desc ? result.OrderByDescending(x => x.Kod)     : result.OrderBy(x => x.Kod),
-                    "aktivitiorganisasi"     => request.desc ? result.OrderByDescending(x => x.AktivitiOrganisasi)     : result.OrderBy(x => x.AktivitiOrganisasi),
+                    "kod" => request.desc ? result.OrderByDescending(x => x.Kod) : result.OrderBy(x => x.Kod),
+                    "aktivitiorganisasi" => request.desc ? result.OrderByDescending(x => x.AktivitiOrganisasi) : result.OrderBy(x => x.AktivitiOrganisasi),
                 };
 
 
-            var items = ordered
-            .Skip((request.page - 1) * request.pageSize)        
-            .Take(request.pageSize)        
-            .ToList();                                                                                                                                                                                                                                                                            
-                return new PagedResult<StrukturAktivitiOrganisasiDto>            
+                var items = ordered
+                .Skip((request.page - 1) * request.pageSize)
+                .Take(request.pageSize)
+                .ToList();
+                return new PagedResult<StrukturAktivitiOrganisasiDto>
                 {
                     Total = total,
-                    Items = items   
+                    Items = items
                 };
             }
 
@@ -90,98 +162,323 @@ namespace HR.Application.Services.PDO
 
         }
 
-        public async Task<List<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasiGetParent(int? Id, List<StrukturAktivitiOrganisasiDto> child)
+                                                                      
+        public async Task<PagedResult<StrukturAktivitiOrganisasiDto>> StrukturButiranAktivitiOrganisasi(StrukturAktivitiOrganisasiRequestDto request)
         {
-            bool rootparent = false;
-            int? newParentId = 0;
-            var result = await (from pdoao in _context.PDOAktivitiOrganisasi
-                                       join pdorkao in _context.PDORujKategoriAktivitiOrganisasi on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
-                                       where pdoao.Id == Id
-                                       select new StrukturAktivitiOrganisasiDto
-                                        {
-                                            Children = child,
-                                            HasChildren = child.Count() > 0 ? true : false,
-                                            Id = pdoao.Id,
-                                            IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
-                                            KodCartaAktiviti = pdoao.KodCartaAktiviti.Trim(),
-                                            KodProgram = pdoao.KodProgram.Trim(),
-                                            Kod = pdoao.Kod.Trim(),
-                                            Tahap = pdoao.Tahap,
-                                            AktivitiOrganisasi = pdoao.Nama.Trim()
-
-                                        }
-                            ).ToListAsync();
-
-            foreach (var item in result)
+            try
             {
-                if (item.Id == item.IdIndukAktivitiOrganisasi)
+                int? newParentId = 0;
+                bool rootparent = false;
+                request.page = request.page <= 0 ? 1 : request.page;
+                request.pageSize = request.pageSize <= 0 ? 50 : request.pageSize;
+
+                var query = from pdoao in _context.PDOAktivitiOrganisasi
+                            join pdorkao in _context.PDORujKategoriAktivitiOrganisasi
+                            on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
+                            orderby pdoao.KodProgram
+                            select new { pdoao, pdorkao }
+
+                                    ;
+                if (!request.ResultChild)
                 {
-                    rootparent = true;
+                    query = query.Where(x =>
+                        x.pdoao.KodCartaAktiviti == request.KodCartaAktiviti);
                 }
                 else
                 {
-                    newParentId = item.IdIndukAktivitiOrganisasi;
+                    var IdInduk = await (from pdoao in _context.PDOAktivitiOrganisasi
+                                         where pdoao.KodCartaAktiviti == request.KodCartaAktiviti
+                                         select pdoao.Id).FirstOrDefaultAsync();
+
+                    query = query.Where(x =>
+                      x.pdoao.IdIndukAktivitiOrganisasi == IdInduk);
+                    //query = query.Where(x =>
+                    //    x.pdoao.KodCartaAktiviti.StartsWith(request.KodCartaAktiviti) &&
+                    //    x.pdoao.KodCartaAktiviti.Length == request.KodCartaAktiviti.Length + 2
+                    //    //&& x.pdoao.Tahap == x.pdorkao.Tahap
+                    //    );
                 }
+
+                var result = await query
+                    .Select(x => new StrukturAktivitiOrganisasiDto
+                    {
+                        Id = x.pdoao.Id,
+                        IdIndukAktivitiOrganisasi = x.pdoao.IdIndukAktivitiOrganisasi,
+                        Kod = x.pdoao.Kod != null ? x.pdoao.Kod.Trim() : "",
+                        KodCartaAktiviti = x.pdoao.KodCartaAktiviti != null ? x.pdoao.KodCartaAktiviti.Trim() : "",
+                        KodProgram = (x.pdorkao.Nama ?? "").Trim().ToUpper() + " " + (x.pdoao.KodProgram ?? "").Trim(),
+                        AktivitiOrganisasi = (x.pdorkao.Nama ?? "").ToUpper() + " - " +
+                                             (x.pdoao.KodProgram ?? "").ToUpper() + " - " +
+                                             (x.pdoao.Nama ?? "").ToUpper().Trim(),
+                        ButiranKemaskiniJson = x.pdoao.ButiranKemaskini,
+                        Tahap = x.pdoao.Tahap,
+                        StatusAktif = x.pdoao.StatusAktif ?? false,
+                        StatusAktivitiOrganisasi =
+                            x.pdoao.IndikatorRekod == 1 ? "WujudBaru" :
+                            x.pdoao.IndikatorRekod == 2 ? "JenamaSemula" :
+                            x.pdoao.IndikatorRekod == 3 ? "Kemaskini" :
+                            x.pdoao.IndikatorRekod == 4 ? "Mansuh" :
+                            "None"
+                    })
+                    .ToListAsync();
+                foreach (var item in result)
+                {
+
+                    item.Children = await StrukturButiranAktivitiOrganisasiGetChildren((int)item.Id,item.KodCartaAktiviti, request);
+
+                    #region StatusAktivitiOrganisasi Logic (Commented Out)
+                    #endregion
+                    var queryButiranPermohonan = from bp in _context.PDOButiranPermohonan
+                                                 where bp.IdPermohonanJawatan == request.IdPermohonanJawatan
+                                                 && bp.IdAktivitiOrganisasi == item.Id
+                                                 select new { bp };
+                    //List<ButiranKemaskiniDto>;
+                    var butiranPermohonan = await queryButiranPermohonan
+                        .Select(x => new ButiranPermohonanDetailDto
+                        {
+                            IndikatorRekod = x.bp.IndikatorRekod,
+                            Id = x.bp.Id,
+                            NamaButiran = x.bp.NoButiran + " " + x.bp.AnggaranTajukJawatan,
+                            NamaAktivitiOrganisasi = item.AktivitiOrganisasi,
+
+                            StatusAktivitiOrganisasi =
+                                x.bp.IndikatorRekod == 1 ? "WujudBaru" :
+                                x.bp.IndikatorRekod == 2 ? "Kemaskini" :
+                                x.bp.IndikatorRekod == 3 ? "TambahJawatan" :
+                                x.bp.IndikatorRekod == 4 ? "Mansuh" :
+                                "None"
+                        }
+                        )
+                        .ToListAsync();
+
+                    if (!string.IsNullOrWhiteSpace(item.ButiranKemaskiniJson))
+                    {
+                        var butirankemaskini = JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(item.ButiranKemaskiniJson);
+                        item.NamaPenjenamaan = butirankemaskini.LastOrDefault()?.Nama;
+                    }
+                    else
+                    {
+                        // Handle null or empty case
+                        var obj = new List<ButiranKemaskiniDto>(); // or null, depending on your logic
+                    }
+                    item.ButiranPermohonan = butiranPermohonan;
+                    if (item.Children.Count() > 0)
+                    {
+                        item.HasChildren = true;
+                    }
+                    else
+                    {
+                        item.HasChildren = false;
+                    }
+                }
+
+                var total = result.Count();
+                var ordered = (request.sortBy ?? "AktivitiOrganisasi").Trim().ToLowerInvariant() switch
+
+                {
+                    "kod" => request.desc ? result.OrderByDescending(x => x.Kod) : result.OrderBy(x => x.Kod),
+                    "aktivitiorganisasi" => request.desc ? result.OrderByDescending(x => x.AktivitiOrganisasi) : result.OrderBy(x => x.AktivitiOrganisasi),
+                };
+
+
+                var items = ordered
+                .Skip((request.page - 1) * request.pageSize)
+                .Take(request.pageSize)
+                .ToList();
+                return new PagedResult<StrukturAktivitiOrganisasiDto>
+                {
+                    Total = total,
+                    Items = items
+                };
             }
-            if (rootparent)
+
+            catch (Exception ex)
+
             {
-                return result;
+
+                _logger.LogError(ex, "Error in StrukturAktivitiOrganisasi");
+
+                throw;
             }
-            else
-            {
-                return await StrukturAktivitiOrganisasiGetParent(newParentId, result);
-            }
+
         }
 
-        public async Task<List<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasiGetChildren(int? Id, StrukturAktivitiOrganisasiRequestDto request)
+        public async Task<List<StrukturAktivitiOrganisasiDto>> StrukturAktivitiOrganisasiGetChildren(string? KodCartaAktiviti, StrukturAktivitiOrganisasiRequestDto request)
         {
             bool rootparent = false;
             int newParentId = 0;
-            var result = await (from pdoao in _context.PDOAktivitiOrganisasi
-                                join pdorkao in _context.PDORujKategoriAktivitiOrganisasi on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
-                                where pdoao.IdIndukAktivitiOrganisasi == Id //&& pdoao.KodCartaAktiviti.Contains(request.KodCartaAktiviti)
-                                select new StrukturAktivitiOrganisasiDto
-                                {
-                                    HasChildren = false,
-                                    Id = pdoao.Id,
-                                    IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
-                                    KodCartaAktiviti = pdoao.KodCartaAktiviti.Trim(),
-                                    KodProgram = pdoao.Kod.Trim(),
-                                    Kod = pdoao.Kod.Trim(),
-                                    Tahap = pdoao.Tahap,
-                                    AktivitiOrganisasi = pdoao.Nama.Trim()
+            var query = from pdoao in _context.PDOAktivitiOrganisasi.AsNoTracking()
+                                join pdorkao in _context.PDORujKategoriAktivitiOrganisasi.AsNoTracking()
+                                    on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
+                                orderby pdoao.KodProgram
+                                select new { pdoao, pdorkao }
+                                ;
+            query = query.Where(x =>
+                x.pdoao.KodCartaAktiviti.StartsWith(request.KodCartaAktiviti) &&
+                x.pdoao.KodCartaAktiviti.Length == request.KodCartaAktiviti.Length + 2 
+                //&& x.pdoao.Tahap == x.pdorkao.Tahap
+                );
 
-                                }
-            ).ToListAsync();
+            var result = await query
+                .Select(x => new StrukturAktivitiOrganisasiDto
+                {
+                    Id = x.pdoao.Id,
+                    IdIndukAktivitiOrganisasi = x.pdoao.IdIndukAktivitiOrganisasi,
+                    Kod = x.pdoao.Kod != null ? x.pdoao.Kod.Trim() : "",
+                    KodCartaAktiviti = x.pdoao.KodCartaAktiviti != null ? x.pdoao.KodCartaAktiviti.Trim() : "",
+                    KodProgram = (x.pdorkao.Nama ?? "").Trim().ToUpper() + " " + (x.pdoao.KodProgram ?? "").Trim(),
+                    AktivitiOrganisasi = (x.pdorkao.Nama ?? "").ToUpper() + " - " +
+                                         (x.pdoao.KodProgram ?? "").ToUpper() + " - " +
+                                         (x.pdoao.Nama ?? "").ToUpper().Trim(),
+                    Tahap = x.pdoao.Tahap,
+                    ButiranKemaskiniJson = x.pdoao.ButiranKemaskini,
+                    StatusAktif = x.pdoao.StatusAktif ?? false,
+                    StatusAktivitiOrganisasi =
+                        x.pdoao.IndikatorRekod == 1 ? "WujudBaru" :
+                        x.pdoao.IndikatorRekod == 2 ? "JenamaSemula" :
+                        x.pdoao.IndikatorRekod == 3 ? "Kemaskini" :
+                        x.pdoao.IndikatorRekod == 4 ? "Mansuh" :
+                        x.pdoao.IndikatorRekod == 5 ? "Pindah" :
+                        "None"
+                })
+                .ToListAsync();
             foreach (var item in result)
             {
-                var butiranPermohonan = (from bp in _context.PDOButiranPermohonan
-                                         where bp.IdPermohonanJawatan == request.IdPermohonanJawatan
-                                         && bp.IdAktivitiOrganisasi == request.IdAktivitiOrganisasi
-                                         select bp).ToList();
-                item.ButiranPermohonan = butiranPermohonan;
-                var count = await (from pdoao in _context.PDOAktivitiOrganisasi
-                                   join pdorkao in _context.PDORujKategoriAktivitiOrganisasi on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
+                var count = await (from pdoao in _context.PDOAktivitiOrganisasi.AsNoTracking()
+                                   join pdorkao in _context.PDORujKategoriAktivitiOrganisasi.AsNoTracking()
+                                    on new { KodRujKategoriAktivitiOrganisasi = pdoao.KodRujKategoriAktivitiOrganisasi, Tahap = pdoao.Tahap }
+                                    equals new { KodRujKategoriAktivitiOrganisasi = pdorkao.Kod, Tahap = pdorkao.Tahap }
                                    where pdoao.IdIndukAktivitiOrganisasi == item.Id //&& pdoao.KodCartaAktiviti.Contains(request.KodCartaAktiviti)
                                    select pdoao.Id)
                                    .CountAsync();
-                               
-                //foreach(var child in item.Children)
-                //{
-                //    var count = await (from pdoao in _context.PDOAktivitiOrganisasi
-                //                       join pdorkao in _context.PDORujKategoriAktivitiOrganisasi
-                //                            on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
-                //                       where pdoao.IdIndukAktivitiOrganisasi == child.Id
-                //                       select pdoao.Id) // just a key or anything simple
-                //                      .CountAsync();
-                //    if (count  > 0) child.HasChildren = true;
-                //}
-                if (count > 0) item.HasChildren = true;
+
+                if (!string.IsNullOrWhiteSpace(item.ButiranKemaskiniJson))
+                {
+                    var butirankemaskini = JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(item.ButiranKemaskiniJson);
+                    item.NamaPenjenamaan = butirankemaskini.LastOrDefault()?.Nama;
+                }
+                else
+                {
+                    // Handle null or empty case
+                    var obj = new List<ButiranKemaskiniDto>(); // or null, depending on your logic
+                }
+
+
+                if (count > 0)
+                {
+                    item.HasChildren = true;
+                }
+                else
+                {
+                    item.HasChildren = false;
+                }
             }
 
             return result;
         }
 
+        public async Task<List<StrukturAktivitiOrganisasiDto>> StrukturButiranAktivitiOrganisasiGetChildren(int Id, string? KodCartaAktiviti, StrukturAktivitiOrganisasiRequestDto request)
+        {
+            bool rootparent = false;
+            int newParentId = 0;
+            var query = from pdoao in _context.PDOAktivitiOrganisasi.AsNoTracking()
+                        join pdorkao in _context.PDORujKategoriAktivitiOrganisasi.AsNoTracking()
+                            on pdoao.KodRujKategoriAktivitiOrganisasi equals pdorkao.Kod
+                        orderby pdoao.KodProgram
+                        select new { pdoao, pdorkao }
+                                ;
+            query = query.Where(x =>
+                x.pdoao.IdIndukAktivitiOrganisasi == Id
+                //x.pdoao.KodCartaAktiviti.StartsWith(request.KodCartaAktiviti) &&
+                //x.pdoao.KodCartaAktiviti.Length == request.KodCartaAktiviti.Length + 2
+                //&& x.pdoao.Tahap == x.pdorkao.Tahap
+                );
+
+            var result = await query
+                .Select(x => new StrukturAktivitiOrganisasiDto
+                {
+                    Id = x.pdoao.Id,
+                    IdIndukAktivitiOrganisasi = x.pdoao.IdIndukAktivitiOrganisasi,
+                    Kod = x.pdoao.Kod != null ? x.pdoao.Kod.Trim() : "",
+                    KodCartaAktiviti = x.pdoao.KodCartaAktiviti != null ? x.pdoao.KodCartaAktiviti.Trim() : "",
+                    KodProgram = (x.pdorkao.Nama ?? "").Trim().ToUpper() + " " + (x.pdoao.KodProgram ?? "").Trim(),
+                    AktivitiOrganisasi = (x.pdorkao.Nama ?? "").ToUpper() + " - " +
+                                         (x.pdoao.KodProgram ?? "").ToUpper() + " - " +
+                                         (x.pdoao.Nama ?? "").ToUpper().Trim(),
+                    Tahap = x.pdoao.Tahap,
+                    ButiranKemaskiniJson = x.pdoao.ButiranKemaskini,
+                    StatusAktif = x.pdoao.StatusAktif ?? false,
+                    StatusAktivitiOrganisasi =
+                        x.pdoao.IndikatorRekod == 1 ? "WujudBaru" :
+                        x.pdoao.IndikatorRekod == 2 ? "JenamaSemula" :
+                        x.pdoao.IndikatorRekod == 3 ? "Kemaskini" :
+                        x.pdoao.IndikatorRekod == 4 ? "Mansuh" :
+                        x.pdoao.IndikatorRekod == 5 ? "Pindah" :
+                        "None"
+                })
+                .ToListAsync();
+            foreach (var item in result)
+            {
+                var count = await (from pdoao in _context.PDOAktivitiOrganisasi.AsNoTracking()
+                                   join pdorkao in _context.PDORujKategoriAktivitiOrganisasi.AsNoTracking()
+                                    on new { KodRujKategoriAktivitiOrganisasi = pdoao.KodRujKategoriAktivitiOrganisasi, Tahap = pdoao.Tahap }
+                                    equals new { KodRujKategoriAktivitiOrganisasi = pdorkao.Kod, Tahap = pdorkao.Tahap }
+                                   where pdoao.IdIndukAktivitiOrganisasi == item.Id //&& pdoao.KodCartaAktiviti.Contains(request.KodCartaAktiviti)
+                                   select pdoao.Id)
+                                   .CountAsync();
+
+                var queryButiranPermohonan = from bp in _context.PDOButiranPermohonan
+                                             select new { bp }
+                                         //where bp.IdPermohonanJawatan == request.IdPermohonanJawatan
+                                         //&& bp.IdAktivitiOrganisasi == item.Id
+                                         //&& bp.IdAktivitiOrganisasi == request.IdAktivitiOrganisasi
+                                         //select new ButiranPermohonanDetailDto
+                                         //{
+                                         //    Id = bp.Id,
+                                         //    NamaButiran = bp.NoButiran + " " + bp.AnggaranTajukJawatan,
+                                         //    NamaAktivitiOrganisasi = item.AktivitiOrganisasi
+                                         //}
+                                         ;
+
+                queryButiranPermohonan = queryButiranPermohonan.Where(x =>
+                   x.bp.IdPermohonanJawatan == request.IdPermohonanJawatan
+                    && x.bp.IdAktivitiOrganisasi == item.Id);
+
+                var butiranPermohonan = await queryButiranPermohonan
+                    .Select(x =>
+                        new ButiranPermohonanDetailDto
+                        {
+                            Id = x.bp.Id,
+                            NamaButiran = x.bp.NoButiran + " " + x.bp.AnggaranTajukJawatan,
+                            NamaAktivitiOrganisasi = item.AktivitiOrganisasi
+                        }
+                    )
+                    .ToListAsync();
+                if (!string.IsNullOrWhiteSpace(item.ButiranKemaskiniJson))
+                {
+                    var butirankemaskini = JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(item.ButiranKemaskiniJson);
+                    item.NamaPenjenamaan = butirankemaskini.LastOrDefault()?.Nama;
+                }
+                else
+                {
+                    // Handle null or empty case
+                    var obj = new List<ButiranKemaskiniDto>(); // or null, depending on your logic
+                }
+
+
+                item.ButiranPermohonan = butiranPermohonan;
+                if (count > 0)
+                {
+                    item.HasChildren = true;
+                }
+                else
+                {
+                    item.HasChildren = false;
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Creates (wujud) a new Aktiviti Organisasi entity.
@@ -196,24 +493,43 @@ namespace HR.Application.Services.PDO
         /// Purpose: Inserts a new record into <c>PDOAktivitiOrganisasi</c> with proper metadata  
         /// for creation tracking and auditing.
         /// </remarks>
-        public async Task WujudAktivitiOrganisasiBaru(WujudAktivitiOrganisasiRequestDto request)
+        public async Task<AktivitiOrganisasiDto> WujudAktivitiOrganisasiBaru(WujudAktivitiOrganisasiRequestDto request)
         {
 
             try
             {
+                var parentAktivitiOrganisasi = await (from pdoao in _context.PDOAktivitiOrganisasi
+                                                where pdoao.Id == request.IdIndukAktivitiOrganisasi
+                                                select pdoao).FirstOrDefaultAsync();
+                var count = await (from pdoao in _context.PDOAktivitiOrganisasi
+                                   where pdoao.Id == request.IdIndukAktivitiOrganisasi
+                                   select pdoao).CountAsync();
+                string? newKodCarta = "";
+                string? newNoButiran = "";
+
+                ++count;
+                if (parentAktivitiOrganisasi != null)
+                {
+                    
+                    var parentKodCarta = parentAktivitiOrganisasi.KodCartaAktiviti;
+                    newKodCarta = parentKodCarta + count.ToString("D2");
+                }
+
                 await _unitOfWork.BeginTransactionAsync();
                 var entity = new PDOAktivitiOrganisasi
                 {
-                    IdIndukAktivitiOrganisasi = request.IdIndukAktivitiOrganisasi,
+                    IdIndukAktivitiOrganisasi = parentAktivitiOrganisasi.Id,
                     KodProgram = request.KodProgram.Trim(),
                     Kod = request.Kod.Trim(),
                     Nama = request.Nama.Trim(),
                     Tahap = request.Tahap,
                     KodRujKategoriAktivitiOrganisasi = request.KodRujKategoriAktivitiOrganisasi.Trim(),
+                    IndikatorRekod = 1,
+                    KodCartaAktiviti = newKodCarta,
                     Keterangan = request.Keterangan.Trim(),
                     IdCipta = request.UserId,
                     TarikhCipta = DateTime.Now,
-                    StatusAktif = true // usually "baru" means aktif — confirm if you want default = false
+                    StatusAktif = false // usually "baru" means aktif — confirm if you want default = false
                 };
 
                 await _context.PDOAktivitiOrganisasi.AddAsync(entity);
@@ -221,6 +537,7 @@ namespace HR.Application.Services.PDO
                 // persist changes
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
+                return await BacaAktivitiOrganisasi(entity.Id);
             }
             catch (Exception ex)
             {
@@ -269,29 +586,28 @@ namespace HR.Application.Services.PDO
                     throw new Exception("PDOAktivitiOrganisasi not found.");
                 }
 
-                // Archive old state before updating
-                var archivedEntity = new PDOAktivitiOrganisasi
-                {
-                    KodRujKategoriAktivitiOrganisasi = entity.KodRujKategoriAktivitiOrganisasi.Trim(),
-                    IdIndukAktivitiOrganisasi = entity.IdIndukAktivitiOrganisasi,
-                    Kod = entity.Kod.Trim(),
-                    Nama = entity.Nama.Trim(), // old name for history
-                    Keterangan = entity.Keterangan.Trim(),
-                    KodProgram = entity.KodProgram.Trim(),
-                    Tahap = entity.Tahap,
-                    KodCartaAktiviti = entity.KodCartaAktiviti.Trim(),
-                    ButiranKemaskini = entity.ButiranKemaskini.Trim(),
-                    StatusAktif = entity.StatusAktif ?? false,
+                var butiranKemaskiniList = new List<ButiranKemaskiniDto>();
 
+                if (entity.ButiranKemaskini != null)
+                {
+                    butiranKemaskiniList = JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(entity.ButiranKemaskini);
+                }
+
+                // Archive old state before updating
+                var archivedEntity = new ButiranKemaskiniDto
+                {
+                    Nama = request.Nama.Trim(), // old name for history
                     IdPinda = request.UserId,
                     TarikhPinda = DateTime.Now
                 };
 
-                string json = JsonSerializer.Serialize(archivedEntity);
-                entity.ButiranKemaskini = json;
+                butiranKemaskiniList.Add(archivedEntity);
 
+                string json = JsonSerializer.Serialize(butiranKemaskiniList, new JsonSerializerOptions { WriteIndented = true });
+                
+                entity.ButiranKemaskini = json;
+                entity.IndikatorRekod = 2;
                 // Apply the new name
-                entity.Nama = request.Nama;
                 entity.IdPinda = request.UserId;
                 entity.TarikhPinda = DateTime.Now;
 
@@ -342,33 +658,32 @@ namespace HR.Application.Services.PDO
                     throw new Exception("PDOAktivitiOrganisasi not found.");
                 }
 
-                var newPDOAktivitiOrganisasi = new PDOAktivitiOrganisasi
+                var butiranKemaskiniList = new List<ButiranKemaskiniDto>();
+
+                if (entity.ButiranKemaskini != null)
+                {
+                    butiranKemaskiniList = JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(entity.ButiranKemaskini);
+                }
+
+                // Archive old state before updating
+                var archivedEntity = new ButiranKemaskiniDto
                 {
                     // ⚠️ Do not copy Id — EF will manage it if identity
-                    KodRujKategoriAktivitiOrganisasi = entity.KodRujKategoriAktivitiOrganisasi,
-                    IdIndukAktivitiOrganisasi = request.NewParentId, // <-- override parent
-                    Kod = entity.Kod.Trim(),
-                    Nama = entity.Nama.Trim(),
-                    Keterangan = entity.Keterangan.Trim(),
-                    KodProgram = entity.KodProgram.Trim(),
-                    Tahap = entity.Tahap,
-                    KodCartaAktiviti = entity.KodCartaAktiviti.Trim(),
-                    ButiranKemaskini = entity.ButiranKemaskini,
+                    IdIndukAktivitiOrganisasi = request.NewParentId,
                     StatusAktif = entity.StatusAktif ?? false,
-
-                    // metadata
-                    IdCipta = Guid.NewGuid(), // 🔎 check business rules, might need to keep original IdCipta instead
-                    TarikhCipta = DateTime.UtcNow,
                     IdPinda = request.UserId,
                     TarikhPinda = DateTime.Now,
-                    IdHapus = null,
-                    TarikhHapus = null,
+                    NewParentId = request.NewParentId,
+                    OldParentId = request.OldParentId
                 };
 
-                string json = JsonSerializer.Serialize(newPDOAktivitiOrganisasi);
+
+                butiranKemaskiniList.Add(archivedEntity);
+                string json = JsonSerializer.Serialize(butiranKemaskiniList, new JsonSerializerOptions { WriteIndented = true });
 
                 // Archive current state into JSON on the original entity
                 entity.ButiranKemaskini = json;
+                entity.IndikatorRekod = 5;
                 entity.IdPinda = request.UserId;
                 entity.TarikhPinda = DateTime.Now;
 
@@ -405,20 +720,17 @@ namespace HR.Application.Services.PDO
             {
                 var result = await (
                     from pdoao in _context.PDOAktivitiOrganisasi
-                    join paoparent in _context.PDOAktivitiOrganisasi
-                        on pdoao.IdIndukAktivitiOrganisasi equals paoparent.Id into parentJoin
+                    join paoparent in _context.PDOAktivitiOrganisasi on pdoao.KodCartaAktiviti.Substring(0, pdoao.KodCartaAktiviti.Length-2) equals paoparent.KodCartaAktiviti into parentJoin
                     from paoparent in parentJoin.DefaultIfEmpty() // left join in case root has no parent
+                    join pdokao in _context.PDORujKategoriAktivitiOrganisasi on pdoao.KodRujKategoriAktivitiOrganisasi equals pdokao.Kod
                     where pdoao.Id == Id
                     select new AktivitiOrganisasiDto
                     {
-                        AktiviOrganisasi = pdoao.Nama.Trim(),
+                        AktiviOrganisasi = pdoao.Nama.ToUpper().Trim(),
                         AktivitiOrganisasiInduk = paoparent != null ? paoparent.Nama : null,
                         ButiranKemaskini = pdoao.ButiranKemaskini,
                         Id = pdoao.Id,
-                        IdCipta = pdoao.IdCipta,
-                        IdHapus = pdoao.IdHapus,
                         IdIndukAktivitiOrganisasi = pdoao.IdIndukAktivitiOrganisasi,
-                        IdPinda = pdoao.IdPinda,
                         Keterangan = pdoao.Keterangan.Trim(),
                         Kod = pdoao.Kod.Trim(),
                         KodCartaAktiviti = pdoao.KodCartaAktiviti.Trim(),
@@ -426,9 +738,8 @@ namespace HR.Application.Services.PDO
                         KodRujKategoriAktivitiOrganisasi = pdoao.KodRujKategoriAktivitiOrganisasi.Trim(),
                         StatusAktif = pdoao.StatusAktif ?? false,
                         Tahap = pdoao.Tahap,
-                        TarikhCipta = pdoao.TarikhCipta,
-                        TarikhHapus = pdoao.TarikhHapus,
-                        TarikhPinda = pdoao.TarikhPinda
+                        KategoriAktivitiOrgansisasi = pdokao.Nama.Trim(),
+                        
                     }
                 ).FirstOrDefaultAsync();
 
@@ -440,22 +751,30 @@ namespace HR.Application.Services.PDO
                     .CountAsync(x => x.IdIndukAktivitiOrganisasi == result.Id);
 
                 // Generate next KodProgram (append count+1)
+                result.Tahap = (result.Tahap ?? 0) + 1;
                 var nextProgramCount = childCount + 1;
                 result.KodProgram = $"{result.KodProgram}.{nextProgramCount}";
 
+                //var kodArr = result.Kod.Split(".");
+                //var cntStr = kodArr[(int)result.Tahap];
+                //var count = Int32.Parse(cntStr);
+                //++count;
+                //kodArr[(int)result.Tahap] = count.ToString("D3");
+
+                //result.Kod = string.Join(".", kodArr);
+
                 // Increase hierarchy level
-                result.Tahap = (result.Tahap ?? 0) + 1;
 
                 // Generate next Kod (increment last numeric part if exists)
                 if (!string.IsNullOrWhiteSpace(result.Kod))
                 {
                     var parts = result.Kod.Split('.', StringSplitOptions.RemoveEmptyEntries);
-                    var lastPart = parts.Last();
+                    var lastPart = parts[(int)result.Tahap];
 
                     if (int.TryParse(lastPart, out int lastNumber))
                     {
                         lastNumber++;
-                        parts[^1] = lastNumber.ToString("D3"); // keep padding to 3 digits
+                        parts[(int)result.Tahap] = lastNumber.ToString("D3"); // keep padding to 3 digits
                         result.Kod = string.Join(".", parts);
                     }
                     else
@@ -475,6 +794,45 @@ namespace HR.Application.Services.PDO
 
 
 
+        public async Task<AktivitiOrganisasiAlamatIndukDto> BacaAktivitiOrganisasiAlamatInduk(int IdUnitOrganisasi)
+        {
+            try
+            {
+                var unitOrganisasi = await (
+                    from pdoao in _context.PDOAktivitiOrganisasi
+                    where pdoao.Id == IdUnitOrganisasi
+                    select pdoao
+                ).FirstOrDefaultAsync();
+                var KodCartaOrganisasiParent = unitOrganisasi.KodCartaAktiviti.Substring(0, unitOrganisasi.KodCartaAktiviti.Length - 2);
+                var unitOrganisasiParent = await (from pdouo in _context.PDOUnitOrganisasi
+                              where pdouo.Id == unitOrganisasi.IdIndukAktivitiOrganisasi
+                                                  select pdouo
+                              ).FirstOrDefaultAsync();
+
+                var result = await (from pdoauo in _context.PDOAlamatUnitOrganisasi
+                              where pdoauo.IdUnitOrganisasi == unitOrganisasiParent.Id
+                              select new AktivitiOrganisasiAlamatIndukDto
+                              {
+                                    Id = pdoauo.Id,
+                                    IdUnitOrganisasi = pdoauo.IdUnitOrganisasi,
+                                    KodRujPoskod = pdoauo.KodRujPoskod,
+                                    Alamat1 = pdoauo.Alamat1,
+                                    Alamat2 = pdoauo.Alamat2,
+                                    Alamat3 = pdoauo.Alamat3,
+                                    KodRujNegara = pdoauo.KodRujNegara,
+                                    KodRujNegeri = pdoauo.KodRujNegeri,
+                                    KodRujBandar = pdoauo.KodRujBandar,
+                                    NomborTelefonPejabat = pdoauo.NomborTelefonPejabat,
+                                    NomborFaksPejabat = pdoauo.NomborFaksPejabat
+                              }).FirstOrDefaultAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in BacaAktivitiOrganisasi for Id={IdUnitOrganisasi}", IdUnitOrganisasi);
+                throw;
+            }
+        }
         /// <summary>
         /// Retrieves a list of AktivitiOrganisasi for use in dropdowns.
         /// </summary>
@@ -642,19 +1000,30 @@ namespace HR.Application.Services.PDO
                     throw new Exception("PDOAktivitiOrganisasi not found.");
                 }
 
+                var butiranKemaskiniList = new List<ButiranKemaskiniDto>();
+
+                if (entity.ButiranKemaskini != null)
+                {
+                    butiranKemaskiniList = JsonSerializer.Deserialize<List<ButiranKemaskiniDto>>(entity.ButiranKemaskini);
+                }
+
+                // Archive old state before updating
                 // Archive current state into JSON and set deletion metadata
-                var newButiranKemaskini = new MansuhAktivitiOrganisasiButiranKemaskiniDto
+                var newButiranKemaskini = new ButiranKemaskiniDto
                 {
                     Id = entity.Id,
                     StatusAktif = entity.StatusAktif ?? false,
                 };
 
-                string json = JsonSerializer.Serialize(newButiranKemaskini);
+                butiranKemaskiniList.Add(newButiranKemaskini);
+
+                string json = JsonSerializer.Serialize(butiranKemaskiniList, new JsonSerializerOptions { WriteIndented = true });
 
                 int count = json.Length;
 
                 // Apply update on the original entity
                 entity.ButiranKemaskini = json;
+                entity.IndikatorRekod = 4;
                 entity.IdPinda = request.UserId;
                 entity.TarikhPinda = DateTime.Now;
 

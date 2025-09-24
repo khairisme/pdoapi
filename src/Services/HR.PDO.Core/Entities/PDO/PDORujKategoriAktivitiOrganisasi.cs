@@ -12,7 +12,7 @@ namespace HR.PDO.Core.Entities.PDO
     public class PDORujKategoriAktivitiOrganisasi : PDOBaseEntity
     {
        
-        public string Kod { get; set; }
+        public string? Kod { get; set; }
 
        
         public string Nama { get; set; }

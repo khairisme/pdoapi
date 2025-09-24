@@ -24,7 +24,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _rujgelaranjawatanext.RujukanGelaranJawatan();
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -37,6 +42,35 @@ namespace HR.PDO.API.Controllers.PDO {
                 }
                  
                 return StatusCode(500, ex.Message+"-"+err);
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult<IEnumerable<object>>> TambahGelaranJawatan(TambahGelaranJawatanRequestDto request)
+        {
+            _logger.LogInformation("Calling TambahGelaranJawatan");
+            try
+            {
+                var data = await _rujgelaranjawatanext.TambahGelaranJawatan(request);
+                return Ok(new
+                {
+                    status = data != null ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in TambahGelaranJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
             }
         }
 

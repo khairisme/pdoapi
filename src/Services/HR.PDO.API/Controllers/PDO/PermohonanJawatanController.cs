@@ -38,7 +38,7 @@ public class PermohonanJawatanController : ControllerBase
         var result = await _permohonanJawatanService.Search(filter).ToListAsync();
         return Ok(new
         {
-            status = result.Count() > 0 ? "Sucess" : "Failed",
+            status = result.Count() > 0 ? "Berjaya" : "Gagal",
             items = result
 
         });
@@ -66,7 +66,7 @@ public class PermohonanJawatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                 items = result
             });
         }
@@ -102,7 +102,7 @@ public class PermohonanJawatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Any() ? "Success" : "Not Found",
+                status = result.Any() ? "Berjaya" : "Tidak dijumpai",
                 items = result
             });
         }
@@ -128,7 +128,7 @@ public class PermohonanJawatanController : ControllerBase
         var result = await _permohonanJawatanService.GetSenaraiAsalAsync(filter.AgensiId, filter.NoRujukan, filter.Tajuk, filter.StatusKod);
         return Ok(new
         {
-            status = result.Any() ? "Success" : "Not Found",
+            status = result.Any() ? "Berjaya" : "Tidak dijumpai",
             items = result
         });
 
@@ -158,7 +158,7 @@ public class PermohonanJawatanController : ControllerBase
         var result = await _permohonanJawatanService.GetPermohonanListAsync(filter.AgensiId, filter.NoRujukan, filter.Tajuk, filter.StatusKod);
         return Ok(new
         {
-            status = result.Any() ? "Success" : "Not Found",
+            status = result.Any() ? "Berjaya" : "Tidak dijumpai",
             items = result
         });
 
@@ -187,7 +187,7 @@ public class PermohonanJawatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }
@@ -224,7 +224,7 @@ public class PermohonanJawatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }
@@ -265,14 +265,14 @@ public class PermohonanJawatanController : ControllerBase
             var isSuccess = await _permohonanJawatanService.SetUlasanPasukanPerunding(ulasanPasukanPerundingRequestDto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500, new { status = "Gagal", message = "Gagal kemaskini rekod" });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 
@@ -298,7 +298,7 @@ public class PermohonanJawatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }
@@ -367,7 +367,7 @@ public class PermohonanJawatanController : ControllerBase
 
             var isSuccess = await _permohonanJawatanService.SimpanSemakanPermohonanPerjawatanAsync(request);
 
-            return Ok(new { status = isSuccess ? "Success" : "Failed", items = isSuccess });
+            return Ok(new { status = isSuccess ? "Berjaya" : "Gagal", items = isSuccess });
         }
         catch (Exception ex)
         {
@@ -411,7 +411,7 @@ public class PermohonanJawatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
             });
         }

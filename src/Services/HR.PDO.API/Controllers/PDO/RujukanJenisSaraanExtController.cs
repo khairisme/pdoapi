@@ -19,16 +19,34 @@ namespace HR.PDO.API.Controllers.PDO {
         [HttpGet]
         public async Task<IActionResult> getAll()
         {
-            _logger.LogInformation("Getting all RujJenisSaraan");
-
-            var result = await _rujjenissaraanext.SenaraiJenisSaraan();
-
-            return Ok(new
+            try
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
-                items = result
+                _logger.LogInformation("Getting all RujJenisSaraan");
 
-            });
+                var result = await _rujjenissaraanext.SenaraiJenisSaraan();
+
+                return Ok(new
+                {
+                    status = result.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = result
+
+                });
+            }
+            catch (Exception ex)
+            {
+                String err = "";
+                if (ex != null)
+                {
+                    _logger.LogError(ex, "Error in RujukanJenisJawatan");
+                    if (ex.InnerException != null)
+                    {
+                        err = ex.InnerException.Message.ToString();
+                    }
+                }
+
+                return StatusCode(500, ex.Message + "-" + err);
+            }
+
         }
 
     }

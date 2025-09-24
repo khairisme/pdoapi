@@ -1,7 +1,23 @@
 using Azure.Core;
 using System;
+using System.ComponentModel;
 namespace HR.PDO.Application.DTOs
 {
+    public class UnitOrganisasiCarianRequestDto
+    {
+        [DefaultValue("")]
+        public string? Kod { get; set; }
+        [DefaultValue("")]
+        public string? NamaAgensi { get; set; }
+        [DefaultValue(1)]
+        public int Page { get; set; }
+        [DefaultValue(50)]
+        public int PageSize { get; set; }
+        [DefaultValue("Nama")]
+        public string? SortBy { get; set; }
+        [DefaultValue(false)]
+        public bool Desc { get; set; }
+    }
     public class UnitOrganisasiCarianDto
     {
         public bool Desc { get; set; }

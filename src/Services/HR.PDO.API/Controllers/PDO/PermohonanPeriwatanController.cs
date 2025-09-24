@@ -38,7 +38,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = isSuccess ? "Sucess" : "Failed",
+                status = isSuccess ? "Berjaya" : "Gagal",
                 items = isSuccess
 
             });
@@ -61,7 +61,7 @@ namespace HR.PDO.API.Controllers.PDO
 
             return Ok(new
             {
-                status = isSuccess ? "Sucess" : "Failed",
+                status = isSuccess ? "Berjaya" : "Gagal",
                 items = isSuccess
 
             });
@@ -94,7 +94,7 @@ namespace HR.PDO.API.Controllers.PDO
             try
             {
                 var result = await _permohonanPeriwatan.SimpanStatusPermohonanAsync(dto);
-                return result ? Ok("Status updated successfully.") : BadRequest("Failed to update status.");
+                return result ? Ok(new {status="Berjaya", messsage="Status Berjaya dikemaskini."}) : BadRequest("Failed to update status.");
             }
             catch (Exception ex)
             {

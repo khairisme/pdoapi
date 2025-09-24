@@ -59,7 +59,7 @@ namespace HR.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = data.Count > 0 ? "Success" : "Failed",
+                    status = data.Count > 0 ? "Berjaya" : "Gagal",
                     items = data
                 });
             }
@@ -114,7 +114,7 @@ namespace HR.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = (data.JumlahBilanganPengisian > 0 || data.HadSilingDitetapkan > 0) ? "Success" : "Failed",
+                    status = (data.JumlahBilanganPengisian > 0 || data.HadSilingDitetapkan > 0) ? "Berjaya" : "Gagal",
                     data = data
                 });
             }
@@ -154,7 +154,7 @@ namespace HR.API.Controllers.PDO
 
                 return Ok(new
                 {
-                    status = "Success",
+                    status = "Berjaya",
                     bilangan = count
                 });
             }
@@ -186,7 +186,7 @@ namespace HR.API.Controllers.PDO
             try
             {
                 var result = await _permohonanPengisianSkimService.UpdateUlasanAndHadSilingAsync(request);
-                return Ok(new { status = result ? "Success" : "Failed" });
+                return Ok(new { status = result ? "Berjaya" : "Gagal" });
             }
             catch (Exception ex)
             {
@@ -225,14 +225,14 @@ namespace HR.API.Controllers.PDO
                     _logger.LogWarning("GetJumlahDanSiling: No data found for IdPermohonanPengisian: {IdPermohonanPengisian}, IdPermohonanPengisianSkim: {IdPermohonanPengisianSkim}", request.IdPermohonanPengisian, request.IdPermohonanPengisianSkim);
                     return NotFound(new
                     {
-                        status = "Failed",
+                        status = "Gagal",
                        
                         data = new PaparPermohonanDanSilingResponseDto()
                     });
                 }
                 return Ok(new
                 {
-                    status = (data.JumlahBilanganPengisian > 0 || data.HadSilingDitetapkan > 0) ? "Success" : "Failed",
+                    status = (data.JumlahBilanganPengisian > 0 || data.HadSilingDitetapkan > 0) ? "Berjaya" : "Gagal",
                     data = data
                 });
             }

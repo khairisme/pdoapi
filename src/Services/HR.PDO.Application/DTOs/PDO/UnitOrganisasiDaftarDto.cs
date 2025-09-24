@@ -3,6 +3,15 @@ using System;
 using System.ComponentModel;
 namespace HR.PDO.Application.DTOs
 {
+    public class KemaskiniSemakUnitOrganisasiRequestDto
+    {
+        public int Id { get; set; }
+        public Guid UserId { get; set; }
+        public string? NamaUnitOrganisasi { get; set; }
+        public string? KodRujKategoriUnitOrganisasi { get; set; }
+        public string? Keterangan { get; set; }
+    }
+
     public class UnitOrganisasiDaftarDto
     {
         public Guid UserId { get; set; }
@@ -12,15 +21,6 @@ namespace HR.PDO.Application.DTOs
         public bool? IndikatorJabatanDiKerajaanNegeri { get; set; }
         public bool? IndikatorPemohonPerjawatan { get; set; }
         public bool? StatusAktif { get; set; }
-        public DateTime? TarikhAkhirPengukuhan { get; set; }
-        public DateTime? TarikhAkhirPenyusunan { get; set; }
-        public DateTime? TarikhCipta { get; set; }
-        public DateTime? TarikhHapus { get; set; }
-        public DateTime? TarikhPenubuhan { get; set; }
-        public DateTime? TarikhPinda { get; set; }
-        public Guid? IdCipta { get; set; }
-        public Guid? IdHapus { get; set; }
-        public Guid? IdPinda { get; set; }
         public int IdAsal { get; set; }
         public int IdIndukUnitOrganisasi { get; set; }
         public int Tahap { get; set; }
@@ -36,6 +36,7 @@ namespace HR.PDO.Application.DTOs
         public string? Nama { get; set; }
         public string? SejarahPenubuhan { get; set; }
         public string? Singkatan { get; set; }
+        public DateTime? TarikhPenubuhan { get; set; }
     }
     public class StrukturUnitOrganisasiRequestDto
     {
@@ -45,7 +46,7 @@ namespace HR.PDO.Application.DTOs
         [DefaultValue(1)]
         public int IdAktivitiOrganisasi { get; set; } 
 
-        [DefaultValue("0101")]
+        [DefaultValue("7215")]
         public string? KodCartaOrganisasi { get; set; }
         public int ParentId { get; set; } = 0;
     
@@ -57,6 +58,7 @@ namespace HR.PDO.Application.DTOs
         [DefaultValue("UnitOrganisasi")]
         public string? SortBy { get; set; } = "UnitOrganisasi";
         [DefaultValue(false)]
+        public bool? ResultChild { get; set; }
         public bool Desc { get; set; } = false;
     }
     public class HapusTerusUnitOrganisasiRequestDto

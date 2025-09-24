@@ -32,9 +32,10 @@ namespace HR.Application.Services.PDO
             try
 
             {
-
+                var excludeList = new List<string> { "03" }; // Example exclude list
                 var result = await (from pdorgj in _context.PDORujStatusJawatan
-                    select new DropDownDto{
+                                    where !excludeList.Contains(pdorgj.Kod)
+                                    select new DropDownDto{
                          Kod = pdorgj.Kod.Trim(),
                          Nama = pdorgj.Nama.Trim()
                     }

@@ -12,15 +12,15 @@ namespace HR.PDO.Core.Entities.PDO
     {
         public int Id { get; set; }
         public int IdButiranPermohonan { get; set; }
-        public string? SkimPerkhidmatan { get; set; }
-        public string? Gred { get; set; }
+        public string? ButiranSkimPerkhidmatanGred { get; set; }
         public string? KodRujJenisJawatan { get; set; }
+        public string? KodRujPangkatBadanBeruniform { get; set; }
+        
         public string? KodRujStatusBekalan { get; set; }
         public string? KodRujStatusJawatan { get; set; }
         public int? IdAktivitiOrganisasi { get; set; }
         public int IdUnitOrganisasi { get; set; }
-        public string? GelaranJawatan { get; set; }
-        public string? Pangkat { get; set; }
+        public string? KodRujGelaranJawatan { get; set; }
         public string? Penyandang { get; set; }
         public bool? StatusAktif { get; set; }
         public Guid? IdCipta { get; set; }

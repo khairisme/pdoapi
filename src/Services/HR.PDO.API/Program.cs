@@ -50,6 +50,12 @@ builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSet
 //    client.DefaultRequestHeaders.Accept.Add(
 //        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 //});
+builder.Services.Configure<ApiSettings>(
+    builder.Configuration.GetSection("ApiSettings"));
+
+builder.Services.AddSingleton(sp =>
+    sp.GetRequiredService<IOptions<ApiSettings>>().Value);
+
 builder.Services.AddHttpClient("PpaApi", (sp, client) =>
 {
     var settings = sp.GetRequiredService<IOptions<ApiSettings>>().Value;
@@ -121,22 +127,38 @@ builder.Services.AddTemporalServices(builder.Configuration);
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen(c =>
+//{
+//    c.SwaggerDoc("v1", new OpenApiInfo
+//    {
+//        Title = "HR.PDO API",
+//        Version = "v1",
+//        Description = "Endpoints for Permohonan Jawatan, Unit Organisasi, etc."
+//    });
+
+//    // Include XML comments for all assemblies
+//    foreach (var xml in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml"))
+//    {
+//        c.IncludeXmlComments(xml, includeControllerXmlComments: true);
+//    }
+
+//    // Enable annotations for [SwaggerOperation], etc.
+//    c.EnableAnnotations();
+//});
+
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "HR.PDO API",
-        Version = "v1",
-        Description = "Endpoints for Permohonan Jawatan, Unit Organisasi, etc."
-    });
+    c.SwaggerDoc("v1", new() { Title = "HR API", Version = "v1" });
 
-    // Include XML comments for all assemblies
-    foreach (var xml in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml"))
+    // Set the comments path for the Swagger JSON and UI
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
     {
-        c.IncludeXmlComments(xml, includeControllerXmlComments: true);
+        c.IncludeXmlComments(xmlPath);
     }
 
-    // Enable annotations for [SwaggerOperation], etc.
+    // Ensure all controllers are discovered
     c.EnableAnnotations();
 });
 
@@ -153,18 +175,24 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation($"Running on: {System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription}");
+
+
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        //c.SwaggerEndpoint("/swagger/v1/swagger.json", "HR API v1");
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HR.PDO API v1");
-        c.DocumentTitle = "HR.PDO API Docs";
-        c.DisplayOperationId();
-        c.DefaultModelsExpandDepth(-1); // hide schema models panel (optional)
-    });
+app.UseStaticFiles();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    //c.SwaggerEndpoint("/swagger/v1/swagger.json", "HR API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HR.PDO API v1");
+    //c.DocumentTitle = "HR.PDO API Docs";
+    //c.DisplayOperationId();
+    //c.DefaultModelsExpandDepth(-1); // hide schema models panel (optional)
+});
 //}
 
 app.UseHttpsRedirection();

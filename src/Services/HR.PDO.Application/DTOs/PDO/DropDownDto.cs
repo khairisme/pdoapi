@@ -11,6 +11,12 @@ namespace HR.PDO.Application.DTOs
     /// </remarks>
     public class DropDownDto
     {
+        #region
+        public int? IdKumpulanPerkhidmatan { get; set; }
+        public int? IdKlasifikasiPerkhidmatan { get; set; }
+        public int? IdSkimPerkhidmatan { get; set; }
+        public string? KodRujJenisSaraan{ get; set; }
+        #endregion
         /// <summary>
         /// Required. Unique identifier for the dropdown item.
         /// </summary>
@@ -25,5 +31,13 @@ namespace HR.PDO.Application.DTOs
         /// Required. Display name of the item.
         /// </summary>
         public string Nama { get; set; }
+    }
+    public class DropDownNegaraDto
+    {
+        public string? kod { get; set; }
+        public string? nama { get; set; }
+        public string? keterangan { get; set; }
+        public bool? statusAktif { get; set; }
+        public string? rawatan { get; set; }
     }
 }

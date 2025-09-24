@@ -9,15 +9,6 @@ namespace HR.PDO.Application.DTOs
         public bool? IndikatorJabatanDiKerajaanNegeri { get; set; }
         public bool? IndikatorPemohonPerjawatan { get; set; }
         public bool? StatusAktif { get; set; }
-        public DateTime? TarikhAkhirPengukuhan { get; set; }
-        public DateTime? TarikhAkhirPenyusunan { get; set; }
-        public DateTime? TarikhCipta { get; set; }
-        public DateTime? TarikhHapus { get; set; }
-        public DateTime? TarikhPenubuhan { get; set; }
-        public DateTime? TarikhPinda { get; set; }
-        public Guid? IdCipta { get; set; }
-        public Guid? IdHapus { get; set; }
-        public Guid? IdPinda { get; set; }
         public int? IdAsal { get; set; }
         public int? IdIndukUnitOrganisasi { get; set; }
         public int? Tahap { get; set; }

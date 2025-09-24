@@ -25,7 +25,12 @@ namespace HR.PDO.API.Controllers.PDO {
             try
             {
                 var data = await _rujjenisdokumenext.RujukanJenisDokumen();
-                return Ok(data);
+                return Ok(new
+                {
+                    status = data.Count() > 0 ? "Berjaya" : "Gagal",
+                    items = data
+
+                });
             }
             catch (Exception ex)
             {
@@ -65,13 +70,13 @@ namespace HR.PDO.API.Controllers.PDO {
         }
 
         [HttpPut]
-        public async Task<ActionResult> KemaskiniRujJenisDokumen([FromQuery] Guid UserId,RujJenisDokumenDaftarDto filter)
+        public async Task<ActionResult> KemaskiniRujJenisDokumen([FromBody] RujJenisDokumenDaftarDto filter)
         {
             _logger.LogInformation("Calling KemaskiniRujJenisDokumen");
             try
             {
-                await _rujjenisdokumenext.KemaskiniRujJenisDokumen(UserId,filter);
-                return CreatedAtAction(nameof(KemaskiniRujJenisDokumen), new {UserId, filter }, null);
+                await _rujjenisdokumenext.KemaskiniRujJenisDokumen(filter);
+                return Ok(new { message = "Berjaya Kemaskini Jenis Dokuman" });
             }
             catch (Exception ex)
             {

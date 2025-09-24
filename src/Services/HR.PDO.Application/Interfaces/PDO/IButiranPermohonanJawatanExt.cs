@@ -9,6 +9,6 @@ namespace HR.PDO.Application.Interfaces.PDO
         public Task<List<ButiranPermohonanJawatanDto>> SenaraiButiranPermohonanJawatan();
         public Task<ButiranPermohonanJawatanDto> BacaButiranPermohonanJawatan(AddButiranPermohonanJawatanRequestDto request);
         public Task HapusTerusPermohonanJawatan(AddButiranPermohonanJawatanRequestDto request);
-        public Task TambahButiranPermohonanJawatan(TambahButiranPermohonanJawatanDto request);
+        public Task<ButiranPermohonanJawatanDto> TambahButiranPermohonanJawatan(TambahButiranPermohonanJawatanDto request);
     }
 }

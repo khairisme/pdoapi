@@ -1,6 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>HR.PDO.Application</AssemblyName>
+	</PropertyGroup>
 
-  <ItemGroup>
+
+	<ItemGroup>
     <ProjectReference Include="..\HR.PDO.Core\HR.PDO.Core.csproj" />
     <ProjectReference Include="..\HR.PDO.Infrastructure\HR.PDO.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
@@ -12,18 +19,14 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />-->
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="DTOs\PPA\" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
 
 </Project>

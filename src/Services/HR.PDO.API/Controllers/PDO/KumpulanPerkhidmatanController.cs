@@ -42,7 +42,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
 
         return Ok(new
         {
-            status = result.Count() > 0 ? "Sucess" : "Failed",
+            status = result.Count() > 0 ? "Berjaya" : "Gagal",
             items = result
 
         });
@@ -64,7 +64,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -94,14 +94,14 @@ public class KumpulanPerkhidmatanController : ControllerBase
             var isSuccess = await _kumpulanPerkhidmatan.CreateAsync(kumpulanPerkhidmatanDto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to create the record.");
+                return StatusCode(500, new {status="Gagal", message="Rekod gagal diwujudkan"});
 
             return Ok("Created successfully");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during creation : "+ ex.InnerException.ToString());
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>
@@ -123,7 +123,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during getKumpulanPerkhidmatan");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 
@@ -146,7 +146,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during creation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>
@@ -167,14 +167,14 @@ public class KumpulanPerkhidmatanController : ControllerBase
             var isSuccess = await _kumpulanPerkhidmatan.UpdateAsync(kumpulanPerkhidmatanDto);
 
             if (!isSuccess)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500, new { status = "Gagal", message = "Gagal kemaskini rekod" });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during updation");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 
@@ -194,7 +194,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
 
             return Ok(new
             {
-                status = result.Count() > 0 ? "Sucess" : "Failed",
+                status = result.Count() > 0 ? "Berjaya" : "Gagal",
                 items = result
 
             });
@@ -202,7 +202,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during carl getStatusKumpulanPerkhidmatan");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>
@@ -225,7 +225,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during GetMaklumatSediaAda");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>
@@ -248,7 +248,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during GetMaklumatBaharu");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 
@@ -265,14 +265,14 @@ public class KumpulanPerkhidmatanController : ControllerBase
             var result = await _kumpulanPerkhidmatan.KemaskiniStatusAsync(perkhidmatanDto);
 
             if (!result)
-                return StatusCode(500, "Failed to update the record.");
+                return StatusCode(500, new { status = "Gagal", message = "Gagal kemaskini rekod" });
 
-            return Ok("Updated successfully");
+            return Ok(new {status="Berjaya", message="Updated successfully"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during SetKemaskinistatus");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
     /// <summary>
@@ -294,7 +294,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during DaftarHantarKumpulanPermohonan");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 
@@ -318,7 +318,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during setHantarKumpulanPermohonan");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
 
     }
@@ -342,7 +342,7 @@ public class KumpulanPerkhidmatanController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception during DeleteOrUpdate");
-            return StatusCode(500, ex.InnerException.Message.ToString());
+            return StatusCode(500, new{status = "Gagal", message = ex.Message + " - " + ex.InnerException != null ? ex.InnerException.Message.ToString() : ""});
         }
     }
 }

@@ -14,14 +14,9 @@ namespace HR.PDO.Application.DTOs
     {
         public int? Id { get; set; }
         public int? IdJawatan { get; set; }
-        public DateTime? TarikhCipta { get; set; }
-        public DateTime? TarikhHapus { get; set; }
-        public DateTime? TarikhMulaSandangan { get; set; }
-        public DateTime? TarikhPinda { get; set; }
+        public Guid UserId { get; set; }
         public DateTime? TarikhTamatSandangan { get; set; }
-        public Guid? IdCipta { get; set; }
-        public Guid? IdHapus { get; set; }
         public Guid? IdPemilikKompetensi { get; set; }
-        public Guid? IdPinda { get; set; }
+        public DateTime? TarikhMulaSandangan { get; set; }
     }
 }

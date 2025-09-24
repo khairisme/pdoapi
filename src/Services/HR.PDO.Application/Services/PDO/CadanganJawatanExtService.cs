@@ -12,6 +12,7 @@ using HR.PDO.Application.Interfaces.PDO;
 using HR.PDO.Core.Entities.PDO;
 using HR.PDO.Application.DTOs;
 using Azure.Core;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace HR.Application.Services.PDO
 {
@@ -64,16 +65,14 @@ namespace HR.Application.Services.PDO
                         IdButiranPermohonan = pdobp != null ? pdobp.Id : 0,
 
                         // Prefer values from PDOCadanganJawatan; fallback to the joined masters
-                        SkimPerkhidmatan = pdocj != null && pdocj.SkimPerkhidmatan != null ? pdocj.SkimPerkhidmatan.Trim() : pdosp!.Nama.Trim(),
-                        Gred = pdocj != null && pdocj.Gred != null ? pdocj.Gred : pdog!.Nama.Trim(),
-
-                        GelaranJawatan = pdocj!.GelaranJawatan,
+                        SkimPerkhidmatan = pdocj != null && pdocj.ButiranSkimPerkhidmatanGred != null ? pdocj.ButiranSkimPerkhidmatanGred.Trim() : pdosp!.Nama.Trim(),
+                        KodRujGelaranJawatan = pdocj!.KodRujGelaranJawatan,
                         KodRujJenisJawatan = pdocj!.KodRujJenisJawatan,
                         KodRujStatusBekalan = pdocj!.KodRujStatusBekalan,
                         KodRujStatusJawatan = pdocj!.KodRujStatusJawatan,
                         IdAktivitiOrganisasi = pdobp!.IdAktivitiOrganisasi,
                         IdUnitOrganisasi = pdocj!.IdUnitOrganisasi,
-                        Pangkat = pdocj!.Pangkat,
+                        KodRujPangkatBadanBeruniform = pdocj!.KodRujPangkatBadanBeruniform,
                         Penyandang = pdocj!.Penyandang,
                     }
                 ).ToListAsync();
@@ -92,24 +91,178 @@ namespace HR.Application.Services.PDO
             }
 
         }
+        public async Task<List<PDOCadanganJawatan>> SenaraiRekodCadanganJawatan(int IdButiranPermohonan)
+        {
+            try
+
+            {
+
+                var result = await (from pdocj in _context.PDOCadanganJawatan.AsNoTracking()
+                    where pdocj.IdButiranPermohonan == IdButiranPermohonan
+                    select pdocj
+                ).ToListAsync();
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in SenaraiCadanganJawatan");
+
+                throw;
+            }
+
+        }
 
 
+        public async Task<List<ButiranCadanganJawatanDto>> SenaraiButiranCadanganJawatan(SenaraiCadanganJawatanRequestDto request)
+        {
+            try
 
-        public async Task TambahCadanganJawatan(Guid UserId, CadanganJawatanRequestDto request)
+            {
+                var gredStr = "";
+                foreach (var req in request.SkimPerkhidmatanList)
+                {
+
+                    var GredList = req.IdGredList
+                      .Split(",")
+                      .Select(s => int.TryParse(s.Trim(), out var val) ? val : 0)
+                      .ToList();
+                    int cnt = 0;
+                    foreach (var gred in GredList)
+                    {
+                        var Nama = (from pdog in _context.PDOGred
+                                    where gred == pdog.Id
+                                    select pdog.Nama
+                                ).FirstOrDefault();
+                        if (gredStr == "")
+                        {
+                            gredStr = Nama.Trim();
+                        }
+                        else
+                        {
+                            gredStr = gredStr + "," + Nama.Trim();
+                        }
+                    }
+                    ++cnt;
+                    if (cnt == GredList.Count())
+                    {
+                        gredStr = gredStr + " / ";
+                    }
+                }
+
+                var gelaranJawatan = (from pdogj in _context.PDORujGelaranJawatan
+                                      where pdogj.Kod == request.KodRujGelaranJawatan
+                                      select pdogj.Nama).FirstOrDefault();
+
+                var newGred = gredStr.Replace(",", "/");
+                var newAnggaran = request.AnggaranBerkenaanTajukJawatan.Replace(newGred, "");
+
+                var result = new List<ButiranCadanganJawatanDto>();
+
+                for (int i = 1; i <= request.BilanganJawatan; i++)
+                {
+                    var butiranCadangan = new ButiranCadanganJawatanDto
+                    {
+                        Id = i,
+                        NamaJawatan = gelaranJawatan + " " + newAnggaran,
+                        NamaUnitOrganisasi = ""
+                    };
+                    result.Add(butiranCadangan);
+                }
+
+
+                return result;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in TambahCadanganJawatan");
+
+                throw;
+            }
+
+            //try
+
+            //{
+
+            //    var result = await (from pdocj in _context.PDOCadanganJawatan.AsNoTracking()
+            //                        where pdocj.IdButiranPermohonan == IdButiranPermohonan
+            //                        select new ButiranCadanganJawatanDto
+            //                        {
+            //                            Id = pdocj.Id,
+            //                            NamaJawatan = pdocj.ButiranSkimPerkhidmatanGred,
+            //                            IdUnitOrganisasi = pdocj.IdUnitOrganisasi,
+            //                            NamaUnitOrganisasi = (from pdou in _context.PDOUnitOrganisasi
+            //                                                  where pdou.Id == pdocj.IdUnitOrganisasi
+            //                                                  select pdou.Nama).FirstOrDefault()
+            //                        }
+            //    ).ToListAsync();
+
+            //    return result;
+
+            //}
+
+            //catch (Exception ex)
+
+            //{
+
+            //    _logger.LogError(ex, "Error in SenaraiCadanganJawatan");
+
+            //    throw;
+            //}
+
+        }
+
+        public async Task<List<PDOCadanganJawatan>> TambahCadanganJawatan(SenaraiCadanganJawatanRequestDto request)
         {
 
             try
 
             {
-                var gelaranJawatan = (from pdorgj in _context.PDORujGelaranJawatan
-                                    where pdorgj.Kod==request.KodRujGelaranJawatan
-                                    select pdorgj).FirstOrDefault();
-                var gred = (from pdog in _context.PDOGred
-                            where pdog.KodGred == request.KodGred
-                            select pdog).FirstOrDefault();
-                var skim = (from pdosp in _context.PDOSkimPerkhidmatan
-                            where pdosp.Id == request.IdSkimPerkhidmatan
-                            select pdosp).FirstOrDefault();
+                var gredStr = "";
+                foreach (var req in request.SkimPerkhidmatanList)
+                {
+
+                    var GredList = req.IdGredList
+                      .Split(",")
+                      .Select(s => int.TryParse(s.Trim(), out var val) ? val : 0)
+                      .ToList();
+                    int cnt = 0;
+                    foreach (var gred in GredList)
+                    {
+                        var Nama = (from pdog in _context.PDOGred
+                                    where gred == pdog.Id
+                                    select pdog.Nama
+                                ).FirstOrDefault();
+                        if (gredStr == "")
+                        {
+                            gredStr = Nama.Trim();
+                        }
+                        else
+                        {
+                            gredStr = gredStr + "," + Nama.Trim();
+                        }
+                    }
+                    ++cnt;
+                    if (cnt == GredList.Count())
+                    {
+                        gredStr = gredStr + " / ";
+                    }
+                }
+
+                var gelaranJawatan = (from pdogj in _context.PDORujGelaranJawatan
+                                      where pdogj.Kod == request.KodRujGelaranJawatan
+                                      select pdogj.Nama).FirstOrDefault();
+
+                var newGred = gredStr.Replace(",", "/");
+                var newAnggaran = request.AnggaranBerkenaanTajukJawatan.Replace(newGred, "");
 
                 for (int i=1; i<=request.BilanganJawatan; i++)
                 {
@@ -118,23 +271,27 @@ namespace HR.Application.Services.PDO
                     var entity = new PDOCadanganJawatan();
 
                     entity.IdAktivitiOrganisasi = request.IdAktivitiOrganisasi;
+                    entity.IdUnitOrganisasi = request.IdUnitOrganisasi;
                     entity.IdButiranPermohonan = request.IdButiranPermohonan;
-                    entity.SkimPerkhidmatan = skim.Nama;
-                    entity.Gred = gred.Nama.Trim();
+                    entity.ButiranSkimPerkhidmatanGred = newAnggaran;
                     entity.IdButiranPermohonan = request.IdButiranPermohonan;
                     entity.TarikhCipta = DateTime.Now;
                     entity.StatusAktif = false;
                     entity.KodRujJenisJawatan = request.KodRujJenisJawatan;
-                    entity.GelaranJawatan = gelaranJawatan.Nama.Trim();
-                    entity.KodRujStatusBekalan = request.KodRujStatusBekalan;
+                    entity.KodRujGelaranJawatan = request.KodRujGelaranJawatan;
+                    entity.KodRujStatusBekalan = request.KodRujStatusBekalan != null ? (request.KodRujStatusBekalan!="" || request.KodRujStatusBekalan!="string"? request.KodRujStatusBekalan: null) : null ;
                     entity.KodRujStatusJawatan = request.KodRujStatusJawatan;
-                    entity.IdCipta = UserId;
+                    entity.IdCipta = request.UserId;
                     entity.TarikhCipta = DateTime.Now;
                     await _context.PDOCadanganJawatan.AddAsync(entity);
 
                     await _unitOfWork.SaveChangesAsync();
                     await _unitOfWork.CommitAsync();
                 }
+
+                var result = await SenaraiRekodCadanganJawatan(request.IdButiranPermohonan);
+
+                return result;
 
             }
 
@@ -149,22 +306,22 @@ namespace HR.Application.Services.PDO
 
         }
 
-        public async Task KemaskiniCadanganJawatan(Guid UserId, int IdButiranPermohonan, int IdUnitOrganisasi)
+        public async Task KemaskiniCadanganJawatan(KemaskiniCadanganJawatanRequestDto request)
         {
 
             try
 
             {
                 var record = (from pdocj in _context.PDOCadanganJawatan
-                              where pdocj.IdButiranPermohonan == IdButiranPermohonan
+                              where pdocj.IdButiranPermohonan == request.IdButiranPermohonan
                               select pdocj).ToList();
 
                 foreach (var item in record)
                 {
                     await _unitOfWork.BeginTransactionAsync();
 
-                    item.IdUnitOrganisasi=IdUnitOrganisasi;
-                    item.IdPinda = UserId;
+                    item.IdUnitOrganisasi= request.IdUnitOrganisasi;
+                    item.IdPinda = request.UserId;
                     item.TarikhPinda = DateTime.Now;
 
                     _context.PDOCadanganJawatan.Update(item);
@@ -185,6 +342,40 @@ namespace HR.Application.Services.PDO
                 throw;
             }
 
+        }
+
+        public async Task<PDOCadanganJawatan> KemaskiniUnitOrganisasiCadanganJawatan(KemaskiniUnitOrganisasiCadanganJawatanRequestDto request)
+        {
+            try
+
+            {
+                var record = await (from pdocj in _context.PDOCadanganJawatan
+                              where pdocj.Id == request.IdCadanganJawatan
+                              select pdocj).FirstOrDefaultAsync();
+
+                await _unitOfWork.BeginTransactionAsync();
+
+                record.IdUnitOrganisasi = request.IdUnitOrganisasi;
+                record.IdPinda = request.UserId;
+                record.TarikhPinda = DateTime.Now;
+
+                _context.PDOCadanganJawatan.Update(record);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitAsync();
+
+                return record;
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                _logger.LogError(ex, "Error in TambahCadanganJawatan");
+
+                throw;
+            }
         }
 
 
